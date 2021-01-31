@@ -1,0 +1,59 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+    <form class="m-4">
+        <div class="form-group">
+          <label for="inputAge">Type AGE of patient</label>
+          <input type="age" class="form-control" id="inputAge" placeholder="Enter age">
+        </div>
+
+        <div class="form-group">
+          <label for="inputGender">Select GENDER of patient</label>
+          <select class="form-control" id="inputGender">
+            <option>Male</option>
+            <option>Female</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="inputChest">Select CHEST PAIN TYPE</label>
+          <select class="form-control" id="inputChest">
+            <option>1 - Typical</option>
+            <option>2 - Typical Angine</option>
+            <option>3 - non anginal pain</option>
+            <option>4 - Asymptomatic</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="inputBPS">Type RESTING BP (Level of blood pressure at resting mode in mm/HG)</label>
+          <input type="age" class="form-control" id="inputBPS" placeholder="Enter BP s">
+        </div>
+
+        <div class="form-group">
+          <label for="inputChol">Type CHOLESTROL</label>
+          <input type="age" class="form-control" id="inputChol" placeholder="Enter Cholestrol">
+        </div>
+
+        {# select maybe #}
+        <div class="form-group">
+          <label for="inputFBS">Type FASTING BLOOD SUGAR </label>
+          <input type="age" class="form-control" id="inputFBS" placeholder="Enter Fasting Blood Sugar">
+        </div>
+
+        <div class="form-group">
+          <label for="inputFBS">Type RESTING ECG </label>
+          <input type="age" class="form-control" id="inputFBS" placeholder="Enter Fasting Blood Sugar">
+        </div>
+
+
+       
+
+
+
+
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+{% endblock %}
