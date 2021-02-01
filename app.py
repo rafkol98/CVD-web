@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 import pickle
 import numpy as np
 
@@ -15,11 +15,17 @@ def diagnose():
     return render_template('diagnose.html')
 
 
-@app.route('/predict', methods=['POST','GET'])
+@app.route('/predict', methods=['POST'])
 def predict():
 # Bug with request.
     ints = [int(x) for x in request.form.values()]
+    # data1 = request.form['age']
+
+    # x = len(ints)
     final = [np.array(ints)]
+    # out_arr = np.array_str(final) 
+    # str1 = ''.join(final)
+    # return render_template('diagnose.html', pred=data1)
     prediction = model.predict(final)
 
     if prediction==1:
