@@ -4,37 +4,37 @@
 <div class="jumbotron jumbotron-fluid">
   <div class="container">
     <h1 class="display-5">Diagnose Patient</h1>
+    <h2>{{pred}}</h2>
     <p class="lead">Fill out the form below to diagnose whether a patient is at risk of suffering from a Cardiovascular Disease in the future.</p>
   </div>
 </div>
 
-<form class="m-2">
+<form action='/predict' method="POST">
 
-  <div class="form-row">
+  {# <div class="form-row">
     <div class="form-group col-md-6">
-      <label for="inputEmail4">Last Name</label>
-      <input type="email" class="form-control" id="inputEmail4">
+      <label for="inputLastName">Last Name</label>
+      <input type="name" class="form-control" id="inputLastName" placeholder="Enter last name of patient">
     </div>
 
     <div class="form-group col-md-6">
-      <label for="inputPassword4">Email</label>
-      <input type="password" class="form-control" id="inputPassword4">
+      <label for="inputEmail">Email</label>
+      <input type="email" class="form-control" id="inputEmail" placeholder="Enter email of patient">
     </div>
-  </div>
+  </div> #}
 
 
   <div class="form-row">
     <div class="form-group col-md-6">
-      <label for="inputAge">Type AGE of patient</label>
+      <label for="inputAge">Age</label>
       <input type="age" class="form-control" id="inputAge" placeholder="Enter age">
     </div>
 
     <div class="form-group col-md-6">
-      <label for="inputGender">Select GENDER of patient</label>
+      <label for="inputGender">Gender</label>
       <select class="form-control" id="inputGender">
-        <option>Male</option>
-        <option>Female</option>
-        <option>Other</option>
+        <option value='0'>Male</option>
+        <option value='1'>Female</option>
       </select>
     </div>
   </div>
@@ -42,87 +42,79 @@
 
   <div class="form-row">
     <div class="form-group col-md-6">
-      <label for="inputChest">Select CHEST PAIN TYPE</label>
+      <label for="inputChest">Chest pain type</label>
       <select class="form-control" id="inputChest">
-        <option>1 - Typical</option>
-        <option>2 - Typical Angine</option>
-        <option>3 - non anginal pain</option>
-        <option>4 - Asymptomatic</option>
+        <option value="1">Typical</option>
+        <option value="2">Typical Angine</option>
+        <option value="3">Non anginal pain</option>
+        <option value="4">Asymptomatic</option>
       </select>
     </div>
 
     <div class="form-group col-md-6">
-      <label for="inputBPS">Type RESTING BP  <small>( Level of blood pressure at resting mode in mm/HG )</small> </label>
+      <label for="inputBPS">Resting Blood Pressure  <small>( Level of blood pressure at resting mode in mm/HG )</small> </label>
       <input type="age" class="form-control" id="inputBPS" placeholder="Enter BP s">
     </div>
   </div>
 
   <div class="form-row">
     <div class="form-group col-md-6">
-      <label for="inputChol">Type CHOLESTROL</label>
+      <label for="inputChol">Cholestrol</label>
       <input type="age" class="form-control" id="inputChol" placeholder="Enter Cholestrol">
     </div>
 
     <div class="form-group col-md-6">
-      <label for="inputFBS">Type FASTING BLOOD SUGAR </label>
-      <input type="age" class="form-control" id="inputFBS" placeholder="Enter Fasting Blood Sugar">
+      <label for="inputFBS">Fasting blood sugar </label>
+      <select class="form-control" id="inputECG">
+        <option value="0">Less or equal to 120 mg/dl</option>
+        <option value="1">More than 120 mg/dl</option>
+      </select>
     </div>
   </div>
 
   <div class="form-row">
     <div class="form-group col-md-6">
-      <label for="inputECG">Select RESTING ECG <small>( Result of Electrocardiogram )</small></label>
+      <label for="inputECG">Resting ECG <small>( Result of Electrocardiogram )</small></label>
       <select class="form-control" id="inputECG">
-        <option>Normal</option>
-        <option>Abnormality in ST-T wave</option>
-        <option>Left ventricular hypertrophy</option>
+        <option value="0">Normal</option>
+        <option value="1">Abnormality in ST-T wave</option>
+        <option value="2">Left ventricular hypertrophy</option>
       </select>
     </div>
 
     <div class="form-group col-md-6">
-      <label for="inputHeart col-md-6">Type MAX HEART RATE ACHIEVED </label>
+      <label for="inputHeart col-md-6">Max heart rate achieved </label>
       <input type="age" class="form-control" id="inputHeart" placeholder="Enter Heart Rate Achieved">
     </div>
   </div>
 
   <div class="form-row">
     <div class="form-group col-md-6">
-      <label for="inputHeart">Experienced EXERCISE ANGINA? <small>( Angina that was induced by exercise )</small> </label>
+      <label for="inputHeart">Exercise angina? <small>( Angina that was induced by exercise )</small> </label>
       <select class="form-control" id="inputECG">
-        <option>No</option>
-        <option>Yes</option>
+        <option value="0">No</option>
+        <option value="1">Yes</option>
       </select>
     </div>
 
     <div class="form-group col-md-6">
-      <label for="inputOldPeak">Type OLDPEAK <small>(Exercise induced ST-depression in comparison with the state of rest)</small>
+      <label for="inputOldPeak">Oldpeak <small>(Exercise induced ST-depression in comparison with the state of rest)</small>
       </label>
       <input type="age" class="form-control" id="inputOldPeak" placeholder="Enter Oldpeak result">
     </div>
   </div>
 
   <div class="form-group">
-    <label for="inputOLDPEAK">Select ST slope <small>(Exercise induced ST-depression in comparison with the state of rest)</small>
+    <label for="inputOLDPEAK">ST slope <small>(Exercise induced ST-depression in comparison with the state of rest)</small>
     </label>
     <select class="form-control" id="inputECG">
-      <option>Normal</option>
-      <option>Upsloping</option>
-      <option>Flat</option>
-      <option>Downsloping</option>
+      <option value="0">Normal</option>
+      <option value="1">Upsloping</option>
+      <option value="2">Flat</option>
+      <option value="3">Downsloping</option>
     </select>
   </div>
 
-
-
-
-
-
-
-
-
-
-
-
-  <button type="submit" class="btn btn-primary">Submit</button>
+  <button type="submit" class="btn btn-primary center mb-4">Diagnose</button>
 </form>
 {% endblock %}
