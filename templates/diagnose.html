@@ -1,59 +1,128 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-    <form class="m-4">
-        <div class="form-group">
-          <label for="inputAge">Type AGE of patient</label>
-          <input type="age" class="form-control" id="inputAge" placeholder="Enter age">
-        </div>
+<div class="jumbotron jumbotron-fluid">
+  <div class="container">
+    <h1 class="display-5">Diagnose Patient</h1>
+    <p class="lead">Fill out the form below to diagnose whether a patient is at risk of suffering from a Cardiovascular Disease in the future.</p>
+  </div>
+</div>
 
-        <div class="form-group">
-          <label for="inputGender">Select GENDER of patient</label>
-          <select class="form-control" id="inputGender">
-            <option>Male</option>
-            <option>Female</option>
-            <option>Other</option>
-          </select>
-        </div>
+<form class="m-2">
 
-        <div class="form-group">
-          <label for="inputChest">Select CHEST PAIN TYPE</label>
-          <select class="form-control" id="inputChest">
-            <option>1 - Typical</option>
-            <option>2 - Typical Angine</option>
-            <option>3 - non anginal pain</option>
-            <option>4 - Asymptomatic</option>
-          </select>
-        </div>
+  <div class="form-row">
+    <div class="form-group col-md-6">
+      <label for="inputEmail4">Last Name</label>
+      <input type="email" class="form-control" id="inputEmail4">
+    </div>
 
-        <div class="form-group">
-          <label for="inputBPS">Type RESTING BP (Level of blood pressure at resting mode in mm/HG)</label>
-          <input type="age" class="form-control" id="inputBPS" placeholder="Enter BP s">
-        </div>
-
-        <div class="form-group">
-          <label for="inputChol">Type CHOLESTROL</label>
-          <input type="age" class="form-control" id="inputChol" placeholder="Enter Cholestrol">
-        </div>
-
-        {# select maybe #}
-        <div class="form-group">
-          <label for="inputFBS">Type FASTING BLOOD SUGAR </label>
-          <input type="age" class="form-control" id="inputFBS" placeholder="Enter Fasting Blood Sugar">
-        </div>
-
-        <div class="form-group">
-          <label for="inputFBS">Type RESTING ECG </label>
-          <input type="age" class="form-control" id="inputFBS" placeholder="Enter Fasting Blood Sugar">
-        </div>
+    <div class="form-group col-md-6">
+      <label for="inputPassword4">Email</label>
+      <input type="password" class="form-control" id="inputPassword4">
+    </div>
+  </div>
 
 
-       
+  <div class="form-row">
+    <div class="form-group col-md-6">
+      <label for="inputAge">Type AGE of patient</label>
+      <input type="age" class="form-control" id="inputAge" placeholder="Enter age">
+    </div>
+
+    <div class="form-group col-md-6">
+      <label for="inputGender">Select GENDER of patient</label>
+      <select class="form-control" id="inputGender">
+        <option>Male</option>
+        <option>Female</option>
+        <option>Other</option>
+      </select>
+    </div>
+  </div>
+
+
+  <div class="form-row">
+    <div class="form-group col-md-6">
+      <label for="inputChest">Select CHEST PAIN TYPE</label>
+      <select class="form-control" id="inputChest">
+        <option>1 - Typical</option>
+        <option>2 - Typical Angine</option>
+        <option>3 - non anginal pain</option>
+        <option>4 - Asymptomatic</option>
+      </select>
+    </div>
+
+    <div class="form-group col-md-6">
+      <label for="inputBPS">Type RESTING BP  <small>( Level of blood pressure at resting mode in mm/HG )</small> </label>
+      <input type="age" class="form-control" id="inputBPS" placeholder="Enter BP s">
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group col-md-6">
+      <label for="inputChol">Type CHOLESTROL</label>
+      <input type="age" class="form-control" id="inputChol" placeholder="Enter Cholestrol">
+    </div>
+
+    <div class="form-group col-md-6">
+      <label for="inputFBS">Type FASTING BLOOD SUGAR </label>
+      <input type="age" class="form-control" id="inputFBS" placeholder="Enter Fasting Blood Sugar">
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group col-md-6">
+      <label for="inputECG">Select RESTING ECG <small>( Result of Electrocardiogram )</small></label>
+      <select class="form-control" id="inputECG">
+        <option>Normal</option>
+        <option>Abnormality in ST-T wave</option>
+        <option>Left ventricular hypertrophy</option>
+      </select>
+    </div>
+
+    <div class="form-group col-md-6">
+      <label for="inputHeart col-md-6">Type MAX HEART RATE ACHIEVED </label>
+      <input type="age" class="form-control" id="inputHeart" placeholder="Enter Heart Rate Achieved">
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group col-md-6">
+      <label for="inputHeart">Experienced EXERCISE ANGINA? <small>( Angina that was induced by exercise )</small> </label>
+      <select class="form-control" id="inputECG">
+        <option>No</option>
+        <option>Yes</option>
+      </select>
+    </div>
+
+    <div class="form-group col-md-6">
+      <label for="inputOldPeak">Type OLDPEAK <small>(Exercise induced ST-depression in comparison with the state of rest)</small>
+      </label>
+      <input type="age" class="form-control" id="inputOldPeak" placeholder="Enter Oldpeak result">
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="inputOLDPEAK">Select ST slope <small>(Exercise induced ST-depression in comparison with the state of rest)</small>
+    </label>
+    <select class="form-control" id="inputECG">
+      <option>Normal</option>
+      <option>Upsloping</option>
+      <option>Flat</option>
+      <option>Downsloping</option>
+    </select>
+  </div>
 
 
 
 
 
-        <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
+
+
+
+
+
+
+
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
 {% endblock %}
