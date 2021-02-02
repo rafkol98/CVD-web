@@ -17,21 +17,15 @@ def diagnose():
 
 @app.route('/predict', methods=['POST'])
 def predict():
-# Bug with request.
-    ints = [int(x) for x in request.form.values()]
-    # data1 = request.form['age']
-
-    # x = len(ints)
+    ints = [float(x) for x in request.form.values()]
     final = [np.array(ints)]
-    # out_arr = np.array_str(final) 
-    # str1 = ''.join(final)
-    # return render_template('diagnose.html', pred=data1)
     prediction = model.predict(final)
-
+    
+    output = model.predict_proba(final)
     if prediction==1:
-        return render_template('diagnose.html', pred='Cancer')
+        return render_template('report.html', pred = "Suffers from a CVD", prob = output )
     else:
-        return render_template('diagnose.html', pred='Healthy')
+        return render_template('report.html', pred= "Most Likely Healthy", prob = output )
 
     
 

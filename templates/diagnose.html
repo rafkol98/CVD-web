@@ -1,37 +1,33 @@
 {% extends 'layout.html' %}
 
+
 {% block body %}
+<!-- parsley not working -->
+
+<!-- <script>
+  $('#pform').on('submit', function(e){
+    return $(this).parsley().validate();}).parsley();
+  }
+</script> -->
+
 <div class="jumbotron jumbotron-fluid">
   <div class="container">
     <h1 class="display-5">Diagnose Patient</h1>
-    <h2>{{pred}}</h2>
     <p class="lead">Fill out the form below to diagnose whether a patient is at risk of suffering from a Cardiovascular Disease in the future.</p>
   </div>
 </div>
 
-<form action='/predict' method="POST">
-
-  {# <div class="form-row">
-    <div class="form-group col-md-6">
-      <label for="inputLastName">Last Name</label>
-      <input type="name" class="form-control" id="inputLastName" placeholder="Enter last name of patient">
-    </div>
-
-    <div class="form-group col-md-6">
-      <label for="inputEmail">Email</label>
-      <input type="email" class="form-control" id="inputEmail" placeholder="Enter email of patient">
-    </div>
-  </div> #}
+<form id='form' action='/predict' method="POST">
 
   <div class="form-row">
     <div class="form-group col-md-6">
       <label for="inputAge">Age</label>
-      <input name="age" type="age" class="form-control" id="inputAge" placeholder="Enter age">
+      <input name="age" type="age" class="form-control" id="inputAge" placeholder="Enter age" required>
     </div>
 
     <div class="form-group col-md-6">
       <label for="inputGender">Gender</label>
-      <select name="gender" class="form-control" id="inputGender">
+      <select name="gender" class="form-control" id="inputGender" required>
         <option value='0'>Male</option>
         <option value='1'>Female</option>
       </select>
@@ -42,7 +38,7 @@
   <div class="form-row">
     <div class="form-group col-md-6">
       <label for="inputChest">Chest pain type</label>
-      <select name="chest" class="form-control" id="inputChest">
+      <select name="chest" class="form-control" id="inputChest" required>
         <option value="1">Typical</option>
         <option value="2">Typical Angine</option>
         <option value="3">Non anginal pain</option>
@@ -52,19 +48,19 @@
 
     <div class="form-group col-md-6">
       <label for="inputBPS">Resting Blood Pressure  <small>( Level of blood pressure at resting mode in mm/HG )</small> </label>
-      <input name="bps" class="form-control" id="inputBPS" placeholder="Enter BP s">
+      <input name="bps" class="form-control" id="inputBPS" placeholder="Enter BP s" required data-parsley-minlength="1">
     </div>
   </div>
 
   <div class="form-row">
     <div class="form-group col-md-6">
       <label for="inputChol">Cholestrol</label>
-      <input name="chol" type="age" class="form-control" id="inputChol" placeholder="Enter Cholestrol">
+      <input name="chol" type="age" class="form-control" id="inputChol" placeholder="Enter Cholestrol" required>
     </div>
 
     <div class="form-group col-md-6">
       <label for="inputFBS">Fasting blood sugar </label>
-      <select name="fbs" class="form-control" id="inputECG">
+      <select name="fbs" class="form-control" id="inputECG" required>
         <option value="0">Less or equal to 120 mg/dl</option>
         <option value="1">More than 120 mg/dl</option>
       </select>
@@ -74,7 +70,7 @@
   <div class="form-row">
     <div class="form-group col-md-6">
       <label for="inputECG">Resting ECG <small>( Result of Electrocardiogram )</small></label>
-      <select name="ecg" class="form-control" id="inputECG">
+      <select name="ecg" class="form-control" id="inputECG" required>
         <option value="0">Normal</option>
         <option value="1">Abnormality in ST-T wave</option>
         <option value="2">Left ventricular hypertrophy</option>
@@ -83,14 +79,14 @@
 
     <div class="form-group col-md-6">
       <label for="inputHeart col-md-6">Max heart rate achieved </label>
-      <input name="maxheart" type="age" class="form-control" id="inputHeart" placeholder="Enter Heart Rate Achieved">
+      <input name="maxheart" type="age" class="form-control" id="inputHeart" placeholder="Enter Heart Rate Achieved" required>
     </div>
   </div>
 
   <div class="form-row">
     <div class="form-group col-md-6">
       <label for="inputHeart">Exercise angina? <small>( Angina that was induced by exercise )</small> </label>
-      <select name="exang" class="form-control" id="inputECG">
+      <select name="exang" class="form-control" id="inputECG" required>
         <option value="0">No</option>
         <option value="1">Yes</option>
       </select>
@@ -99,14 +95,14 @@
     <div class="form-group col-md-6">
       <label for="inputOldPeak">Oldpeak <small>(Exercise induced ST-depression in comparison with the state of rest)</small>
       </label>
-      <input name="oldpeak" class="form-control" id="inputOldPeak" placeholder="Enter Oldpeak result">
+      <input name="oldpeak" class="form-control" id="inputOldPeak" placeholder="Enter Oldpeak result" required>
     </div>
   </div>
 
   <div class="form-group">
     <label for="inputStSlope">ST slope <small>(Exercise induced ST-depression in comparison with the state of rest)</small>
     </label>
-    <select name="stslope" class="form-control" id="inputStSlope">
+    <select name="stslope" class="form-control" id="inputStSlope" required>
       <option value="0">Normal</option>
       <option value="1">Upsloping</option>
       <option value="2">Flat</option>
