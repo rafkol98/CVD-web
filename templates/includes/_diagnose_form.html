@@ -1,0 +1,110 @@
+<form id='form' action='/predict' class="p-1 mt-5 mb-3" method="POST">
+
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="inputAge">Age</label>
+            <input name="age" type="age" class="form-control" id="inputAge" placeholder="Enter age" required>
+        </div>
+
+        <div class="form-group col-md-6">
+            <label for="inputGender">Gender</label>
+            <select name="gender" class="form-control" id="inputGender" required>
+                <option value='0'>Male</option>
+                <option value='1'>Female</option>
+            </select>
+        </div>
+    </div>
+
+
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="inputChest">Chest pain type</label>
+            <select name="chest" class="form-control" id="inputChest" required>
+                <option value="1">Typical</option>
+                <option value="2">Typical Angine</option>
+                <option value="3">Non anginal pain</option>
+                <option value="4">Asymptomatic</option>
+            </select>
+        </div>
+
+        <div class="form-group col-md-6">
+            <label for="inputBPS">Resting Blood Pressure <small>( Level of blood pressure at resting mode in mm/HG
+                    )</small> </label>
+            <input name="bps" class="form-control" id="inputBPS" placeholder="Enter BP s" required
+                data-parsley-minlength="1">
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="inputChol">Cholestrol</label>
+            <input name="chol" type="age" class="form-control" id="inputChol" placeholder="Enter Cholestrol" required>
+        </div>
+
+        <div class="form-group col-md-6">
+            <label for="inputFBS">Fasting blood sugar </label>
+            <select name="fbs" class="form-control" id="inputECG" required>
+                <option value="0">Less or equal to 120 mg/dl</option>
+                <option value="1">More than 120 mg/dl</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="inputECG">Resting ECG <small>( Result of Electrocardiogram )</small></label>
+            <select name="ecg" class="form-control" id="inputECG" required>
+                <option value="0">Normal</option>
+                <option value="1">Abnormality in ST-T wave</option>
+                <option value="2">Left ventricular hypertrophy</option>
+            </select>
+        </div>
+
+        <div class="form-group col-md-6">
+            <label for="inputHeart col-md-6">Max heart rate achieved </label>
+            <input name="maxheart" type="age" class="form-control" id="inputHeart"
+                placeholder="Enter Heart Rate Achieved" required>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="inputHeart">Exercise angina? <small>( Angina that was induced by exercise )</small> </label>
+            <select name="exang" class="form-control" id="inputECG" required>
+                <option value="0">No</option>
+                <option value="1">Yes</option>
+            </select>
+        </div>
+
+        <div class="form-group col-md-6">
+            <label for="inputOldPeak">Oldpeak <small>(Exercise induced ST-depression in comparison with the state of
+                    rest)</small>
+            </label>
+            <input name="oldpeak" class="form-control" id="inputOldPeak" placeholder="Enter Oldpeak result" required>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="inputStSlope">ST slope <small>(Exercise induced ST-depression in comparison with the state of
+                rest)</small>
+        </label>
+        <select name="stslope" class="form-control" id="inputStSlope" required>
+            <option value="0">Normal</option>
+            <option value="1">Upsloping</option>
+            <option value="2">Flat</option>
+            <option value="3">Downsloping</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary center mb-4">Diagnose</button>
+</form>
+<script>
+    $(document).ready(function () {
+
+        $('#sidebarCollapse').on('click', function () {
+            $('#sidebar').toggleClass('active');
+        });
+    
+    });
+</script>
+
