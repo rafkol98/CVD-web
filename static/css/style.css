@@ -1,6 +1,26 @@
 .navblue {
-    background-image: linear-gradient(to right,rgb(0, 166, 255),rgb(45, 157, 255));
+    background-image: linear-gradient(to right,rgb(255, 255, 255),rgb(255, 255, 255));
     /* background-color:  !important; */
+}
+
+.side-txt {
+  font-size: 1.3rem;
+  color: rgb(9, 9, 9) !important;
+}
+
+#menu-toggle {
+  font-size: 1.2rem;
+  border: none;
+  background: none;
+
+}
+
+* {
+  font-family: 'Roboto', sans-serif !important;
+}
+
+body {
+  background-color: rgb(250, 250, 250) !important;
 }
 
 #wrapper {

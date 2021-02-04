@@ -1,13 +1,7 @@
 {% extends 'layout.html' %}
 
-
 {% block body %}
-<!-- parsley not working -->
-
-<!-- <script>
-  $('#pform').on('submit', function(e){
-    return $(this).parsley().validate();}).parsley();
-  }
-</script> -->
-{% include 'includes/_diagnose_form.html' %}
+  <h3 class="mt-4"><i class="fas fa-heartbeat"></i> Diagnose Patient</h3>
+  <p>Fill out the form to diagnose whether the patient suffers from a cardiovascular disease.</p>
+  {% include 'includes/_diagnose_form.html' %}
 {% endblock %}
