@@ -1,22 +1,35 @@
 .navblue {
-    background-image: linear-gradient(to right,rgb(255, 255, 255),rgb(255, 255, 255));
-    /* background-color:  !important; */
+  background-color: #079191;
+}
+
+.navside {
+  background-image: linear-gradient(to right, #37bb9d, #079191);
+}
+
+button {
+  background-color: #079191 !important;
+  border: black !important;
+}
+
+a {
+  color: #4ee9c5;
 }
 
 .side-txt {
-  font-size: 1.3rem;
+  background-color: #4ee9c5 !important;
+  font-size: 1.5rem;
   color: rgb(9, 9, 9) !important;
 }
 
 #menu-toggle {
+  color: white;
   font-size: 1.2rem;
   border: none;
   background: none;
-
 }
 
 * {
-  font-family: 'Roboto', sans-serif !important;
+  font-family: "Roboto", sans-serif !important;
 }
 
 body {
@@ -24,16 +37,16 @@ body {
 }
 
 #wrapper {
-    overflow-x: hidden;
+  overflow-x: hidden;
 }
 
 #sidebar-wrapper {
   min-height: 100vh;
   margin-left: -15rem;
-  -webkit-transition: margin .25s ease-out;
-  -moz-transition: margin .25s ease-out;
-  -o-transition: margin .25s ease-out;
-  transition: margin .25s ease-out;
+  -webkit-transition: margin 0.25s ease-out;
+  -moz-transition: margin 0.25s ease-out;
+  -o-transition: margin 0.25s ease-out;
+  transition: margin 0.25s ease-out;
 }
 
 #sidebar-wrapper .sidebar-heading {
