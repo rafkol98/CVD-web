@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="687.006" height="195.5" viewBox="0 0 687.006 195.5">
+  <g id="Group_1" data-name="Group 1" transform="translate(122.006 82.754)">
+    <path id="Icon_awesome-heartbeat" data-name="Icon awesome-heartbeat" d="M135.439,91.852l-21.021,42.043a6.763,6.763,0,0,1-12.224-.254L78.127,80.22,65.438,110.547h-39.8l77.191,78.883a7.536,7.536,0,0,0,10.87,0l77.234-78.883H144.787ZM200.364,19.99l-1.015-1.057a55.409,55.409,0,0,0-79.264,0l-11.8,12.1-11.8-12.055a55.336,55.336,0,0,0-79.264,0L16.2,19.99c-20.6,21.064-21.487,54.6-3.088,77.022H56.429l15.184-36.46a6.781,6.781,0,0,1,12.435-.169l24.617,54.69,20.725-41.408a6.758,6.758,0,0,1,12.1,0l11.674,23.348h50.291c18.4-22.417,17.511-55.958-3.088-77.022Z" transform="translate(-119 -82)" fill="none" stroke="#408f90" stroke-width="6"/>
+    <text id="Cardio" transform="translate(118 71)" fill="#242424" font-size="151" font-family="Ubuntu-Regular, Ubuntu"><tspan x="0" y="0">Cardio</tspan></text>
+  </g>
+</svg>

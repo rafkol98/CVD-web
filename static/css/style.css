@@ -3,7 +3,21 @@
 }
 
 .navside {
-  background-image: linear-gradient(to right, #37bb9d, #079191);
+  background-color: #ffffff;
+  /* background-image: linear-gradient(to right, #37bb9d, #079191); */
+}
+
+.img-logo {
+  padding: 10px;
+  max-width: 180px;
+  margin-top: 15px;
+  margin-bottom: 20px;
+}
+
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 button {
@@ -16,12 +30,13 @@ a {
 }
 
 .side-txt {
-  background-color: #4ee9c5 !important;
-  font-size: 1.5rem;
+  background-color: #ffffff !important;
+  font-size: 1.3rem;
+  text-align: center !important;
   color: rgb(9, 9, 9) !important;
 }
 
-#menu-toggle {
+.nav-items {
   color: white;
   font-size: 1.2rem;
   border: none;
@@ -50,8 +65,10 @@ body {
 }
 
 #sidebar-wrapper .sidebar-heading {
+  background-color: #ffffff;
   padding: 0.875rem 1.25rem;
   font-size: 1.2rem;
+
 }
 
 #sidebar-wrapper .list-group {

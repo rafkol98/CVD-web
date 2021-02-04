@@ -33,6 +33,9 @@ def index():
 def diagnose():
     return render_template('diagnose.html')
 
+@app.route('/patients')
+def patients():
+    return render_template('patients.html')
 
 @app.route('/predict', methods=['POST'])
 def predict():

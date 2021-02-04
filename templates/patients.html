@@ -1,0 +1,29 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<table class="table table-hover mt-5">
+    <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Patient Name</th>
+        <th scope="col">Age</th>
+        <th scope="col">Email</th>
+        <th scope="col">No. of tests performed</th>
+        <th scope="col">Latest diagnosis</th>
+        <th scope="col">Diagnose</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row">1</th>
+        <td>Mark</td>
+        <td>35</td>
+        <td>justyno@gmail.com</td>
+        <td>8</td>
+        <td><h5><span class="badge badge-danger">Cardio Disease</span></h5></td>
+        <td><button class="btn btn-primary">Diagnose</button></td>
+      </tr>
+      
+    </tbody>
+  </table>
+{% endblock %}
