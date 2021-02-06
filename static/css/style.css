@@ -20,7 +20,7 @@
   margin-right: auto;
 }
 
-button {
+.btn {
   background-color: #079191 !important;
   border: black !important;
 }
@@ -46,6 +46,14 @@ a {
 * {
   font-family: "Roboto", sans-serif !important;
 }
+
+.breadcrumb {
+  background-color: rgb(250, 250, 250) !important;
+  
+  /* box-shadow: 4px 4px 3px rgb(216, 216, 216); */
+}
+
+
 
 body {
   background-color: rgb(250, 250, 250) !important;
