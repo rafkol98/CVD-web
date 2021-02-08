@@ -63,11 +63,12 @@
 </head>
 
 <body>
-    <!-- login of user. -->
-    <div class="row">
+    {% include 'includes/_nav_index.html' %}
+    <div class="row mt-5">
         <div class="col-md-6 d-flex justify-content-center align-items-center">
             <img class="img-main img-fluid center" src="{{ url_for('static', filename='docs-image.svg') }}">
         </div>
+         <!-- login options of user. -->
         <div class="col-md-6 d-flex justify-content-center align-items-center">
             <div id="firebaseui-auth-container"></div>
         </div>
@@ -85,8 +86,8 @@
     <script>
         firebase.auth().onAuthStateChanged((user) => {
             if (user) {
-                // User logged in already or has just logged in.
-                window.location.replace("/diagnose");
+                // User logged in already.  
+                window.location.replace("/patients");
             }
         });
     </script>

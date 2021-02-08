@@ -22,10 +22,8 @@ db = firebase.database()
 
 # user = db.child(firebase.currentUser().uid)
 
-
-
 app = Flask(__name__)
-
+# Load model.
 model = pickle.load(open('cvd-model.pkl','rb'))
 
 @app.route('/')
@@ -40,15 +38,13 @@ def diagnose():
 def patients():
     return render_template('patients.html')
 
-@app.route('/sign')
-def sign():
-    return render_template('sign_in.html')
-
 @app.route('/predict', methods=['POST'])
 def predict():
     if request.method == 'POST':
         # Get all the values from the form.
         ints = [request.form['age'], request.form['gender'], request.form['chest'],request.form['bps'], request.form['chol'],request.form['fbs'],request.form['ecg'], request.form['maxheart'], request.form['exang'], request.form['oldpeak'], request.form['stslope']]
+        # TODO - ERROR CHECKING.
+        
         # Get uid of user logged in.
         uid = request.form['uid']
 

@@ -27,9 +27,11 @@
   margin-right: auto;
 }
 
-.btn {
-  background-color: #079191 !important;
-  border: black !important;
+.btn-function {
+  color: black !important;
+  background-color: none !important;
+  border: 1px solid black !important;
+  border-radius: 10px !important;
 }
 
 a {

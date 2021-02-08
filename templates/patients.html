@@ -1,36 +1,28 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-<div class="mt-3">
-  <nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-      <li class="breadcrumb-item"><a href="">Patients</a></li>
-    </ol>
-  </nav>
+<div class="row mt-3">
+  <div class="col">
+    <div>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="">Patients</a></li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+
+  <div>
+    <!-- Button trigger modal -->
+  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+  Launch demo modal
+  </button>
+    {# <button class="btn btn-primary"><i class="fas fa-user"></i> Add new patient</button>     #}
+  </div>
 </div>
 
 
-<table class="table table-hover mt-3">
-    <thead>
-      <tr>
-        <th scope="col">ID</th>
-        <th scope="col">Patient Name</th>
-        <th scope="col">Patient Details</th>
-        <th scope="col">Diagnosis History</th>
-        <th scope="col">Latest Diagnosis Result</th>
-        <th scope="col">Diagnose</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <th scope="row">1</th>
-        <td>Mark</td>
-        <td><a href="./diagnose.html"><i class="fas fa-info-circle"></i> Info</a></td>
-        <td><a href="./diagnose.html"><i class="fas fa-file-medical-alt"></i> History</a></td>
-        <td><h5><span class="badge badge-danger">Cardio Disease</span></h5></td>
-        <td><a href="/diagnose" class="btn btn-primary"><i class="fas fa-heartbeat"></i> Diagnose</a></td>
-      </tr>
-      
-    </tbody>
-  </table>
+{% include 'includes/_patients_table.html' %}
+{% include 'includes/_add_patient_modal.html' %}
+
 {% endblock %}
