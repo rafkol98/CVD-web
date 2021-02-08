@@ -17,7 +17,10 @@ config = {
 
 firebase = pyrebase.initialize_app(config)
 
+# Get firebase database.
 db = firebase.database()
+
+# user = db.child(firebase.currentUser().uid)
 
 
 
@@ -37,21 +40,29 @@ def diagnose():
 def patients():
     return render_template('patients.html')
 
+@app.route('/sign')
+def sign():
+    return render_template('sign_in.html')
+
 @app.route('/predict', methods=['POST'])
 def predict():
-    ints = [float(x) for x in request.form.values()]
+    if request.method == 'POST':
+        # Get all the values from the form.
+        ints = [request.form['age'], request.form['gender'], request.form['chest'],request.form['bps'], request.form['chol'],request.form['fbs'],request.form['ecg'], request.form['maxheart'], request.form['exang'], request.form['oldpeak'], request.form['stslope']]
+        # Get uid of user logged in.
+        uid = request.form['uid']
 
-    final = [np.array(ints)]
-    prediction = model.predict(final)
-    a = pd.Series(final).to_json(orient='values')
-    output = model.predict_proba(final)
-    if prediction==1:
-        db.child("names").push({"age":request.form['age'], "gender":request.form['gender'], "chest":request.form['chest'], "bps":request.form['bps'], "chol":request.form['chol'], "fbs":request.form['fbs'], "ecg":request.form['ecg'], "maxheart":request.form['maxheart'], "exang":request.form['exang'], "oldpeak":request.form['oldpeak'], "stslope":request.form['stslope'], "cardio":0})
-        return render_template('report.html', pred = "Suffers from a CVD", prob = output )
-    else:
-        db.child("names").push({"age":request.form['age'], "gender":request.form['gender'], "chest":request.form['chest'], "bps":request.form['bps'], "chol":request.form['chol'], "fbs":request.form['fbs'], "ecg":request.form['ecg'], "maxheart":request.form['maxheart'], "exang":request.form['exang'], "oldpeak":request.form['oldpeak'], "stslope":request.form['stslope'], "cardio":1})
-        return render_template('report.html', pred= "Most Likely Healthy", prob = output )
+        final = [np.array(ints)]
+        prediction = model.predict(final)
+        a = pd.Series(final).to_json(orient='values')
+        output = model.predict_proba(final)
 
+        if prediction==1:
+            db.child(uid).child("Patients").child("patientid").child("history").child("timestamp").push({"age":request.form['age'], "gender":request.form['gender'], "chest":request.form['chest'], "bps":request.form['bps'], "chol":request.form['chol'], "fbs":request.form['fbs'], "ecg":request.form['ecg'], "maxheart":request.form['maxheart'], "exang":request.form['exang'], "oldpeak":request.form['oldpeak'], "stslope":request.form['stslope'], "cardio":1})
+            return render_template('report.html', pred = "Suffers from a CVD", prob = output )
+        else:
+            db.child(uid).child("Patients").child("patientid").child("history").child("timestamp").push({"age":request.form['age'], "gender":request.form['gender'], "chest":request.form['chest'], "bps":request.form['bps'], "chol":request.form['chol'], "fbs":request.form['fbs'], "ecg":request.form['ecg'], "maxheart":request.form['maxheart'], "exang":request.form['exang'], "oldpeak":request.form['oldpeak'], "stslope":request.form['stslope'], "cardio":0})
+            return render_template('report.html', pred= "Most Likely Healthy", prob = output )
     
 
 if __name__ == '__main__':
