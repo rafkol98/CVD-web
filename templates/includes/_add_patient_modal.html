@@ -1,20 +1,41 @@
+<script type="text/javascript" src="{{ url_for('static', filename = 'js/uid.js') }}"></script>
+
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
     aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Add Patient</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                ...
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+                <!-- Form -->
+                <form id='form' action='/addpatient' class="p-1 mt-3 mb-3" method="POST">
+
+                    <label for="inputName">Full Name</label>
+                    <input name="name" type="name" class="form-control mb-3" id="inputName" placeholder="Enter name..." required>
+
+                    <label for="inputEmail">Email</label>
+                    <input name="email" type="email" class="form-control mb-3" id="inputEmail" placeholder="Enter email..." required>
+
+                    <label for="inputAge">Age</label>
+                    <input name="age" type="age" class="form-control mb-3" id="inputAge" placeholder="Enter age..." required>
+
+                    <label for="inputGender">Gender</label>
+                    <select name="gender" class="form-control" id="inputGender" required>
+                        <option value='0'>Male</option>
+                        <option value='1'>Female</option>
+                    </select>
+
+                    <input type="hidden" id="uid" name="uid">
+                    <button type="submit" class="btn btn-function center mt-4">Add Patient</button>
+                </form>
             </div>
         </div>
     </div>
 </div>
+
+
+
