@@ -9,10 +9,12 @@
             <th scope="col">Diagnose</th>
         </tr>
     </thead>
-    <tbody>
+    <tbody id="t1">
+        {% for patient in patients.items() %}
         <tr>
-            <th scope="row">1</th>
-            <td>Mark</td>
+
+            <th scope="row">{{ patient[0] }}</th>
+            <td><p>{{ patient[1].age }}</p></td>
             <td><a href="./diagnose.html"><i class="fas fa-info-circle"></i> Info</a></td>
             <td><a href="./diagnose.html"><i class="fas fa-file-medical-alt"></i> History</a></td>
             <td>
@@ -20,10 +22,12 @@
             </td>
             <td><a href="{{url_for('diagnose', patient_id='Aaskd23')}}" class="btn btn-function"><i class="fas fa-heartbeat"></i> Diagnose</a></td>
         </tr>
+        {% endfor %}
 
     </tbody>
 </table>
 
 <script>
-    console.log("{{x.age}}");
+    
+    console.log("{{patients}}");
 </script>

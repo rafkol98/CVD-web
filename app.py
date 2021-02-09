@@ -26,6 +26,10 @@ app = Flask(__name__)
 # Load model.
 model = pickle.load(open('cvd-model.pkl','rb'))
 
+# Get patients
+def getPatients(u_id):
+    return db.child(u_id).child("Patients").get().val()
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -34,20 +38,16 @@ def index():
 def diagnose(patient_id):
     return render_template('diagnose.html')
 
-@app.route('/addpatient', methods=['POST'])
-def addpatient():
-     if request.method == 'POST':
-        # Get uid of user logged in.
-        uid = request.form['uid']
-
-        db.child(uid).child("Patients").push({"age":request.form['age'], "gender":request.form['gender'], "name":request.form['name'], "email":request.form['email']})
-        return render_template('patients.html')
-
-@app.route('/patients/<u_id>')
+@app.route('/patients/<u_id>', methods=['GET','POST'])
 def patients(u_id):
-    
-    x = db.child(u_id).child("Patients").child("-MT1IE-trJTZLMuEoMGT").get().val()
-    return render_template('patients.html', x=x)
+    if request.method == 'POST':
+        # Get uid of user logged in.
+        patients = getPatients(u_id)
+        db.child(u_id).child("Patients").push({"age":request.form['age'], "gender":request.form['gender'], "name":request.form['name'], "email":request.form['email']})
+        return render_template('diagnose.html')
+    else:
+        patients = getPatients(u_id)
+        return render_template('patients.html', patients=patients)
 
 @app.route('/predict', methods=['POST'])
 def predict():

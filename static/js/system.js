@@ -8,8 +8,23 @@ firebase.auth().onAuthStateChanged((user) => {
     }
 });
 
+function patientsUid() {
+    firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+            window.location.replace("/patients/" + user.uid);
+        }
+    });
+}
 
-function doSomething() {
-    var x = $( '#uid' ).val();
-    window.location.replace("/patients/"+x);
-  }
+function showData() {
+    // var database = firebase.database();
+    firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+            var userId = user.uid;
+            return firebase.database().ref(userId).once('value').then((snapshot) => {
+                // document.getElementById("").innerHTML = "";
+            });
+        }
+    });
+
+}
