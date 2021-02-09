@@ -7,3 +7,9 @@ firebase.auth().onAuthStateChanged((user) => {
         // User not logged in or has just logged out.
     }
 });
+
+
+function doSomething() {
+    var x = $( '#uid' ).val();
+    window.location.replace("/patients/"+x);
+  }

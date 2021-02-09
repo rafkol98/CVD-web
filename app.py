@@ -30,8 +30,8 @@ model = pickle.load(open('cvd-model.pkl','rb'))
 def index():
     return render_template('index.html')
 
-@app.route('/diagnose')
-def diagnose():
+@app.route('/diagnose/<patient_id>')
+def diagnose(patient_id):
     return render_template('diagnose.html')
 
 @app.route('/addpatient', methods=['POST'])
@@ -43,9 +43,11 @@ def addpatient():
         db.child(uid).child("Patients").push({"age":request.form['age'], "gender":request.form['gender'], "name":request.form['name'], "email":request.form['email']})
         return render_template('patients.html')
 
-@app.route('/patients')
-def patients():
-    return render_template('patients.html')
+@app.route('/patients/<u_id>')
+def patients(u_id):
+    
+    x = db.child(u_id).child("Patients").child("-MT1IE-trJTZLMuEoMGT").get().val()
+    return render_template('patients.html', x=x)
 
 @app.route('/predict', methods=['POST'])
 def predict():

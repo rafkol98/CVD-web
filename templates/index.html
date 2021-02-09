@@ -87,9 +87,8 @@
     <script>
         firebase.auth().onAuthStateChanged((user) => {
             if (user) {
-                // User logged in already.   window.location.replace("/patients");
-               
-               
+                // User logged in already.    
+                window.location.replace("/patients");
             }
         });
     </script>

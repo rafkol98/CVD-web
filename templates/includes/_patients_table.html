@@ -18,8 +18,12 @@
             <td>
                 <h5><span class="badge badge-danger">Cardio Disease</span></h5>
             </td>
-            <td><a href="/diagnose" class="btn btn-function"><i class="fas fa-heartbeat"></i> Diagnose</a></td>
+            <td><a href="{{url_for('diagnose', patient_id='Aaskd23')}}" class="btn btn-function"><i class="fas fa-heartbeat"></i> Diagnose</a></td>
         </tr>
 
     </tbody>
 </table>
+
+<script>
+    console.log("{{x.age}}");
+</script>
