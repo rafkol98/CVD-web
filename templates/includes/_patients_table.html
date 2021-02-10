@@ -10,11 +10,11 @@
         </tr>
     </thead>
     <tbody id="t1">
-        {% for patient in patients.items() %}
+       
         <tr>
 
-            <th scope="row">{{ patient[0] }}</th>
-            <td><p>{{ patient[1].age }}</p></td>
+            <th scope="row">alo</th>
+            <td><p>alo</p></td>
             <td><a href="./diagnose.html"><i class="fas fa-info-circle"></i> Info</a></td>
             <td><a href="./diagnose.html"><i class="fas fa-file-medical-alt"></i> History</a></td>
             <td>
@@ -22,12 +22,12 @@
             </td>
             <td><a href="{{url_for('diagnose', patient_id='Aaskd23')}}" class="btn btn-function"><i class="fas fa-heartbeat"></i> Diagnose</a></td>
         </tr>
-        {% endfor %}
+        
 
     </tbody>
 </table>
 
 <script>
-    
-    console.log("{{patients}}");
+   
+  
 </script>

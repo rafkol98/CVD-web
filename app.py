@@ -38,16 +38,19 @@ def index():
 def diagnose(patient_id):
     return render_template('diagnose.html')
 
-@app.route('/patients/<u_id>', methods=['GET','POST'])
-def patients(u_id):
+@app.route('/addpatient', methods=['POST'])
+def addpatient():
     if request.method == 'POST':
         # Get uid of user logged in.
-        patients = getPatients(u_id)
-        db.child(u_id).child("Patients").push({"age":request.form['age'], "gender":request.form['gender'], "name":request.form['name'], "email":request.form['email']})
-        return render_template('diagnose.html')
-    else:
-        patients = getPatients(u_id)
-        return render_template('patients.html', patients=patients)
+        uid = request.form['user_id']
+
+        db.child(uid).child("Patients").push({"age":request.form['age'], "gender":request.form['gender'], "name":request.form['name'], "email":request.form['email']})
+        return render_template('patients.html')
+
+@app.route('/patients', methods=['GET','POST'])
+def patients():
+        # patients = getPatients(u_id)
+        return render_template('patients.html')
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -55,9 +58,9 @@ def predict():
         # Get all the values from the form.
         ints = [request.form['age'], request.form['gender'], request.form['chest'],request.form['bps'], request.form['chol'],request.form['fbs'],request.form['ecg'], request.form['maxheart'], request.form['exang'], request.form['oldpeak'], request.form['stslope']]
         # TODO - ERROR CHECKING.
-        
+
         # Get uid of user logged in.
-        uid = request.form['uid']
+        uid = request.form['user_id']
 
         final = [np.array(ints)]
         prediction = model.predict(final)

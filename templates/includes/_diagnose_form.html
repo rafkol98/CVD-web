@@ -1,3 +1,4 @@
+<script type="text/javascript" src="{{ url_for('static', filename = 'js/system.js') }}"></script>
 <form id='form' action='/predict' class="p-1 mt-3 mb-3" method="POST">
 
     <div class="form-row">
@@ -120,23 +121,7 @@
         </select>
     </div>
 
-    <input type="hidden" id="uid" name="uid">
+    <input hidden id="user_id" name="user_id">
 
     <button type="submit" class="btn btn-function center mb-4">Diagnose</button>
 </form>
-<script>
-    $(document).ready(function () {
-        $('[data-toggle="popover"]').popover();
-    });
-
-    firebase.auth().onAuthStateChanged((user) => {
-        if (user) {
-            // User logged in already or has just logged in.
-            $('#uid').val(user.uid);
-        } else {
-            console.log("not logged in");
-            // User not logged in or has just logged out.
-        }
-    });
-
-</script>

@@ -12,7 +12,7 @@
             </div>
             <div class="modal-body">
                 <!-- Form -->
-                <form id='form' action='javascript:getPatientsUid();' class="p-1 mt-3 mb-3" method="POST">
+                <form id='form' action='/addpatient' class="p-1 mt-3 mb-3" method="POST">
 
                     <label for="inputName">Full Name</label>
                     <input name="name" type="name" class="form-control mb-3" id="inputName" placeholder="Enter name..." required>
@@ -28,8 +28,9 @@
                         <option value='0'>Male</option>
                         <option value='1'>Female</option>
                     </select>
+                   
+                    <input hidden id="user_id" name="user_id">
 
-                    <input type="hidden" id="uid" name="uid">
                     <button type="submit" class="btn btn-function center mt-4">Add Patient</button>
                 </form>
             </div>
