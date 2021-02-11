@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 import pickle
 import numpy as np
 import pandas as pd
@@ -38,19 +38,17 @@ def index():
 def diagnose(patient_id):
     return render_template('diagnose.html')
 
-@app.route('/addpatient', methods=['POST'])
-def addpatient():
-    if request.method == 'POST':
-        # Get uid of user logged in.
-        uid = request.form['user_id']
-
-        db.child(uid).child("Patients").push({"age":request.form['age'], "gender":request.form['gender'], "name":request.form['name'], "email":request.form['email']})
-        return render_template('patients.html')
-
 @app.route('/patients', methods=['GET','POST'])
 def patients():
-        # patients = getPatients(u_id)
-        return render_template('patients.html')
+        if request.method == 'POST':
+        # Get uid of user logged in.
+            uid = request.form['user_id']
+
+            db.child(uid).child("Patients").push({"age":request.form['age'], "gender":request.form['gender'], "name":request.form['name'], "email":request.form['email']})
+            return redirect(url_for('patients'))
+        else:
+            # patients = getPatients(u_id)
+            return render_template('patients.html')
 
 @app.route('/predict', methods=['POST'])
 def predict():
