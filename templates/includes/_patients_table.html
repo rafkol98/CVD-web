@@ -1,17 +1,17 @@
-<table class="table table-hover mt-3">
+<div class="table-responsive">
+  <table class="table table-hover mt-3">
     <thead>
-        <tr>
-            <th scope="col">ID</th>
-            <th scope="col">Patient Name</th>
-            <th scope="col">Patient Details</th>
-            <th scope="col">Diagnosis History</th>
-            <th scope="col">Latest Diagnosis Result</th>
-            <th scope="col">Diagnose</th>
-        </tr>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Patient Name</th>
+        <th scope="col">Patient Details</th>
+        <th scope="col">Diagnosis History</th>
+        <th scope="col">Latest Diagnosis Result</th>
+        <th scope="col">Diagnose</th>
+      </tr>
     </thead>
-    <tbody id='items_table'>
-       
-        <!-- <tr>
+    <tbody id="items_table">
+      <!-- <tr>
 
             <th scope="row">alo</th>
             <td><p>alo</p></td>
@@ -22,12 +22,10 @@
             </td>
             <td><a href="{{url_for('diagnose', patient_id='Aaskd23')}}" class="btn btn-function"><i class="fas fa-heartbeat"></i> Diagnose</a></td>
         </tr> -->
-        
-        
-
     </tbody>
-</table>
+  </table>
+</div>
 
 <script>
-    showData();
+  showData();
 </script>

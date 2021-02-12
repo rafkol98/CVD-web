@@ -24,7 +24,7 @@
 {% include 'includes/_patients_table.html' %}
 {% include 'includes/_add_patient_modal.html' %}
 
-<script>
+<canvas id="myChart"></canvas>
+<script type="text/javascript" src="{{ url_for('static', filename = 'js/charts.js') }}"></script>
 
-</script>
 {% endblock %}
