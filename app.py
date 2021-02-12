@@ -35,7 +35,10 @@ def getPatients(u_id):
 def index():
     return render_template('index.html')
 
+@app.route('/diagnose/', methods=['GET','POST'])
+def diagnose():
     if request.method == 'POST':
+        # Get patient id.
         pid = request.args.get('pid')
 
         # Get all the values from the form.
