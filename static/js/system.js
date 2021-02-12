@@ -41,7 +41,7 @@ function showData() {
               child.key +
               "</td><td>" +
               child.val().name +
-              `</td> <td><a href="./diagnose.html"><i class="fas fa-info-circle"></i> Info</a></td>  <td><a href="./diagnose.html"><i class="fas fa-file-medical-alt"></i> History</a></td> <td><h5><span class="badge badge-danger">Cardio Disease</span></h5></td> <td><a href="/diagnose/${child.key}" class="btn btn-function"><i class="fas fa-heartbeat"></i> Diagnose</a></td> </tr>`;
+              `</td> <td><a href="./diagnose.html"><i class="fas fa-info-circle"></i> Info</a></td>  <td><a href="./diagnose.html"><i class="fas fa-file-medical-alt"></i> History</a></td> <td><h5><span class="badge badge-danger">Cardio Disease</span></h5></td> <td><a href="/diagnose/?pid=${child.key}" class="btn btn-function"><i class="fas fa-heartbeat"></i> Diagnose</a></td> </tr>`;
 
             //   console.log(snapshot.val());
           });
