@@ -60,11 +60,11 @@ def diagnose():
         if prediction==1:
             db.child(uid).child("Patients").child(pid).child("latest").update({"cardio":1})
             db.child(uid).child("Patients").child(pid).child("history").child(ct).set({"age":request.form['age'], "gender":request.form['gender'], "chest":request.form['chest'], "bps":request.form['bps'], "chol":request.form['chol'], "fbs":request.form['fbs'], "ecg":request.form['ecg'], "maxheart":request.form['maxheart'], "exang":request.form['exang'], "oldpeak":request.form['oldpeak'], "stslope":request.form['stslope'], "cardio":1})
-            return render_template('report.html', pred = "Suffers from a CVD", prob = output )
+            return redirect(url_for('report', pred = "Suffers from a CVD", prob = output, pid = pid ))
         else:
             db.child(uid).child("Patients").child(pid).update({"latest":0})
             db.child(uid).child("Patients").child(pid).child("history").child(ct).set({"age":request.form['age'], "gender":request.form['gender'], "chest":request.form['chest'], "bps":request.form['bps'], "chol":request.form['chol'], "fbs":request.form['fbs'], "ecg":request.form['ecg'], "maxheart":request.form['maxheart'], "exang":request.form['exang'], "oldpeak":request.form['oldpeak'], "stslope":request.form['stslope'], "cardio":0})
-            return render_template('report.html', pred= "Most Likely Healthy", prob = output )
+            return redirect(url_for('report', pred= "Most Likely Healthy", prob = output, pid = pid ))
     else:
         pid = request.args.get('pid')
         return render_template('diagnose.html', pid = pid)
@@ -81,6 +81,10 @@ def patients():
         else:
             # patients = getPatients(u_id)
             return render_template('patients.html')
+
+@app.route('/report')
+def report():
+    return render_template('report.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
