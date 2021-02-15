@@ -22,10 +22,14 @@ function loggedIn() {
   });
 }
 
-function callPredict() {
+function logout() {
   firebase.auth().onAuthStateChanged((user) => {
     if (user) {
-      window.location.replace("/patients/?uid="+user.uid);
+      firebase.auth().signOut().then(() => {
+        window.location.replace("/");
+      }).catch((error) => {
+        console.log("Error"+error);
+      });
     }
   });
 }

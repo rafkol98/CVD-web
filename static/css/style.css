@@ -48,6 +48,13 @@ a {
   color: rgb(9, 9, 9) !important;
 }
 
+.sign-out {
+  color: black;
+}
+.sign-out:hover {
+  color: rgb(255, 0, 0);
+}
+
 .nav-items {
   color: rgb(0, 0, 0);
   font-size: 1.2rem;
@@ -59,10 +66,13 @@ a {
   font-family: 'Ubuntu', sans-serif !important;
 }
 
+.navbar-toggler {
+  display: none !important;
+  /* visibility: hidden; */
+}
+
 .breadcrumb {
   background-color: rgb(250, 250, 250) !important;
-  
-  /* box-shadow: 4px 4px 3px rgb(216, 216, 216); */
 }
 
 
