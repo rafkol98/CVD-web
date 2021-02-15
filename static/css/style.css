@@ -1,5 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu&display=swap');
+
 .navblue {
-  background-color: #079191;
+  background-color: #ffffff;
+  /* #079191 */
 }
 
 .navside {
@@ -46,14 +49,14 @@ a {
 }
 
 .nav-items {
-  color: white;
+  color: rgb(0, 0, 0);
   font-size: 1.2rem;
   border: none;
   background: none;
 }
 
 * {
-  font-family: "Roboto", sans-serif !important;
+  font-family: 'Ubuntu', sans-serif !important;
 }
 
 .breadcrumb {

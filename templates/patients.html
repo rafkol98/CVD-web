@@ -14,7 +14,7 @@
 
   <div>
     <!-- Button trigger modal -->
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+    <button type="button" class="btn btn-function" data-toggle="modal" data-target="#exampleModal">
       <i class="fas fa-user"></i>  Add new patient
     </button>
   </div>
@@ -25,6 +25,6 @@
 {% include 'includes/_add_patient_modal.html' %}
 
 
-<canvas id="myChart"></canvas>
+<p>{{patients}}</p>
 
 {% endblock %}

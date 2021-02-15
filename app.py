@@ -72,7 +72,7 @@ def diagnose():
         return render_template('diagnose.html', pid = pid)
 
 
-@app.route('/patients', methods=['GET','POST'])
+@app.route('/patients/', methods=['GET','POST'])
 def patients():
         if request.method == 'POST':
         # Get uid of user logged in.
@@ -81,7 +81,6 @@ def patients():
             db.child(uid).child("Patients").push({"age":request.form['age'], "gender":request.form['gender'], "name":request.form['name'], "email":request.form['email']})
             return redirect(url_for('patients'))
         else:
-            # patients = getPatients(u_id)
             return render_template('patients.html')
 
 @app.route('/report')
@@ -91,11 +90,9 @@ def report():
     uid = request.args.get('uid')
     pid = request.args.get('pid')
 
-    testL = db.child(uid).child("Patients").child(pid).child("current").get()
+    diagnosisData = db.child(uid).child("Patients").child(pid).child("current").get()
 
-    # testL.val()['name']
-
-    data = [ testL.val()['bps'], testL.val()['chol'], testL.val()['maxheart']]
+    data = [ diagnosisData.val()['bps'], diagnosisData.val()['chol'], diagnosisData.val()['maxheart'] ]
     return render_template('report.html', pred = pred, prob = prob, pid = pid, data = data)
 
 if __name__ == '__main__':
