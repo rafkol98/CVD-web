@@ -1,12 +1,43 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-    <h1>{{prob}}</h1>
-    <h2>{{pred}}</h2>
+    {# <h1>{{prob}}</h1> #}
+    <h2 class="mt-4 mb-4 text-center">{{pred}}</h2>
     
     <canvas id="myChart"></canvas>
 
     <script>
-        callGraphs();
+        var dataX = {{ data|tojson }};
+        var ctx = document.getElementById("myChart").getContext("2d");
+        var chart = new Chart(ctx, {
+          // The type of chart we want to create
+          type: "radar",
+        
+          // The data for our dataset
+          data: {
+            labels: [
+              "Resting Blood Pressure",
+              "Cholestrol",
+              "Max Heart Rate"
+            ],
+            datasets: [
+              {
+                label: "Patient Values",
+                pointBackgroundColor: "rgb(55, 99, 132,0.2)",
+                borderColor: "rgb(255, 99, 132)",
+                data: dataX,
+              },
+              {
+                label: "Average values",
+                pointBackgroundColor: "rgb(0, 0, 0,0.5)",
+                borderColor: "rgb(0, 0, 0)",
+                data: [129.79, 231.65, 150.89],
+              },
+            ],
+          },
+        
+          // Configuration options go here
+          options: {},
+        });
     </script>
 {% endblock %}
