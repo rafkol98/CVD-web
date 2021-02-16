@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="687.006" height="195.5" viewBox="0 0 687.006 195.5">
-  <g id="Group_1" data-name="Group 1" transform="translate(122.006 82.754)">
-    <path id="Icon_awesome-heartbeat" data-name="Icon awesome-heartbeat" d="M135.439,91.852l-21.021,42.043a6.763,6.763,0,0,1-12.224-.254L78.127,80.22,65.438,110.547h-39.8l77.191,78.883a7.536,7.536,0,0,0,10.87,0l77.234-78.883H144.787ZM200.364,19.99l-1.015-1.057a55.409,55.409,0,0,0-79.264,0l-11.8,12.1-11.8-12.055a55.336,55.336,0,0,0-79.264,0L16.2,19.99c-20.6,21.064-21.487,54.6-3.088,77.022H56.429l15.184-36.46a6.781,6.781,0,0,1,12.435-.169l24.617,54.69,20.725-41.408a6.758,6.758,0,0,1,12.1,0l11.674,23.348h50.291c18.4-22.417,17.511-55.958-3.088-77.022Z" transform="translate(-119 -82)" fill="none" stroke="#408f90" stroke-width="6"/>
-    <text id="Cardio" transform="translate(118 71)" fill="#242424" font-size="151" font-family="Ubuntu-Regular, Ubuntu"><tspan x="0" y="0">Cardio</tspan></text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1155.689" height="297" viewBox="0 0 1155.689 297">
+  <g id="Group_264" data-name="Group 264" transform="translate(-449.811 -391.731)">
+    <path id="Icon_awesome-heartbeat" data-name="Icon awesome-heartbeat" d="M184.4,124.247,155.783,181.49a9.207,9.207,0,0,1-16.643-.346L106.373,108.41,89.1,149.7H34.906L140,257.1a10.261,10.261,0,0,0,14.8,0L259.96,149.7H197.132ZM272.8,26.4l-1.382-1.44a75.441,75.441,0,0,0-107.92,0l-16.067,16.47L131.366,25.023a75.341,75.341,0,0,0-107.92,0L22.064,26.4c-28.045,28.679-29.255,74.346-4.2,104.868H76.83L97.5,81.632a9.232,9.232,0,0,1,16.931-.23l33.516,74.461L176.17,99.484a9.2,9.2,0,0,1,16.47,0l15.894,31.789h68.472c25.051-30.522,23.842-76.189-4.2-104.868Z" transform="translate(453.819 408.749)" fill="#fff" stroke="#2b40d0" stroke-width="8"/>
+    <text id="Cardio" transform="translate(820.5 638.731)" fill="#2b2b2b" font-size="265" font-family="Ubuntu-Regular, Ubuntu"><tspan x="0" y="0">Cardio</tspan></text>
   </g>
 </svg>

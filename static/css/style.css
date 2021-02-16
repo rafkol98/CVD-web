@@ -6,7 +6,7 @@
 }
 
 .navside {
-  background-color: #ffffff;
+  background-color:rgb(39, 60, 216);
   /* background-image: linear-gradient(to right, #37bb9d, #079191); */
 }
 
@@ -42,10 +42,10 @@ a {
 }
 
 .side-txt {
-  background-color: #ffffff !important;
+  background-color: rgb(39, 60, 216) !important;
   font-size: 1.3rem;
   text-align: center !important;
-  color: rgb(9, 9, 9) !important;
+  color: rgb(255, 255, 255) !important;
 }
 
 .sign-out {

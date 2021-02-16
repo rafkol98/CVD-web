@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify, after_this_request
 import pickle
 import datetime
 import numpy as np
@@ -38,35 +38,43 @@ def index():
 @app.route('/diagnose/', methods=['GET','POST'])
 def diagnose():
     if request.method == 'POST':
-        # Get patient id.
-        pid = request.args.get('pid')
-
-        # Get all the values from the form.
-        ints = [request.form['age'], request.form['gender'], request.form['chest'],request.form['bps'], request.form['chol'],request.form['fbs'],request.form['ecg'], request.form['maxheart'], request.form['exang'], request.form['oldpeak'], request.form['stslope']]
-        # TODO - ERROR CHECKING.
 
         # Get uid of user logged in.
         uid = request.form['user_id']
 
-        # Get current timestamp.
-        ct = int(datetime.datetime.now().timestamp())
-      
+        # Get patient id.
+        pid = request.args.get('pid')
 
-        final = [np.array(ints)]
-        prediction = model.predict(final)
-        a = pd.Series(final).to_json(orient='values')
-        output = model.predict_proba(final)
+        age = db.child(uid).child("Patients").child(pid).child("age").get().val()
 
-        if prediction==1:
-            db.child(uid).child("Patients").child(pid).child("latest").update({"cardio":1})
-            db.child(uid).child("Patients").child(pid).child("current").update({"age":request.form['age'], "gender":request.form['gender'], "chest":request.form['chest'], "bps":request.form['bps'], "chol":request.form['chol'], "fbs":request.form['fbs'], "ecg":request.form['ecg'], "maxheart":request.form['maxheart'], "exang":request.form['exang'], "oldpeak":request.form['oldpeak'], "stslope":request.form['stslope'], "cardio":1})
-            db.child(uid).child("Patients").child(pid).child("history").child(ct).set({"age":request.form['age'], "gender":request.form['gender'], "chest":request.form['chest'], "bps":request.form['bps'], "chol":request.form['chol'], "fbs":request.form['fbs'], "ecg":request.form['ecg'], "maxheart":request.form['maxheart'], "exang":request.form['exang'], "oldpeak":request.form['oldpeak'], "stslope":request.form['stslope'], "cardio":1})
-            return redirect(url_for('report', pred = "Suffers from a CVD", prob = output, pid = pid, uid = uid ))
-        else:
-            db.child(uid).child("Patients").child(pid).update({"latest":0})
-            db.child(uid).child("Patients").child(pid).child("current").update({"age":request.form['age'], "gender":request.form['gender'], "chest":request.form['chest'], "bps":request.form['bps'], "chol":request.form['chol'], "fbs":request.form['fbs'], "ecg":request.form['ecg'], "maxheart":request.form['maxheart'], "exang":request.form['exang'], "oldpeak":request.form['oldpeak'], "stslope":request.form['stslope'], "cardio":0})
-            db.child(uid).child("Patients").child(pid).child("history").child(ct).set({"age":request.form['age'], "gender":request.form['gender'], "chest":request.form['chest'], "bps":request.form['bps'], "chol":request.form['chol'], "fbs":request.form['fbs'], "ecg":request.form['ecg'], "maxheart":request.form['maxheart'], "exang":request.form['exang'], "oldpeak":request.form['oldpeak'], "stslope":request.form['stslope'], "cardio":0})
-            return redirect(url_for('report', pred= "Most Likely Healthy", prob = output, pid = pid, uid = uid ))
+        gender = db.child(uid).child("Patients").child(pid).child("gender").get().val()
+
+        if((age is not None) and (gender is not None)):
+
+            # Get all the values from the form.
+            ints = [age, gender, request.form['chest'],request.form['bps'], request.form['chol'],request.form['fbs'],request.form['ecg'], request.form['maxheart'], request.form['exang'], request.form['oldpeak'], request.form['stslope']]
+            # TODO - ERROR CHECKING.
+
+        
+            # Get current timestamp.
+            ct = int(datetime.datetime.now().timestamp())
+        
+
+            final = [np.array(ints)]
+            prediction = model.predict(final)
+            a = pd.Series(final).to_json(orient='values')
+            output = model.predict_proba(final)
+
+            if prediction==1:
+                db.child(uid).child("Patients").child(pid).child("latest").update({"cardio":1})
+                db.child(uid).child("Patients").child(pid).child("current").update({"chest":request.form['chest'], "bps":request.form['bps'], "chol":request.form['chol'], "fbs":request.form['fbs'], "ecg":request.form['ecg'], "maxheart":request.form['maxheart'], "exang":request.form['exang'], "oldpeak":request.form['oldpeak'], "stslope":request.form['stslope'], "cardio":1})
+                db.child(uid).child("Patients").child(pid).child("history").child(ct).set({"chest":request.form['chest'], "bps":request.form['bps'], "chol":request.form['chol'], "fbs":request.form['fbs'], "ecg":request.form['ecg'], "maxheart":request.form['maxheart'], "exang":request.form['exang'], "oldpeak":request.form['oldpeak'], "stslope":request.form['stslope'], "cardio":1})
+                return redirect(url_for('report', pred = "Suffers from a CVD", prob = output, pid = pid, uid = uid ))
+            else:
+                db.child(uid).child("Patients").child(pid).update({"latest":0})
+                db.child(uid).child("Patients").child(pid).child("current").update({"chest":request.form['chest'], "bps":request.form['bps'], "chol":request.form['chol'], "fbs":request.form['fbs'], "ecg":request.form['ecg'], "maxheart":request.form['maxheart'], "exang":request.form['exang'], "oldpeak":request.form['oldpeak'], "stslope":request.form['stslope'], "cardio":0})
+                db.child(uid).child("Patients").child(pid).child("history").child(ct).set({"chest":request.form['chest'], "bps":request.form['bps'], "chol":request.form['chol'], "fbs":request.form['fbs'], "ecg":request.form['ecg'], "maxheart":request.form['maxheart'], "exang":request.form['exang'], "oldpeak":request.form['oldpeak'], "stslope":request.form['stslope'], "cardio":0})
+                return redirect(url_for('report', pred= "Most Likely Healthy", prob = output, pid = pid, uid = uid ))
     else:
         pid = request.args.get('pid')
         return render_template('diagnose.html', pid = pid)
@@ -94,6 +102,22 @@ def report():
 
     data = [ diagnosisData.val()['bps'], diagnosisData.val()['chol'], diagnosisData.val()['maxheart'] ]
     return render_template('report.html', pred = pred, prob = prob, pid = pid, data = data)
+
+
+@app.route('/patients/hello', methods=['GET'])
+def hello():
+    @after_this_request
+    def add_header(response):
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        return response
+    uid = request.args.get('uid')
+    pid = request.args.get('pid')
+
+    patient = db.child(uid).child("Patients").child(pid).get()
+
+    jsonResp = {'age': patient.val()['age'], 'gender': patient.val()['gender'], 'email': patient.val()['email']}
+    return jsonify(jsonResp)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
