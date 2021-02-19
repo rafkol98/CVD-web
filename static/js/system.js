@@ -47,13 +47,23 @@ function showData() {
           items_table = document.getElementById("items_table");
           snapshot.forEach(function (child) {
             // items_table.innerHTML += '<tr>'
+            var condition = child.val().latest;
+            var badge;
+
+            if (condition == 1) {
+              condition = "Cardio Disease";
+              badge = "danger";
+            } else {
+              condition = "Healthy";
+              badge = "success";
+            }
 
             items_table.innerHTML +=
               "<tr><td>" +
               child.key +
               "</td><td>" +
               child.val().name +
-              `</td> <td><a href="javascript:getInfo('${userId}','${child.key}');"><i class="fas fa-info-circle"></i> Info</a></td>  <td><a href="./diagnose.html"><i class="fas fa-file-medical-alt"></i> History</a></td> <td><h5><span class="badge badge-danger">Cardio Disease</span></h5></td> <td><a href="/diagnose/?pid=${child.key}" class="btn btn-function"><i class="fas fa-heartbeat"></i> Diagnose</a></td> </tr>`;
+              `</td> <td><a href="javascript:getInfo('${userId}','${child.key}');"><i class="fas fa-info-circle"></i> Info</a></td>  <td><a href="javascript:getHistory('${userId}','${child.key}');"><i class="fas fa-file-medical-alt"></i> History</a></td> <td><h5><span class="badge badge-${badge}">${condition}</span></h5></td> <td><a href="/diagnose/?pid=${child.key}" class="btn btn-function"><i class="fas fa-heartbeat"></i> Diagnose</a></td> </tr>`;
 
           });
         });
@@ -61,8 +71,8 @@ function showData() {
   });
 }
 
-function getInfo(userId,pid) {
-  const url = `/patients/hello?uid=${userId}&pid=${pid}`
+function getInfo(userId, pid) {
+  const url = `/patients/info?uid=${userId}&pid=${pid}`
   fetch(url)
     .then(response => response.json())
     .then(json => {
@@ -71,5 +81,28 @@ function getInfo(userId,pid) {
       document.getElementById("info-gender").innerHTML = JSON.stringify(json.gender)
       document.getElementById("info-email").innerHTML = JSON.stringify(json.email)
       console.log(json);
+    })
+}
+
+function getHistory(userId, pid) {
+  const url = `/patients/history?uid=${userId}&pid=${pid}`
+  fetch(url)
+    .then(response => response.json())
+    .then(history => {
+
+      if (history !== null) {
+        $("#historyModal").modal('show');
+        console.log(history);
+
+        for (var key in history) {
+          var date = new Date(key * 1000).toISOString().slice(0, 19).replace('T', ' ');
+          console.log(key + " " + history[key].bps);
+          document.getElementById("history-accord").innerHTML += `<div class="card"><div class="card-header" id="headingOne"><h2 class="mb-0"> <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapse${key}" aria-expanded="true" aria-controls="collapse${key}"> ${date} </button> </h2> </div> <div id="collapse${key}" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample"> <div class="card-body"> <h6>Bps:${history[key].bps}</h6><br><h6>Chest: ${history[key].chest}</h6><br><h6>Cholestrol: ${history[key].chol}</h6><br><h6>Electro Cardiogram: ${history[key].ecg}</h6><br><h6>Exang: ${history[key].exang}</h6><br><h6>Fasting Blood Sugar: ${history[key].fbs}</h6><br><h6>Max Heart Rate Achieved: ${history[key].maxheart}</h6><br><h6>Oldpeak: ${history[key].oldpeak}</h6><br><h6>St Slope: ${history[key].stslope}</h6>  </div></div></div>`
+        }
+
+      } else {
+        alert("This patient does not have any medical history yet.")
+      }
+
     })
 }

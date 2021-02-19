@@ -62,6 +62,11 @@ a {
   background: none;
 }
 
+.modal-des {
+  height: 500px; 
+  overflow: scroll;
+}
+
 * {
   font-family: 'Ubuntu', sans-serif !important;
 }

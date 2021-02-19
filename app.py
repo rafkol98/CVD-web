@@ -104,8 +104,8 @@ def report():
     return render_template('report.html', pred = pred, prob = prob, pid = pid, data = data)
 
 
-@app.route('/patients/hello', methods=['GET'])
-def hello():
+@app.route('/patients/info', methods=['GET'])
+def info():
     @after_this_request
     def add_header(response):
         response.headers.add('Access-Control-Allow-Origin', '*')
@@ -117,6 +117,21 @@ def hello():
 
     jsonResp = {'age': patient.val()['age'], 'gender': patient.val()['gender'], 'email': patient.val()['email']}
     return jsonify(jsonResp)
+
+
+@app.route('/patients/history', methods=['GET'])
+def history():
+    @after_this_request
+    def add_header(response):
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        return response
+    uid = request.args.get('uid')
+    pid = request.args.get('pid')
+
+    history = db.child(uid).child("Patients").child(pid).child("history").get().val()
+
+    # jsonResp = {history}
+    return jsonify(history)
 
 
 if __name__ == '__main__':
