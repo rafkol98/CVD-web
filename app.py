@@ -62,19 +62,24 @@ def diagnose():
 
             final = [np.array(ints)]
             prediction = model.predict(final)
-            a = pd.Series(final).to_json(orient='values')
-            output = model.predict_proba(final)
+            a = pd.Series(final).to_json(orient='values') 
+
+            prob_neg = model.predict_proba(final)[:,0]
+            prob_pos = model.predict_proba(final)[:,1]
+            print("Here --")
+            print(prob_pos)
+            print(prob_neg)
 
             if prediction==1:
                 db.child(uid).child("Patients").child(pid).child("latest").update({"cardio":1})
                 db.child(uid).child("Patients").child(pid).child("current").update({"chest":request.form['chest'], "bps":request.form['bps'], "chol":request.form['chol'], "fbs":request.form['fbs'], "ecg":request.form['ecg'], "maxheart":request.form['maxheart'], "exang":request.form['exang'], "oldpeak":request.form['oldpeak'], "stslope":request.form['stslope'], "cardio":1})
                 db.child(uid).child("Patients").child(pid).child("history").child(ct).set({"chest":request.form['chest'], "bps":request.form['bps'], "chol":request.form['chol'], "fbs":request.form['fbs'], "ecg":request.form['ecg'], "maxheart":request.form['maxheart'], "exang":request.form['exang'], "oldpeak":request.form['oldpeak'], "stslope":request.form['stslope'], "cardio":1})
-                return redirect(url_for('report', pred = "Suffers from a CVD", prob = output, pid = pid, uid = uid ))
+                return redirect(url_for('report', pred = "Suffers from a CVD", neg = prob_neg, pos = prob_pos, pid = pid, uid = uid ))
             else:
                 db.child(uid).child("Patients").child(pid).update({"latest":0})
                 db.child(uid).child("Patients").child(pid).child("current").update({"chest":request.form['chest'], "bps":request.form['bps'], "chol":request.form['chol'], "fbs":request.form['fbs'], "ecg":request.form['ecg'], "maxheart":request.form['maxheart'], "exang":request.form['exang'], "oldpeak":request.form['oldpeak'], "stslope":request.form['stslope'], "cardio":0})
                 db.child(uid).child("Patients").child(pid).child("history").child(ct).set({"chest":request.form['chest'], "bps":request.form['bps'], "chol":request.form['chol'], "fbs":request.form['fbs'], "ecg":request.form['ecg'], "maxheart":request.form['maxheart'], "exang":request.form['exang'], "oldpeak":request.form['oldpeak'], "stslope":request.form['stslope'], "cardio":0})
-                return redirect(url_for('report', pred= "Most Likely Healthy", prob = output, pid = pid, uid = uid ))
+                return redirect(url_for('report', pred= "Most Likely Healthy", neg = prob_neg, pos = prob_pos, pid = pid, uid = uid ))
     else:
         pid = request.args.get('pid')
         return render_template('diagnose.html', pid = pid)
@@ -94,14 +99,15 @@ def patients():
 @app.route('/report')
 def report():
     pred = request.args.get('pred')
-    prob = request.args.get('prob')
+    neg = request.args.get('neg')
+    pos = request.args.get('pos')
     uid = request.args.get('uid')
     pid = request.args.get('pid')
 
     diagnosisData = db.child(uid).child("Patients").child(pid).child("current").get()
 
     data = [ diagnosisData.val()['bps'], diagnosisData.val()['chol'], diagnosisData.val()['maxheart'] ]
-    return render_template('report.html', pred = pred, prob = prob, pid = pid, data = data)
+    return render_template('report.html', pred = pred, neg = neg, pos = pos, pid = pid, data = data)
 
 
 @app.route('/patients/info', methods=['GET'])

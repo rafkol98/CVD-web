@@ -1,14 +1,16 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-    {# <h1>{{prob}}</h1> #}
+    <h1>{{pos}}  {{neg}}</h1>
     <h2 class="mt-5 mb-5 text-center">{{pred}}</h2>
-    
-    <canvas id="myChart"></canvas>
+
+    <canvas id="prob_"></canvas>
+    <canvas id="rbs_chol_max"></canvas>
 
     <script>
+      
         var dataX = {{ data|tojson }};
-        var ctx = document.getElementById("myChart").getContext("2d");
+        var ctx = document.getElementById("rbs_chol_max").getContext("2d");
         var chart = new Chart(ctx, {
           // The type of chart we want to create
           type: "radar",
@@ -44,5 +46,7 @@
           // Configuration options go here
           options: {},
         });
+
+        
     </script>
 {% endblock %}
