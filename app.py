@@ -64,12 +64,9 @@ def diagnose():
             prediction = model.predict(final)
             a = pd.Series(final).to_json(orient='values') 
 
-            prob_neg = model.predict_proba(final)[:,0]
-            prob_pos = model.predict_proba(final)[:,1]
-            print("Here --")
-            print(prob_pos)
-            print(prob_neg)
-
+            prob_neg = str(model.predict_proba(final)[:,0])[1:-1]
+            prob_pos = str(model.predict_proba(final)[:,1])[1:-1]
+        
             if prediction==1:
                 db.child(uid).child("Patients").child(pid).child("latest").update({"cardio":1})
                 db.child(uid).child("Patients").child(pid).child("current").update({"chest":request.form['chest'], "bps":request.form['bps'], "chol":request.form['chol'], "fbs":request.form['fbs'], "ecg":request.form['ecg'], "maxheart":request.form['maxheart'], "exang":request.form['exang'], "oldpeak":request.form['oldpeak'], "stslope":request.form['stslope'], "cardio":1})

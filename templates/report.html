@@ -1,11 +1,23 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-    <h1>{{pos}}  {{neg}}</h1>
-    <h2 class="mt-5 mb-5 text-center">{{pred}}</h2>
+    <h1></h1>
+   
 
-    <canvas id="prob_"></canvas>
+   
+    <h2 class="mt-5 mb-5 text-center">{{pred}}</h2>
+    <div class="row mb-5">
+      <div class="col-md-6 d-flex justify-content-center align-items-center">
+        <canvas id="prob_" width="400" height="225"></canvas>
+      </div>
+      <div class="col-md-6 d-flex justify-content-center align-items-center">
+
+      </div>
+      
+    </div>
     <canvas id="rbs_chol_max"></canvas>
+   
+    
 
     <script>
       
@@ -46,7 +58,25 @@
           // Configuration options go here
           options: {},
         });
+        var pos = {{pos|tojson}};
+        var neg = {{neg|tojson}};
 
-        
+        new Chart(document.getElementById("prob_"), {
+          type: 'doughnut',
+          data: {
+            labels: ["Positive", "Negative"],
+            datasets: [{
+              label: "Population (millions)",
+              backgroundColor: ["#43E33D", "#FF453A"],
+              data: [pos,neg]
+            }]
+          },
+          options: {
+            title: {
+              display: true,
+              text: 'Probability of Cardio'
+            }
+          }
+      });
     </script>
 {% endblock %}
