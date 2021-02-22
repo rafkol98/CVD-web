@@ -105,15 +105,17 @@ def report():
     uid = request.args.get('uid')
     pid = request.args.get('pid')
 
+    patient = db.child(uid).child("Patients").child(pid).get()
+
     diagnosisData = db.child(uid).child("Patients").child(pid).child("current").get()
 
+    data = (np.array([patient.val()['age'], patient.val()['gender'], diagnosisData.val()['chest'], diagnosisData.val()['bps'], diagnosisData.val()['chol'], diagnosisData.val()['fbs'], diagnosisData.val()['ecg'], diagnosisData.val()['maxheart'], diagnosisData.val()['exang'], diagnosisData.val()['oldpeak'], diagnosisData.val()['stslope']])).astype(float)
+    # data=np.array([39,1,3,140,321,0,2,182,0,0,1])
+    # d2 = data.
 
-    # data = [ diagnosisData.val()['bps'], diagnosisData.val()['chol'], diagnosisData.val()['maxheart'] ]
-    data=np.array([39,1,3,140,321,0,2,182,0,0,1])
-    
     exp = exp_load.explain_instance(
     data_row = data,
-    predict_fn = model.predict_proba
+    predict_fn = model.predict_proba,
     )
     exp = exp.as_html()
 
