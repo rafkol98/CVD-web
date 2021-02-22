@@ -1,9 +1,12 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify, after_this_request
+import lime
+from lime import lime_tabular
 import pickle
 import datetime
 import numpy as np
 import pandas as pd
 import pyrebase
+import dill
 
 config = {
     "apiKey": "AIzaSyB6qq3TuV541bSWJzmnOgHm1F90a7sH0yE",
@@ -26,6 +29,7 @@ db = firebase.database()
 app = Flask(__name__)
 # Load model.
 model = pickle.load(open('cvd-model.pkl','rb'))
+with open("explainer.pkl", 'rb') as f: exp_load = dill.load(f)
 
 # Get patients
 def getPatients(u_id):
@@ -103,8 +107,17 @@ def report():
 
     diagnosisData = db.child(uid).child("Patients").child(pid).child("current").get()
 
-    data = [ diagnosisData.val()['bps'], diagnosisData.val()['chol'], diagnosisData.val()['maxheart'] ]
-    return render_template('report.html', pred = pred, neg = neg, pos = pos, pid = pid, data = data)
+
+    # data = [ diagnosisData.val()['bps'], diagnosisData.val()['chol'], diagnosisData.val()['maxheart'] ]
+    data=np.array([39,1,3,140,321,0,2,182,0,0,1])
+    
+    exp = exp_load.explain_instance(
+    data_row = data,
+    predict_fn = model.predict_proba
+    )
+    exp = exp.as_html()
+
+    return render_template('report.html', pred = pred, neg = neg, exp = exp, pos = pos, pid = pid, data = data)
 
 
 @app.route('/patients/info', methods=['GET'])
