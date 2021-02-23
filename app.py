@@ -105,21 +105,22 @@ def report():
     uid = request.args.get('uid')
     pid = request.args.get('pid')
 
+    # Get patient.
     patient = db.child(uid).child("Patients").child(pid).get()
-
+    # Get current diagnosis data.
     diagnosisData = db.child(uid).child("Patients").child(pid).child("current").get()
 
+    # Make an array with all the patient's data.
     data = (np.array([patient.val()['age'], patient.val()['gender'], diagnosisData.val()['chest'], diagnosisData.val()['bps'], diagnosisData.val()['chol'], diagnosisData.val()['fbs'], diagnosisData.val()['ecg'], diagnosisData.val()['maxheart'], diagnosisData.val()['exang'], diagnosisData.val()['oldpeak'], diagnosisData.val()['stslope']])).astype(float)
-    # data=np.array([39,1,3,140,321,0,2,182,0,0,1])
-    # d2 = data.
+    
+    # Make the first graph.
+    graphOne = [ diagnosisData.val()['bps'], diagnosisData.val()['chol'], diagnosisData.val()['maxheart'] ]
 
-    exp = exp_load.explain_instance(
-    data_row = data,
-    predict_fn = model.predict_proba,
-    )
+    # Explainable AI.
+    exp = exp_load.explain_instance(data_row = data, predict_fn = model.predict_proba)
     exp = exp.as_html()
 
-    return render_template('report.html', pred = pred, neg = neg, exp = exp, pos = pos, pid = pid, data = data)
+    return render_template('report.html', pred = pred, neg = neg, exp = exp, pos = pos, pid = pid, data = data, graphOne = graphOne)
 
 
 @app.route('/patients/info', methods=['GET'])
