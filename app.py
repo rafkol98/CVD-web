@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify, after_this_request
 import lime
+from dataset import getHealthyChol
 from lime import lime_tabular
 import pickle
 import datetime
@@ -7,6 +8,7 @@ import numpy as np
 import pandas as pd
 import pyrebase
 import dill
+# import dataset
 
 config = {
     "apiKey": "AIzaSyB6qq3TuV541bSWJzmnOgHm1F90a7sH0yE",
@@ -24,16 +26,10 @@ firebase = pyrebase.initialize_app(config)
 # Get firebase database.
 db = firebase.database()
 
-# user = db.child(firebase.currentUser().uid)
-
 app = Flask(__name__)
 # Load model.
 model = pickle.load(open('cvd-model.pkl','rb'))
 with open("explainer.pkl", 'rb') as f: exp_load = dill.load(f)
-
-# Get patients
-def getPatients(u_id):
-    return db.child(u_id).child("Patients").get().val()
 
 @app.route('/')
 def index():
@@ -120,10 +116,13 @@ def report():
     exp = exp_load.explain_instance(data_row = data, predict_fn = model.predict_proba)
     exp = exp.as_html()
 
-    return render_template('report.html', pred = pred, neg = neg, exp = exp, pos = pos, pid = pid, data = data, graphOne = graphOne)
+    healChol = getHealthyChol()
 
-@app.route('/getpatients', methods=['GET'])
-def getpatients():
+    return render_template('report.html', pred = pred, neg = neg, exp = exp, pos = pos, pid = pid, data = data, graphOne = graphOne, healChol = healChol)
+
+# Get patients of user.
+@app.route('/getPatients', methods=['GET'])
+def getPatients():
     @after_this_request
     def add_header(response):
         response.headers.add('Access-Control-Allow-Origin', '*')

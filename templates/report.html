@@ -8,17 +8,8 @@
 
     {{exp|safe}}
 
-    {# <div class="row mt-5 mb-5">
-      <div class="col-md-6 d-flex justify-content-center align-items-center">
-        <canvas id="prob_" width="400" height="225"></canvas>
-      </div>
-      <div class="col-md-6 d-flex justify-content-center align-items-center">
-
-      </div>
-      
-    </div> #}
     <canvas class="mt-5" id="rbs_chol_max"></canvas>
-   
+    <canvas class="mt-5" id="scatterChart"></canvas>
     
 
     <script>
@@ -60,25 +51,21 @@
           // Configuration options go here
           options: {},
         });
-        var pos = {{pos|tojson}};
-        var neg = {{neg|tojson}};
-
-        new Chart(document.getElementById("prob_"), {
-          type: 'doughnut',
+        
+        var healChol = {{healChol}}
+        var ctx2 = document.getElementById("scatterChart").getContext("2d");
+        var scatterChart = new Chart(ctx2, {
+          type: 'scatter',
           data: {
-            labels: ["Positive", "Negative"],
-            datasets: [{
-              label: "Population (millions)",
-              backgroundColor: ["#43E33D", "#FF453A"],
-              data: [pos,neg]
-            }]
-          },
-          options: {
-            title: {
-              display: true,
-              text: 'Probability of Cardio'
-            }
-          }
-      });
+              datasets: [{
+                  label: 'Scatter Dataset',
+                  data: healChol,
+          }],
+          options: {},
+        }});
+
+
     </script>
+
+
 {% endblock %}
