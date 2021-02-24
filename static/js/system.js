@@ -34,39 +34,45 @@ function logout() {
   });
 }
 
-function showData() {
+function getPatients() {
   firebase.auth().onAuthStateChanged((user) => {
     if (user) {
       var userId = firebase.auth().currentUser.uid;
-      return firebase
-        .database()
-        .ref(userId + "/Patients")
-        .once("value")
-        .then((snapshot) => {
-          console.log(snapshot.val());
-          items_table = document.getElementById("items_table");
-          snapshot.forEach(function (child) {
-            // items_table.innerHTML += '<tr>'
-            var condition = child.val().latest;
-            var badge;
+      const url = `/getpatients?uid=${userId}`
+      fetch(url)
+        .then(response => response.json())
+        .then(patients => {
+    
+          if (patients !== null) {
 
-            if (condition == 1) {
-              condition = "Cardio Disease";
-              badge = "danger";
-            } else {
-              condition = "Healthy";
-              badge = "success";
+            items_table = document.getElementById("items_table");
+            for (var key in patients) {
+              
+              var condition = patients[key].latest;
+              var badge;
+  
+              if (condition == 1) {
+                condition = "Cardio Disease";
+                badge = "danger";
+              } else {
+                condition = "Healthy";
+                badge = "success";
+              }
+  
+              items_table.innerHTML +=
+                "<tr><td>" +
+                key +
+                "</td><td>" +
+                patients[key].name +
+                `</td> <td><a href="javascript:getInfo('${userId}','${key}');"><i class="fas fa-info-circle"></i> Info</a></td>  <td><a href="javascript:getHistory('${userId}','${key}');"><i class="fas fa-file-medical-alt"></i> History</a></td> <td><h5><span class="badge badge-${badge}">${condition}</span></h5></td> <td><a href="/diagnose/?pid=${key}" class="btn btn-function"><i class="fas fa-heartbeat"></i> Diagnose</a></td> </tr>`;
             }
-
-            items_table.innerHTML +=
-              "<tr><td>" +
-              child.key +
-              "</td><td>" +
-              child.val().name +
-              `</td> <td><a href="javascript:getInfo('${userId}','${child.key}');"><i class="fas fa-info-circle"></i> Info</a></td>  <td><a href="javascript:getHistory('${userId}','${child.key}');"><i class="fas fa-file-medical-alt"></i> History</a></td> <td><h5><span class="badge badge-${badge}">${condition}</span></h5></td> <td><a href="/diagnose/?pid=${child.key}" class="btn btn-function"><i class="fas fa-heartbeat"></i> Diagnose</a></td> </tr>`;
-
-          });
+    
+          } else {
+            alert("This patient does not have any medical history yet.")
+          }
+    
         });
+
     }
   });
 }
@@ -81,7 +87,7 @@ function getInfo(userId, pid) {
       document.getElementById("info-gender").innerHTML = JSON.stringify(json.gender)
       document.getElementById("info-email").innerHTML = JSON.stringify(json.email)
       console.log(json);
-    })
+    });
 }
 
 function getHistory(userId, pid) {
@@ -104,5 +110,5 @@ function getHistory(userId, pid) {
         alert("This patient does not have any medical history yet.")
       }
 
-    })
+    });
 }

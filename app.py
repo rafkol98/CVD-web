@@ -122,7 +122,20 @@ def report():
 
     return render_template('report.html', pred = pred, neg = neg, exp = exp, pos = pos, pid = pid, data = data, graphOne = graphOne)
 
+@app.route('/getpatients', methods=['GET'])
+def getpatients():
+    @after_this_request
+    def add_header(response):
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        return response
+    uid = request.args.get('uid')
 
+    patients = db.child(uid).child("Patients").get().val()
+
+    return jsonify(patients)
+
+
+# Get a patient's info.
 @app.route('/patients/info', methods=['GET'])
 def info():
     @after_this_request
@@ -138,6 +151,7 @@ def info():
     return jsonify(jsonResp)
 
 
+# Get a patient's history.
 @app.route('/patients/history', methods=['GET'])
 def history():
     @after_this_request
@@ -149,7 +163,6 @@ def history():
 
     history = db.child(uid).child("Patients").child(pid).child("history").get().val()
 
-    # jsonResp = {history}
     return jsonify(history)
 
 
