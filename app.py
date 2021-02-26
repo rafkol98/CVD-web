@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify, after_this_request
 import lime
-from dataset import getHealthyChol
+from dataset import getChol, getRBP
 from lime import lime_tabular
 import pickle
 import datetime
@@ -116,9 +116,13 @@ def report():
     exp = exp_load.explain_instance(data_row = data, predict_fn = model.predict_proba)
     exp = exp.as_html()
 
-    healChol = getHealthyChol()
+    healthyChol = getChol(0)
+    healthyRBP = getRBP(0)
 
-    return render_template('report.html', pred = pred, neg = neg, exp = exp, pos = pos, pid = pid, data = data, graphOne = graphOne, healChol = healChol)
+    cardioChol = getChol(1)
+    cardioRBP = getRBP(1)
+
+    return render_template('report.html', pred = pred, neg = neg, exp = exp, pos = pos, pid = pid, data = data, graphOne = graphOne, healthyChol = healthyChol, healthyRBP = healthyRBP, cardioChol = cardioChol, cardioRBP = cardioRBP)
 
 # Get patients of user.
 @app.route('/getPatients', methods=['GET'])

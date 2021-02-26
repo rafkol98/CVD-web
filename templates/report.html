@@ -1,71 +1,85 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-  
-   
-
-    <h2 class="mt-5 mb-5 text-center">{{pred}}</h2>
-
-    {{exp|safe}}
-
-    <canvas class="mt-5" id="rbs_chol_max"></canvas>
-    <canvas class="mt-5" id="scatterChart"></canvas>
-    
-
-    <script>
-      
-        var dataX = {{ graphOne|tojson }};
-        var ctx = document.getElementById("rbs_chol_max").getContext("2d");
-        var chart = new Chart(ctx, {
-          // The type of chart we want to create
-          type: "radar",
-        
-          // The data for our dataset
-          data: {
-            labels: [
-              "Resting Blood Pressure",
-              "Cholestrol",
-              "Max Heart Rate"
-            ],
-            datasets: [
-              {
-                label: "Patient Values",
-                pointBackgroundColor: "rgb(0, 0, 0,0.2)",
-                borderColor: "rgb(0, 0, 0)",
-                data: dataX,
-              },
-              {
-                label: "Average Healthy Values",
-                pointBackgroundColor: "rgb(0, 255, 0,0.3)",
-                borderColor: "rgb(0, 255, 0)",
-                data: [129.79, 231.65, 150.89],
-              },{
-                label: "Average Cardio Values",
-                pointBackgroundColor: "rgb(255, 0, 0,0.3)",
-                borderColor: "rgb(255, 0, 0)",
-                data: [134.25, 191.37, 129.77],
-              },
-            ],
-          },
-        
-          // Configuration options go here
-          options: {},
-        });
-        
-        var healChol = {{healChol}}
-        var ctx2 = document.getElementById("scatterChart").getContext("2d");
-        var scatterChart = new Chart(ctx2, {
-          type: 'scatter',
-          data: {
-              datasets: [{
-                  label: 'Scatter Dataset',
-                  data: healChol,
-          }],
-          options: {},
-        }});
 
 
-    </script>
+
+<h2 class="mt-5 mb-5 text-center">{{pred}}</h2>
+
+{{exp|safe}}
+
+<canvas class="mt-5" id="rbs_chol_max"></canvas>
+<canvas class="mt-5" id="scatterChart"></canvas>
+
+
+<script>
+
+  var dataX = {{ graphOne| tojson }};
+  var ctx = document.getElementById("rbs_chol_max").getContext("2d");
+  var chart = new Chart(ctx, {
+    // The type of chart we want to create
+    type: "radar",
+
+    // The data for our dataset
+    data: {
+      labels: [
+        "Resting Blood Pressure",
+        "Cholestrol",
+        "Max Heart Rate"
+      ],
+      datasets: [
+        {
+          label: "Patient Values",
+          pointBackgroundColor: "rgb(0, 0, 0,0.2)",
+          borderColor: "rgb(0, 0, 0)",
+          data: dataX,
+        },
+        {
+          label: "Average Healthy Values",
+          pointBackgroundColor: "rgb(0, 255, 0,0.3)",
+          borderColor: "rgb(0, 255, 0)",
+          data: [129.79, 231.65, 150.89],
+        }, {
+          label: "Average Cardio Values",
+          pointBackgroundColor: "rgb(255, 0, 0,0.3)",
+          borderColor: "rgb(255, 0, 0)",
+          data: [134.25, 191.37, 129.77],
+        },
+      ],
+    },
+
+    // Configuration options go here
+    options: {},
+  });
+
+  var healChol = {{ healthyChol }}
+  var healRBP = {{ healthyRBP }}
+
+  var cardioChol = {{ cardioChol }}
+  var cardioRBP = {{ cardioRBP }}
+
+  let healthy = healChol.map((v, i) => ({ x: v, y: healRBP[i] }))
+  let cardio = cardioChol.map((v, i) => ({ x: v, y: cardioRBP[i] }))
+
+  var ctx2 = document.getElementById("scatterChart").getContext("2d");
+  var scatterChart = new Chart(ctx2, {
+    type: 'scatter',
+    data: {
+      datasets: [{
+        label: 'Healthy',
+        pointBackgroundColor: "rgb(0, 255, 0,0.3)",
+        data: healthy,
+      }, {
+        label: 'cardio',
+        pointBackgroundColor: "rgb(255, 0, 0,0.3)",
+        data: cardio,
+      }],
+      options: {},
+    }
+  });
+
+
+</script>
 
 
 {% endblock %}
