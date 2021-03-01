@@ -35,6 +35,7 @@ function logout() {
 }
 
 function getPatients() {
+  $("#items_table").empty();
   firebase.auth().onAuthStateChanged((user) => {
     if (user) {
       var userId = firebase.auth().currentUser.uid;
@@ -44,8 +45,9 @@ function getPatients() {
         .then(patients => {
     
           if (patients !== null) {
-
+            
             items_table = document.getElementById("items_table");
+           
             for (var key in patients) {
               
               var condition = patients[key].latest;
@@ -60,21 +62,40 @@ function getPatients() {
               }
   
               items_table.innerHTML +=
-                "<tr><td>" +
+                `<tr><td> <a href="javascript:editPatient('${userId}','${key}');"><i class='fas fa-edit'></i></a>` +
+                
+                "</td>"+"<td>" +
                 key +
-                "</td><td>" +
+                "</td>"+"<td>" +
                 patients[key].name +
                 `</td> <td><a href="javascript:getInfo('${userId}','${key}');"><i class="fas fa-info-circle"></i> Info</a></td>  <td><a href="javascript:getHistory('${userId}','${key}');"><i class="fas fa-file-medical-alt"></i> History</a></td> <td><h5><span class="badge badge-${badge}">${condition}</span></h5></td> <td><a href="/diagnose/?pid=${key}" class="btn btn-function"><i class="fas fa-heartbeat"></i> Diagnose</a></td> </tr>`;
             }
     
-          } else {
-            alert("This patient does not have any medical history yet.")
           }
     
         });
 
     }
   });
+}
+
+function showNewPatient() {
+  
+}
+
+function editPatient(userId, pid) {
+  $("#editPatientModal").modal('show');
+
+  const url = `/patients/info?uid=${userId}&pid=${pid}`
+  fetch(url)
+    .then(response => response.json())
+    .then(json => {
+      document.getElementById("name_edit").innerText = JSON.stringify(json.name);
+      document.getElementById("email_edit").innerHTML = JSON.stringify(json.email);
+      // document.getElementById("gender_edit").innerHTML = JSON.stringify(json.gender)
+      console.log(json);
+    });
+ 
 }
 
 function getInfo(userId, pid) {

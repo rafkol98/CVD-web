@@ -1,0 +1,36 @@
+<div class="modal fade" id="editPatientModal" tabindex="-1" role="dialog" aria-labelledby="editPatientModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Edit Patient</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id='form' action='/patients/' class="p-1 mt-3 mb-3" method="POST">
+
+                    <label for="inputNameX">Full Name</label>
+                    <input name="name" type="name" class="form-control mb-3" id="name_edit" placeholder="New name..." required>
+
+                    <label for="inputEmail">Email</label>
+                    <input name="email" type="email" class="form-control mb-3" id="email_edit" placeholder="New email..." required>
+
+                    <label for="inputAge">Age</label>
+                    <input name="age" type="age" class="form-control mb-3" id="age_edit" placeholder="Update age..." required>
+
+                    <label for="inputGender">Gender</label>
+                    <select name="gender" class="form-control" id="gender_edit" required>
+                        <option value='0'>Male</option>
+                        <option value='1'>Female</option>
+                    </select>
+                   
+                    <input hidden id="user_id" name="user_id">
+
+                    <button type="submit" class="btn btn-function center mt-4">Add Patient</button>
+                </form>
+            </div>
+            
+        </div>
+    </div>
+</div>

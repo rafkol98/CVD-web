@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 import pyrebase
 import dill
+import json
 # import dataset
 
 config = {
@@ -88,11 +89,14 @@ def patients():
         # Get uid of user logged in.
             uid = request.form['user_id']
 
-            db.child(uid).child("Patients").push({"age":request.form['age'], "gender":request.form['gender'], "name":request.form['name'], "email":request.form['email']})
+            patient_data = {"age":request.form['age'], "gender":request.form['gender'], "name":request.form['name'], "email":request.form['email']}
+            db.child(uid).child("Patients").push(patient_data)
+            
             return redirect(url_for('patients'))
         else:
             return render_template('patients.html')
 
+# Generate visual report.
 @app.route('/report')
 def report():
     pred = request.args.get('pred')
@@ -123,6 +127,19 @@ def report():
     cardioRBP = getRBP(1)
 
     return render_template('report.html', pred = pred, neg = neg, exp = exp, pos = pos, pid = pid, data = data, graphOne = graphOne, healthyChol = healthyChol, healthyRBP = healthyRBP, cardioChol = cardioChol, cardioRBP = cardioRBP)
+
+# Get patients of user.
+@app.route('/editPatient', methods=['GET'])
+def editPatient():
+    @after_this_request
+    def add_header(response):
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        return response
+    uid = request.args.get('uid')
+
+    patients = db.child(uid).child("Patients").get().val()
+
+    return jsonify(patients)
 
 # Get patients of user.
 @app.route('/getPatients', methods=['GET'])

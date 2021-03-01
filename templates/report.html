@@ -9,7 +9,7 @@
 {{exp|safe}}
 
 <canvas class="mt-5" id="rbs_chol_max"></canvas>
-<canvas class="mt-5" id="scatterChart"></canvas>
+<canvas class="mt-5" id="scatterChart" width="400" height="200"></canvas>
 
 
 <script>
@@ -58,6 +58,7 @@
   var cardioChol = {{ cardioChol }}
   var cardioRBP = {{ cardioRBP }}
 
+
   let healthy = healChol.map((v, i) => ({ x: v, y: healRBP[i] }))
   let cardio = cardioChol.map((v, i) => ({ x: v, y: cardioRBP[i] }))
 
@@ -70,11 +71,26 @@
         pointBackgroundColor: "rgb(0, 255, 0,0.3)",
         data: healthy,
       }, {
-        label: 'cardio',
+        label: 'Cardio',
         pointBackgroundColor: "rgb(255, 0, 0,0.3)",
         data: cardio,
       }],
-      options: {},
+      options: {
+        scales: {
+          yAxes: [{
+            scaleLabel: {
+              display: true,
+              labelString: 'probability'
+            }
+          }],
+          xAxes: [{
+            scaleLabel: {
+              display: true,
+              labelString: 'hola'
+            }
+          }],
+        },
+      },
     }
   });
 
