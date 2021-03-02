@@ -8,10 +8,11 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id='form' action='/patients/' class="p-1 mt-3 mb-3" method="POST">
+                <form id='form' action='/editPatient' class="p-1 mt-3 mb-3" method="POST">
 
                     <label for="inputNameX">Full Name</label>
                     <input name="name" type="name" class="form-control mb-3" id="name_edit" placeholder="New name..." required>
+                    <h5>Age: <span id="info-namee"> </span></h5>
 
                     <label for="inputEmail">Email</label>
                     <input name="email" type="email" class="form-control mb-3" id="email_edit" placeholder="New email..." required>
@@ -24,10 +25,11 @@
                         <option value='0'>Male</option>
                         <option value='1'>Female</option>
                     </select>
-                   
-                    <input hidden id="user_id" name="user_id">
 
-                    <button type="submit" class="btn btn-function center mt-4">Add Patient</button>
+                    <input name="uid" type="uid" class="form-control mb-3" id="uid" placeholder="Update age..." required>
+                    <input hidden id="patient_id" name="patient_id">
+
+                    <button id="submit-edit" type="submit" class="btn btn-function center mt-4">Update Patient Data</button>
                 </form>
             </div>
             

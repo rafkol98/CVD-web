@@ -129,17 +129,23 @@ def report():
     return render_template('report.html', pred = pred, neg = neg, exp = exp, pos = pos, pid = pid, data = data, graphOne = graphOne, healthyChol = healthyChol, healthyRBP = healthyRBP, cardioChol = cardioChol, cardioRBP = cardioRBP)
 
 # Get patients of user.
-@app.route('/editPatient', methods=['GET'])
+@app.route('/editPatient', methods=['POST'])
 def editPatient():
     @after_this_request
     def add_header(response):
         response.headers.add('Access-Control-Allow-Origin', '*')
         return response
-    uid = request.args.get('uid')
 
-    patients = db.child(uid).child("Patients").get().val()
+    # Get uid and pid.
+    uid = request.form['uid']
+    pid = request.form['patient_id']
 
-    return jsonify(patients)
+    print(uid)
+
+    patient_data = {"age":request.form['age'], "gender":request.form['gender'], "name":request.form['name'], "email":request.form['email']}
+    db.child(uid).child("Patients").set(patient_data)
+
+    return ('', 204)
 
 # Get patients of user.
 @app.route('/getPatients', methods=['GET'])
@@ -167,7 +173,7 @@ def info():
 
     patient = db.child(uid).child("Patients").child(pid).get()
 
-    jsonResp = {'age': patient.val()['age'], 'gender': patient.val()['gender'], 'email': patient.val()['email']}
+    jsonResp = {'name': patient.val()['name'],'age': patient.val()['age'], 'gender': patient.val()['gender'], 'email': patient.val()['email']}
     return jsonify(jsonResp)
 
 

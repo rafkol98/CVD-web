@@ -62,13 +62,13 @@ function getPatients() {
               }
   
               items_table.innerHTML +=
-                `<tr><td> <a href="javascript:editPatient('${userId}','${key}');"><i class='fas fa-edit'></i></a>` +
+                `<tr><td> <a href="javascript:editOrInfo('${userId}','${key}',true);"><i class='fas fa-edit'></i></a>` +
                 
                 "</td>"+"<td>" +
                 key +
                 "</td>"+"<td>" +
                 patients[key].name +
-                `</td> <td><a href="javascript:getInfo('${userId}','${key}');"><i class="fas fa-info-circle"></i> Info</a></td>  <td><a href="javascript:getHistory('${userId}','${key}');"><i class="fas fa-file-medical-alt"></i> History</a></td> <td><h5><span class="badge badge-${badge}">${condition}</span></h5></td> <td><a href="/diagnose/?pid=${key}" class="btn btn-function"><i class="fas fa-heartbeat"></i> Diagnose</a></td> </tr>`;
+                `</td> <td><a href="javascript:editOrInfo('${userId}','${key}',false);"><i class="fas fa-info-circle"></i> Info</a></td>  <td><a href="javascript:getHistory('${userId}','${key}');"><i class="fas fa-file-medical-alt"></i> History</a></td> <td><h5><span class="badge badge-${badge}">${condition}</span></h5></td> <td><a href="/diagnose/?pid=${key}" class="btn btn-function"><i class="fas fa-heartbeat"></i> Diagnose</a></td> </tr>`;
             }
     
           }
@@ -79,35 +79,32 @@ function getPatients() {
   });
 }
 
-function showNewPatient() {
-  
-}
-
-function editPatient(userId, pid) {
-  $("#editPatientModal").modal('show');
-
+function editOrInfo(userId, pid, edit) {
   const url = `/patients/info?uid=${userId}&pid=${pid}`
   fetch(url)
     .then(response => response.json())
     .then(json => {
-      document.getElementById("name_edit").innerText = JSON.stringify(json.name);
-      document.getElementById("email_edit").innerHTML = JSON.stringify(json.email);
-      // document.getElementById("gender_edit").innerHTML = JSON.stringify(json.gender)
-      console.log(json);
-    });
- 
-}
+      if(edit) {
+        //Show current data of user.
+        $("#editPatientModal").modal('show');
+        $("#name_edit").val(json.name);
+        $("#email_edit").val(json.email);
+        $("#age_edit").val(json.age);
+        $("#gender_edit").val(json.gender);
+        // TODO : FIX THIS! DOESNT GET VALUE.
+        $("#uid").val(pid);
+        $("#patient_id").val(pid);
+        console.log(userId);   
+      } 
+      else {
+        $("#infoModal").modal('show');
+        $("#info-age").html(json.age);
+        $("#info-gender").html(json.gender);
+        $("#info-email").html(json.email);
+      }
+     
 
-function getInfo(userId, pid) {
-  const url = `/patients/info?uid=${userId}&pid=${pid}`
-  fetch(url)
-    .then(response => response.json())
-    .then(json => {
-      $("#infoModal").modal('show');
-      document.getElementById("info-age").innerHTML = JSON.stringify(json.age)
-      document.getElementById("info-gender").innerHTML = JSON.stringify(json.gender)
-      document.getElementById("info-email").innerHTML = JSON.stringify(json.email)
-      console.log(json);
+      
     });
 }
 
