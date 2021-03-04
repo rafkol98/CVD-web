@@ -41,6 +41,13 @@
   border-radius: 10px !important;
 }
 
+.btn-delete {
+  color: rgb(255, 255, 255) !important;
+  background-color: rgb(255, 0, 0) !important;
+  border: 1px solid rgb(255, 255, 255) !important;
+  border-radius: 10px !important;
+}
+
 a {
   color: #4ee9c5;
 }

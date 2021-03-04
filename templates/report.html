@@ -6,10 +6,13 @@
 
 <h2 class="mt-5 mb-5 text-center">{{pred}}</h2>
 
-{{exp|safe}}
+<div class="mb-5">
+  {{exp|safe}}
+</div>
+
 
 <canvas class="mt-5" id="rbs_chol_max"></canvas>
-<canvas class="mt-5" id="scatterChart" width="400" height="200"></canvas>
+<canvas id="scatterChart" width="400" height="200"></canvas>
 
 
 <script>
@@ -58,39 +61,47 @@
   var cardioChol = {{ cardioChol }}
   var cardioRBP = {{ cardioRBP }}
 
-
   let healthy = healChol.map((v, i) => ({ x: v, y: healRBP[i] }))
   let cardio = cardioChol.map((v, i) => ({ x: v, y: cardioRBP[i] }))
+  let patientX = [{{rbp}}]
+  let patientY = [{{chol}}]
 
+  let patient = patientX.map((v, i) => ({ x: v, y: patientY[i] }))
   var ctx2 = document.getElementById("scatterChart").getContext("2d");
   var scatterChart = new Chart(ctx2, {
     type: 'scatter',
     data: {
       datasets: [{
         label: 'Healthy',
-        pointBackgroundColor: "rgb(0, 255, 0,0.3)",
+        pointBackgroundColor: "rgb(0, 255, 0, 0.3)",
+        borderColor: "rgb(0, 255, 0)",
         data: healthy,
       }, {
         label: 'Cardio',
-        pointBackgroundColor: "rgb(255, 0, 0,0.3)",
+        pointBackgroundColor: "rgb(255, 0, 0, 0.3)",
+        borderColor: "rgb(255, 0, 0)",
         data: cardio,
+      }, {
+        label: 'Patient',
+        pointBackgroundColor: "rgb(0, 0, 255)",
+        borderColor: "rgb(0, 0, 255)",
+        data: patient,
+        pointRadius: 10,
+        pointHoverRadius: 12
       }],
       options: {
         scales: {
-          yAxes: [{
-            scaleLabel: {
-              display: true,
-              labelString: 'probability'
-            }
-          }],
-          xAxes: [{
-            scaleLabel: {
-              display: true,
-              labelString: 'hola'
-            }
-          }],
-        },
-      },
+            yAxes: [{
+                id: 'first-y-axis',
+                type: 'linear',
+                display: true
+            }, {
+                id: 'second-y-axis',
+                type: 'linear',
+                display: true
+            }]
+        }
+    },
     }
   });
 

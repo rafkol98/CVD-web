@@ -69,12 +69,12 @@ def diagnose():
             prob_pos = str(model.predict_proba(final)[:,1])[1:-1]
         
             if prediction==1:
-                db.child(uid).child("Patients").child(pid).child("latest").update({"cardio":1})
+                db.child(uid).child("Patients").child(pid).child("latest").set({"cardio":1})
                 db.child(uid).child("Patients").child(pid).child("current").update({"chest":request.form['chest'], "bps":request.form['bps'], "chol":request.form['chol'], "fbs":request.form['fbs'], "ecg":request.form['ecg'], "maxheart":request.form['maxheart'], "exang":request.form['exang'], "oldpeak":request.form['oldpeak'], "stslope":request.form['stslope'], "cardio":1})
                 db.child(uid).child("Patients").child(pid).child("history").child(ct).set({"chest":request.form['chest'], "bps":request.form['bps'], "chol":request.form['chol'], "fbs":request.form['fbs'], "ecg":request.form['ecg'], "maxheart":request.form['maxheart'], "exang":request.form['exang'], "oldpeak":request.form['oldpeak'], "stslope":request.form['stslope'], "cardio":1})
                 return redirect(url_for('report', pred = "Suffers from a CVD", neg = prob_neg, pos = prob_pos, pid = pid, uid = uid ))
             else:
-                db.child(uid).child("Patients").child(pid).update({"latest":0})
+                db.child(uid).child("Patients").child(pid).set({"latest":0})
                 db.child(uid).child("Patients").child(pid).child("current").update({"chest":request.form['chest'], "bps":request.form['bps'], "chol":request.form['chol'], "fbs":request.form['fbs'], "ecg":request.form['ecg'], "maxheart":request.form['maxheart'], "exang":request.form['exang'], "oldpeak":request.form['oldpeak'], "stslope":request.form['stslope'], "cardio":0})
                 db.child(uid).child("Patients").child(pid).child("history").child(ct).set({"chest":request.form['chest'], "bps":request.form['bps'], "chol":request.form['chol'], "fbs":request.form['fbs'], "ecg":request.form['ecg'], "maxheart":request.form['maxheart'], "exang":request.form['exang'], "oldpeak":request.form['oldpeak'], "stslope":request.form['stslope'], "cardio":0})
                 return redirect(url_for('report', pred= "Most Likely Healthy", neg = prob_neg, pos = prob_pos, pid = pid, uid = uid ))
@@ -88,7 +88,7 @@ def patients():
         # Get uid of user logged in.
             uid = request.form['user_id']
 
-            patient_data = {"age":request.form['age'], "gender":request.form['gender'], "name":request.form['name'], "email":request.form['email']}
+            patient_data = {"age":request.form['age'], "gender":request.form['gender'], "name":request.form['name'], "lastName":request.form['lastName'], "email":request.form['email']}
             db.child(uid).child("Patients").push(patient_data)
             
             return redirect(url_for('patients'))
@@ -125,7 +125,7 @@ def report():
     cardioChol = getChol(1)
     cardioRBP = getRBP(1)
 
-    return render_template('report.html', pred = pred, neg = neg, exp = exp, pos = pos, pid = pid, data = data, graphOne = graphOne, healthyChol = healthyChol, healthyRBP = healthyRBP, cardioChol = cardioChol, cardioRBP = cardioRBP)
+    return render_template('report.html', pred = pred, neg = neg, exp = exp, pos = pos, pid = pid, data = data, graphOne = graphOne, healthyChol = healthyChol, healthyRBP = healthyRBP, cardioChol = cardioChol, cardioRBP = cardioRBP, rbp = diagnosisData.val()['bps'], chol = diagnosisData.val()['chol'])
 
 
 # Get patients of user.
@@ -179,7 +179,7 @@ def edit():
         uid = request.args.get('uid')
         pid = request.args.get('pid')
 
-        patient_data = {"age":request.form['age'], "gender":request.form['gender'], "name":request.form['name'], "email":request.form['email']}
+        patient_data = {"age":request.form['age'], "gender":request.form['gender'], "name":request.form['name'], "lastName":request.form['lastName'], "email":request.form['email']}
         db.child(uid).child("Patients").child(pid).set(patient_data)
 
         return redirect(url_for('edit', uid = uid, pid = pid, update="Patient data was successfully updated!"))
@@ -193,13 +193,26 @@ def edit():
             patient = db.child(uid).child("Patients").child(pid).get()
 
             name = patient.val()['name']
+            lastName = patient.val()['lastName']
             email = patient.val()['email']
             gender = patient.val()['gender']
             age =  patient.val()['age']
 
-            return render_template('edit.html', uid = uid, pid = pid, name = name, email = email, gender = gender, age = age)
+            return render_template('edit.html', uid = uid, pid = pid, name = name, lastName = lastName, email = email, gender = gender, age = age)
         else:
             return render_template('patients.html')
+
+@app.route('/delete/')
+def delete():
+    
+    uid = request.args.get('uid')
+    pid = request.args.get('pid')
+
+    db.child(uid).child("Patients").child(pid).remove()
+
+    return render_template('patients.html', update="Patient was deleted successfully." )
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

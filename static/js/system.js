@@ -50,16 +50,22 @@ function getPatients() {
            
             for (var key in patients) {
               
-              var condition = patients[key].latest;
+              var condition = patients[key].latest
               var badge;
   
-              if (condition == 1) {
-                condition = "Cardio Disease";
-                badge = "danger";
+              if(condition!== undefined) {
+                if (condition == 1) {
+                  condition = "Cardio";
+                  badge = "danger";
+                } else {
+                  condition = "Healthy";
+                  badge = "success";
+                }
               } else {
-                condition = "Healthy";
-                badge = "success";
+                condition = "Not Diagnosed";
+                badge = "dark";
               }
+              
   
               items_table.innerHTML +=
                 `<tr><td> <a href="/edit/?uid=${userId}&pid=${key}"><i class='fas fa-edit'></i></a>` +
@@ -67,7 +73,7 @@ function getPatients() {
                 "</td>"+"<td>" +
                 key +
                 "</td>"+"<td>" +
-                patients[key].name +
+                patients[key].name + " " + patients[key].lastName +
                 `</td> <td><a href="javascript:info('${userId}','${key}');"><i class="fas fa-info-circle"></i> Info</a></td>  <td><a href="javascript:getHistory('${userId}','${key}');"><i class="fas fa-file-medical-alt"></i> History</a></td> <td><h5><span class="badge badge-${badge}">${condition}</span></h5></td> <td><a href="/diagnose/?pid=${key}" class="btn btn-function"><i class="fas fa-heartbeat"></i> Diagnose</a></td> </tr>`;
             }
     
@@ -104,7 +110,7 @@ function getHistory(userId, pid) {
         for (var key in history) {
           var date = new Date(key * 1000).toISOString().slice(0, 19).replace('T', ' ');
           console.log(key + " " + history[key].bps);
-          document.getElementById("history-accord").innerHTML += `<div class="card"><div class="card-header" id="headingOne"><h2 class="mb-0"> <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapse${key}" aria-expanded="true" aria-controls="collapse${key}"> ${date} </button> </h2> </div> <div id="collapse${key}" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample"> <div class="card-body"> <h6>Bps:${history[key].bps}</h6><br><h6>Chest: ${history[key].chest}</h6><br><h6>Cholestrol: ${history[key].chol}</h6><br><h6>Electro Cardiogram: ${history[key].ecg}</h6><br><h6>Exang: ${history[key].exang}</h6><br><h6>Fasting Blood Sugar: ${history[key].fbs}</h6><br><h6>Max Heart Rate Achieved: ${history[key].maxheart}</h6><br><h6>Oldpeak: ${history[key].oldpeak}</h6><br><h6>St Slope: ${history[key].stslope}</h6>  </div></div></div>`
+          document.getElementById("history-accord").innerHTML += `<div class="card"><div class="card-header" id="headingOne"><h2 class="mb-0"> <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapse${key}" aria-expanded="true" aria-controls="collapse${key}"> ${date} </button> </h2> </div> <div id="collapse${key}" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample"> <div class="card-body"> <h6>Bps:${history[key].bps}</h6><br><h6>Chest: ${history[key].chest}</h6><br><h6>Cholestrol: ${history[key].chol}</h6><br><h6>Electro Cardiogram: ${history[key].ecg}</h6><br><h6>Exang: ${history[key].exang}</h6><br><h6>Fasting Blood Sugar: ${history[key].fbs}</h6><br><h6>Max Heart Rate Achieved: ${history[key].maxheart}</h6><br><h6>Oldpeak: ${history[key].oldpeak}</h6><br><h6>St Slope: ${history[key].stslope}</h6><br><h4 class="text-center">Cardio: ${history[key].cardio}</h4>  </div></div></div>`
         }
 
       } else {
