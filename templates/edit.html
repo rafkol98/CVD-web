@@ -1,0 +1,31 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+  
+  <div class="mt-3">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/patients">Patients</a></li>
+        <li class="breadcrumb-item"><a href="">Edit</a></li>
+      </ol>
+    </nav>
+  </div>
+  <h3 class="mt-3"><i class="fas fa-heartbeat"></i> Edit Patient</h3>
+  <div class="alert alert-primary showOrNot" id="alert" role="alert">
+    Patient data was successfully updated!
+  </div>
+
+  {% include 'includes/_edit_patient_form.html' %}
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const update = urlParams.get('update');
+    
+    if(update != null) {
+      document.getElementById('alert').style.display= 'block' ;
+    }
+  </script>
+  
+{% endblock %}
+
+

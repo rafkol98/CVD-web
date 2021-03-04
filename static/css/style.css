@@ -5,6 +5,10 @@
   /* #079191 */
 }
 
+.showOrNot {
+  display: none;
+}
+
 .navside {
   background-color:#273cd8;
   /* background-image: linear-gradient(to right, #37bb9d, #079191); */

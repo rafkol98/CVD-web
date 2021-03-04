@@ -82,7 +82,6 @@ def diagnose():
         pid = request.args.get('pid')
         return render_template('diagnose.html', pid = pid)
 
-
 @app.route('/patients/', methods=['GET','POST'])
 def patients():
         if request.method == 'POST':
@@ -128,24 +127,6 @@ def report():
 
     return render_template('report.html', pred = pred, neg = neg, exp = exp, pos = pos, pid = pid, data = data, graphOne = graphOne, healthyChol = healthyChol, healthyRBP = healthyRBP, cardioChol = cardioChol, cardioRBP = cardioRBP)
 
-# Get patients of user.
-@app.route('/editPatient', methods=['POST'])
-def editPatient():
-    @after_this_request
-    def add_header(response):
-        response.headers.add('Access-Control-Allow-Origin', '*')
-        return response
-
-    # Get uid and pid.
-    uid = request.form['uid']
-    pid = request.form['patient_id']
-
-    print(uid)
-
-    patient_data = {"age":request.form['age'], "gender":request.form['gender'], "name":request.form['name'], "email":request.form['email']}
-    db.child(uid).child("Patients").set(patient_data)
-
-    return ('', 204)
 
 # Get patients of user.
 @app.route('/getPatients', methods=['GET'])
@@ -191,6 +172,34 @@ def history():
 
     return jsonify(history)
 
+
+@app.route('/edit/', methods=['GET','POST'])
+def edit():
+    if request.method == 'POST':
+        uid = request.args.get('uid')
+        pid = request.args.get('pid')
+
+        patient_data = {"age":request.form['age'], "gender":request.form['gender'], "name":request.form['name'], "email":request.form['email']}
+        db.child(uid).child("Patients").child(pid).set(patient_data)
+
+        return redirect(url_for('edit', uid = uid, pid = pid, update="Patient data was successfully updated!"))
+
+    else:
+        uid = request.args.get('uid')
+        pid = request.args.get('pid')
+       
+        # if uid and pid are not None, then return edit form for patient.
+        if uid is not None and pid is not None:
+            patient = db.child(uid).child("Patients").child(pid).get()
+
+            name = patient.val()['name']
+            email = patient.val()['email']
+            gender = patient.val()['gender']
+            age =  patient.val()['age']
+
+            return render_template('edit.html', uid = uid, pid = pid, name = name, email = email, gender = gender, age = age)
+        else:
+            return render_template('patients.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
