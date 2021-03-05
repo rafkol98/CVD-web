@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify, after_this_request
 import lime
-from dataset import getChol, getRBP
+from dataset import getChol, getRBP, getAvg, secondGraph
 from lime import lime_tabular
 import pickle
 import datetime
@@ -113,7 +113,9 @@ def report():
     data = (np.array([patient.val()['age'], patient.val()['gender'], diagnosisData.val()['chest'], diagnosisData.val()['bps'], diagnosisData.val()['chol'], diagnosisData.val()['fbs'], diagnosisData.val()['ecg'], diagnosisData.val()['maxheart'], diagnosisData.val()['exang'], diagnosisData.val()['oldpeak'], diagnosisData.val()['stslope']])).astype(float)
     
     # Make the first graph.
-    graphOne = [ diagnosisData.val()['bps'], diagnosisData.val()['chol'], diagnosisData.val()['maxheart'] ]
+    graphOne = [ diagnosisData.val()['chest'], diagnosisData.val()['fbs'], diagnosisData.val()['ecg'], diagnosisData.val()['exang'], diagnosisData.val()['oldpeak'], diagnosisData.val()['stslope'] ]
+
+    graphTwo = [ diagnosisData.val()['bps'], diagnosisData.val()['chol'], diagnosisData.val()['maxheart'] ]
 
     # Explainable AI.
     exp = exp_load.explain_instance(data_row = data, predict_fn = model.predict_proba)
@@ -125,7 +127,13 @@ def report():
     cardioChol = getChol(1)
     cardioRBP = getRBP(1)
 
-    return render_template('report.html', pred = pred, neg = neg, exp = exp, pos = pos, pid = pid, data = data, graphOne = graphOne, healthyChol = healthyChol, healthyRBP = healthyRBP, cardioChol = cardioChol, cardioRBP = cardioRBP, rbp = patient.val()['age'], chol = diagnosisData.val()['chol'])
+    healthyAvg = getAvg(0)
+    cardioAvg = getAvg(1)
+
+    healthySecAvg = secondGraph(0)
+    cardioSecAvg = secondGraph(1)
+
+    return render_template('report.html', pred = pred, neg = neg, exp = exp, pos = pos, pid = pid, data = data, graphOne = graphOne, healthyChol = healthyChol, healthyRBP = healthyRBP, cardioChol = cardioChol, cardioRBP = cardioRBP, rbp = patient.val()['age'], chol = diagnosisData.val()['chol'], healthyAvg = healthyAvg, cardioAvg = cardioAvg, healthySecAvg = healthySecAvg, cardioSecAvg = cardioSecAvg, graphTwo = graphTwo)
 
 
 # Get patients of user.
@@ -180,7 +188,7 @@ def edit():
         pid = request.args.get('pid')
 
         patient_data = {"age":request.form['age'], "gender":request.form['gender'], "name":request.form['name'], "lastName":request.form['lastName'], "email":request.form['email']}
-        db.child(uid).child("Patients").child(pid).set(patient_data)
+        db.child(uid).child("Patients").child(pid).update(patient_data)
 
         return redirect(url_for('edit', uid = uid, pid = pid, update="Patient data was successfully updated!"))
 
