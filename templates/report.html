@@ -10,8 +10,10 @@
   {{exp|safe}}
 </div>
 
+<h3 class="text-center mt-5">Patient vs Healthy vs Cardio</h3>
+<canvas id="rbs_chol_max"></canvas>
 
-<canvas class="mt-5" id="rbs_chol_max"></canvas>
+<h3 class="text-center">Age of Patient vs Cholestrol</h3>
 <canvas id="scatterChart" width="400" height="200"></canvas>
 
 
@@ -52,7 +54,8 @@
     },
 
     // Configuration options go here
-    options: {},
+    options: {
+    },
   });
 
   var healChol = {{ healthyChol }}
@@ -61,10 +64,11 @@
   var cardioChol = {{ cardioChol }}
   var cardioRBP = {{ cardioRBP }}
 
-  let healthy = healChol.map((v, i) => ({ x: v, y: healRBP[i] }))
-  let cardio = cardioChol.map((v, i) => ({ x: v, y: cardioRBP[i] }))
-  let patientX = [{{rbp}}]
-  let patientY = [{{chol}}]
+  let healthy = healRBP.map((v, i) => ({ x: v, y: healChol[i] }))
+  let cardio = cardioRBP.map((v, i) => ({ x: v, y: cardioChol[i] }))
+
+  let patientX = [{{ rbp }}]
+  let patientY = [{{ chol }}]
 
   let patient = patientX.map((v, i) => ({ x: v, y: patientY[i] }))
   var ctx2 = document.getElementById("scatterChart").getContext("2d");
@@ -90,18 +94,11 @@
         pointHoverRadius: 12
       }],
       options: {
-        scales: {
-            yAxes: [{
-                id: 'first-y-axis',
-                type: 'linear',
-                display: true
-            }, {
-                id: 'second-y-axis',
-                type: 'linear',
-                display: true
-            }]
-        }
-    },
+        title: {
+          display: true,
+          text: "Test"
+        },
+      },
     }
   });
 

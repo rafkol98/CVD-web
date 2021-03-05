@@ -125,7 +125,7 @@ def report():
     cardioChol = getChol(1)
     cardioRBP = getRBP(1)
 
-    return render_template('report.html', pred = pred, neg = neg, exp = exp, pos = pos, pid = pid, data = data, graphOne = graphOne, healthyChol = healthyChol, healthyRBP = healthyRBP, cardioChol = cardioChol, cardioRBP = cardioRBP, rbp = diagnosisData.val()['bps'], chol = diagnosisData.val()['chol'])
+    return render_template('report.html', pred = pred, neg = neg, exp = exp, pos = pos, pid = pid, data = data, graphOne = graphOne, healthyChol = healthyChol, healthyRBP = healthyRBP, cardioChol = cardioChol, cardioRBP = cardioRBP, rbp = patient.val()['age'], chol = diagnosisData.val()['chol'])
 
 
 # Get patients of user.
