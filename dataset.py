@@ -28,6 +28,7 @@ def getAvg(pred):
     # drop first two elements.
     first_item = average.pop(0)
     second_item = average.pop(0)
+    return average
 
 # Get average for all values in the dataset.
 def secondGraph(pred):
