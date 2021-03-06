@@ -6,13 +6,16 @@ df = pd.read_csv("heart_dataset.csv", sep=",")
 def getChol(pred):
     data = df[df["target"] == pred]
     chol = list(np.array(data["cholesterol"]))
-    # rbp = list(np.array(healthy["resting bp s"]))
     return chol
+
+def getAge(pred):
+    data = df[df["target"] == pred]
+    age = list(np.array(data["age"]))
+    return age
 
 def getRBP(pred):
     data = df[df["target"] == pred]
-    # chol = list(np.array(healthy["cholesterol"]))
-    rbp = list(np.array(data["age"]))
+    rbp = list(np.array(data["resting bp s"]))
     return rbp
 
 # Get average for all values in the dataset.
@@ -31,6 +34,7 @@ def getAvg(pred):
     return average
 
 # Get average for all values in the dataset.
+# TODO : Clean this!
 def secondGraph(pred):
     data = df[df["target"] == pred]
     data = data.drop('target', 1)
@@ -48,3 +52,5 @@ def secondGraph(pred):
     second_item = average.pop(0)
 
     return average
+
+

@@ -8,7 +8,7 @@
   {{exp|safe}}
 </div>
 
-
+{# TODO - FIX THE NAMES/ID'S OF GRAPHS! ITS A MESS!!! #}
 <h3 class="text-center mt-5">Patient vs Healthy vs Cardio</h3>
 <canvas id="rbs_chol_max"></canvas>
 
@@ -39,7 +39,10 @@
 <canvas id="second_graph"></canvas>
 
 <h3 class="text-center mt-5">Age of Patient vs Cholestrol</h3>
-<canvas id="scatterChart" width="400" height="200"></canvas>
+<canvas id="scatterChol" width="400" height="200"></canvas>
+
+<h3 class="text-center mt-5">Age of Patient vs RBP</h3>
+<canvas id="scatterRBP" width="400" height="200"></canvas>
 
 
 <script>
@@ -133,19 +136,20 @@
 
 
   var healChol = {{ healthyChol }}
-  var healRBP = {{ healthyRBP }}
-
   var cardioChol = {{ cardioChol }}
-  var cardioRBP = {{ cardioRBP }}
 
-  let healthy = healRBP.map((v, i) => ({ x: v, y: healChol[i] }))
-  let cardio = cardioRBP.map((v, i) => ({ x: v, y: cardioChol[i] }))
+  var healAge = {{ healthyAge }}
+  var cardioAge = {{ cardioAge }}
+  //
+  let healthy = healAge.map((v, i) => ({ x: v, y: healChol[i] }))
+  let cardio = cardioAge.map((v, i) => ({ x: v, y: cardioChol[i] }))
 
-  let patientX = [{{ rbp }}]
+  // Patient data.
+  let patientX = [{{ age }}]
   let patientY = [{{ chol }}]
 
   let patient = patientX.map((v, i) => ({ x: v, y: patientY[i] }))
-  var ctx2 = document.getElementById("scatterChart").getContext("2d");
+  var ctx2 = document.getElementById("scatterChol").getContext("2d");
   var scatterChart = new Chart(ctx2, {
     type: 'scatter',
     data: {
@@ -167,14 +171,47 @@
         pointRadius: 10,
         pointHoverRadius: 12
       }],
-      options: {
-        title: {
-          display: true,
-          text: "Test"
-        },
-      },
+      options: {},
     }
   });
+
+  var healRBP = {{ healthyRBP }}
+  var cardioRBP = {{ cardioRBP }}
+
+  let healthy2 = healAge.map((v, i) => ({ x: v, y: healRBP[i] }))
+  let cardio2 = cardioAge.map((v, i) => ({ x: v, y: cardioRBP[i] }))
+
+  let patientY2 = [{{ rbp }}]
+  let patient2 = patientX.map((v, i) => ({ x: v, y: patientY2[i] }))
+  var ctx2 = document.getElementById("scatterRBP").getContext("2d");
+  var scatterChart = new Chart(ctx2, {
+    type: 'scatter',
+    data: {
+      datasets: [{
+        label: 'Healthy',
+        pointBackgroundColor: "rgb(0, 255, 0, 0.3)",
+        borderColor: "rgb(0, 255, 0)",
+        data: healthy2,
+      }, {
+        label: 'Cardio',
+        pointBackgroundColor: "rgb(255, 0, 0, 0.3)",
+        borderColor: "rgb(255, 0, 0)",
+        data: cardio2,
+      }, {
+        label: 'Patient',
+        pointBackgroundColor: "rgb(0, 0, 255)",
+        borderColor: "rgb(0, 0, 255)",
+        data: patient2,
+        pointRadius: 10,
+        pointHoverRadius: 12
+      }],
+      options: {},
+    }
+  });
+
+
+ 
+
 
 
 </script>

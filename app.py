@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify, after_this_request
 import lime
-from dataset import getChol, getRBP, getAvg, secondGraph
+from dataset import getChol, getAge, getAvg, secondGraph, getRBP
 from lime import lime_tabular
 import pickle
 import datetime
@@ -122,18 +122,21 @@ def report():
     exp = exp.as_html()
 
     healthyChol = getChol(0)
-    healthyRBP = getRBP(0)
+    healthyAge = getAge(0)
 
     cardioChol = getChol(1)
-    cardioRBP = getRBP(1)
+    cardioAge = getAge(1)
 
     healthyAvg = getAvg(0)
     cardioAvg = getAvg(1)
 
+    healthyRBP = getRBP(0)
+    cardioRBP = getRBP(1)
+
     healthySecAvg = secondGraph(0)
     cardioSecAvg = secondGraph(1)
 
-    return render_template('report.html', pred = pred, neg = neg, exp = exp, pos = pos, pid = pid, data = data, graphOne = graphOne, healthyChol = healthyChol, healthyRBP = healthyRBP, cardioChol = cardioChol, cardioRBP = cardioRBP, rbp = patient.val()['age'], chol = diagnosisData.val()['chol'], healthyAvg = healthyAvg, cardioAvg = cardioAvg, healthySecAvg = healthySecAvg, cardioSecAvg = cardioSecAvg, graphTwo = graphTwo)
+    return render_template('report.html', pred = pred, neg = neg, exp = exp, pos = pos, pid = pid, data = data, graphOne = graphOne, healthyChol = healthyChol, healthyAge = healthyAge, cardioChol = cardioChol, cardioAge = cardioAge, rbp = diagnosisData.val()['bps'] , age = patient.val()['age'], chol = diagnosisData.val()['chol'], healthyAvg = healthyAvg, cardioAvg = cardioAvg, healthySecAvg = healthySecAvg, cardioSecAvg = cardioSecAvg, graphTwo = graphTwo, healthyRBP = healthyRBP, cardioRBP = cardioRBP)
 
 
 # Get patients of user.
