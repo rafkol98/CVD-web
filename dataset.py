@@ -3,23 +3,19 @@ import numpy as np
 
 df = pd.read_csv("heart_dataset.csv", sep=",")
 
-def getChol(pred):
-    data = df[df["target"] == pred]
-    chol = list(np.array(data["cholesterol"]))
-    return chol
+# TODO : MAKE ONE FUNCTION THAT JUST TAKES THE NAME OF THE VARIABLE. NO NEED FOR A FUNCTION FOR EACH!
 
-def getAge(pred):
+def getVar(variable,pred):
     data = df[df["target"] == pred]
-    age = list(np.array(data["age"]))
-    return age
+    return list(np.array(data[variable]))
 
-def getRBP(pred):
+def countVar(variable, pred, value):
     data = df[df["target"] == pred]
-    rbp = list(np.array(data["resting bp s"]))
-    return rbp
+    x = list(np.array(data[variable]))
+    return x.count(value)
 
 # Get average for all values in the dataset.
-def getAvg(pred):
+def firstGraph(pred):
     data = df[df["target"] == pred]
     data = data.drop('target', 1)
     data = data.drop('max heart rate', 1)

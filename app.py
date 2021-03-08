@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify, after_this_request
 import lime
-from dataset import getChol, getAge, getAvg, secondGraph, getRBP
+from dataset import firstGraph, secondGraph, getVar, countVar
 from lime import lime_tabular
 import pickle
 import datetime
@@ -121,22 +121,39 @@ def report():
     exp = exp_load.explain_instance(data_row = data, predict_fn = model.predict_proba)
     exp = exp.as_html()
 
-    healthyChol = getChol(0)
-    healthyAge = getAge(0)
-
-    cardioChol = getChol(1)
-    cardioAge = getAge(1)
-
-    healthyAvg = getAvg(0)
-    cardioAvg = getAvg(1)
-
-    healthyRBP = getRBP(0)
-    cardioRBP = getRBP(1)
+    healthyAvg = firstGraph(0)
+    cardioAvg = firstGraph(1)
 
     healthySecAvg = secondGraph(0)
     cardioSecAvg = secondGraph(1)
 
-    return render_template('report.html', pred = pred, neg = neg, exp = exp, pos = pos, pid = pid, data = data, graphOne = graphOne, healthyChol = healthyChol, healthyAge = healthyAge, cardioChol = cardioChol, cardioAge = cardioAge, rbp = diagnosisData.val()['bps'] , age = patient.val()['age'], chol = diagnosisData.val()['chol'], healthyAvg = healthyAvg, cardioAvg = cardioAvg, healthySecAvg = healthySecAvg, cardioSecAvg = cardioSecAvg, graphTwo = graphTwo, healthyRBP = healthyRBP, cardioRBP = cardioRBP)
+    healthyAge = getVar("age", 0)
+    cardioAge = getVar("age", 1)
+
+    healthyChol = getVar("cholesterol", 0)
+    cardioChol = getVar("cholesterol", 1)
+    
+    healthyRBP = getVar("resting bp s", 0)
+    cardioRBP = getVar("resting bp s", 1)
+
+    healthyHeart = getVar("max heart rate", 0)
+    cardioHeart = getVar("max heart rate", 1)
+
+    healthyChest = getVar("chest pain type", 0)
+    cardioChest = getVar("chest pain type", 1)
+
+#   Count of healthy that have fbs value 0.
+    countHealFBS_0 = countVar("fasting blood sugar",0,0)
+    countHealFBS_1 = countVar("fasting blood sugar",0,1)
+
+    countCardioFBS_0 = countVar("fasting blood sugar",1,0)
+    countCardioFBS_1 = countVar("fasting blood sugar",1,1)
+
+    healthyFBS = [countHealFBS_0, countHealFBS_1]
+    cardioFBS = [countCardioFBS_0, countCardioFBS_1]
+
+
+    return render_template('report.html', pred = pred, neg = neg, exp = exp, pos = pos, pid = pid, data = data, graphOne = graphOne, healthyChol = healthyChol, healthyAge = healthyAge, cardioChol = cardioChol, cardioAge = cardioAge, rbp = diagnosisData.val()['bps'] , age = patient.val()['age'], chol = diagnosisData.val()['chol'], maxHeart = diagnosisData.val()['maxheart'], chest = diagnosisData.val()['chest'], fbs = diagnosisData.val()['fbs'], healthyAvg = healthyAvg, cardioAvg = cardioAvg, healthySecAvg = healthySecAvg, cardioSecAvg = cardioSecAvg, graphTwo = graphTwo, healthyRBP = healthyRBP, cardioRBP = cardioRBP, healthyHeart = healthyHeart, cardioHeart = cardioHeart, healthyChest = healthyChest, cardioChest = cardioChest, countHealFBS_0 = countHealFBS_0, countHealFBS_1 = countHealFBS_1, countCardioFBS_0 = countCardioFBS_0, countCardioFBS_1 = countCardioFBS_1, healthyFBS = healthyFBS, cardioFBS = cardioFBS)
 
 
 # Get patients of user.

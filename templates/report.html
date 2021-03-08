@@ -57,7 +57,25 @@
   </div>
 </div>
 
+<div class="row">
+  <div class="col-md-6">
+    <h3 class="text-center mt-5">Age of Patients vs Max Heart</h3>
+    <canvas id="scatterHeart" width="450" height="300"></canvas>
+  </div>
 
+  <div class="col-md-6">
+    <h3 class="text-center mt-5">Age of Patients vs Chest Pain Type</h3>
+    <canvas id="scatterChest" width="450" height="300"></canvas>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <h3 class="text-center mt-5">{{countHealFBS_0}} {{countHealFBS_1}}, {{countCardioFBS_0}} {{countCardioFBS_1}} </h3>
+    <canvas id="myChart" width="400" height="400"></canvas>
+
+  </div>
+</div>
 
 <script>
 
@@ -236,6 +254,116 @@
     }
   });
 
+  var healHeart = {{ healthyHeart }}
+  var cardioHeart = {{ cardioHeart }}
+
+  let healthy3 = healAge.map((v, i) => ({ x: v, y: healHeart[i] }))
+  let cardio3 = cardioAge.map((v, i) => ({ x: v, y: cardioHeart[i] }))
+
+  let patientY3 = [{{ maxHeart }}]
+  let patient3 = patientX.map((v, i) => ({ x: v, y: patientY3[i] }))
+  var ctx2 = document.getElementById("scatterHeart").getContext("2d");
+  var scatterChart = new Chart(ctx2, {
+    type: 'scatter',
+    data: {
+      datasets: [{
+        label: 'Healthy',
+        pointBackgroundColor: "rgb(0, 255, 0, 0.3)",
+        borderColor: "rgb(0, 255, 0)",
+        data: healthy3,
+      }, {
+        label: 'Cardio',
+        pointBackgroundColor: "rgb(255, 0, 0, 0.3)",
+        borderColor: "rgb(255, 0, 0)",
+        data: cardio3,
+      }, {
+        label: 'Patient',
+        pointBackgroundColor: "rgb(0, 0, 255)",
+        borderColor: "rgb(0, 0, 255)",
+        data: patient3,
+        pointRadius: 10,
+        pointHoverRadius: 12
+      }],
+      options: {
+        
+      },
+    }
+  });
+
+  var healChest = {{ healthyChest}}
+  var cardioChest = {{ cardioChest }}
+
+  let healthy4 = healAge.map((v, i) => ({ x: v, y: healChest[i] }))
+  let cardio4 = cardioAge.map((v, i) => ({ x: v, y: cardioChest[i] }))
+
+  let patientY4 = [{{ chest }}]
+  let patient4 = patientX.map((v, i) => ({ x: v, y: patientY4[i] }))
+  var ctx2 = document.getElementById("scatterChest").getContext("2d");
+  var scatterChart = new Chart(ctx2, {
+    type: 'scatter',
+    data: {
+      datasets: [{
+        label: 'Healthy',
+        pointBackgroundColor: "rgb(0, 255, 0, 0.3)",
+        borderColor: "rgb(0, 255, 0)",
+        data: healthy4,
+      }, {
+        label: 'Cardio',
+        pointBackgroundColor: "rgb(255, 0, 0, 0.3)",
+        borderColor: "rgb(255, 0, 0)",
+        data: cardio4,
+      }, {
+        label: 'Patient',
+        pointBackgroundColor: "rgb(0, 0, 255)",
+        borderColor: "rgb(0, 0, 255)",
+        data: patient4,
+        pointRadius: 10,
+        pointHoverRadius: 12
+      }],
+      options: {
+        yAxes: [{
+          ticks: {
+            min: 1, // 18.1 * 8
+            max: 4, // 18.1 * 13
+            stepSize: 1,
+          },
+        }]
+      },
+    }
+  });
+
+  
+  var ctx = document.getElementById("myChart").getContext("2d");
+
+  var healFBS = {{ healthyFBS}}
+  var cardioFBS = {{ cardioFBS }}
+var data = {
+  labels: ["FBS - 0", "FBS - 1"],
+  datasets: [{
+    label: "Healthy",
+    backgroundColor: "green",
+    data: healFBS
+  }, {
+    label: "Cardio",
+    backgroundColor: "red",
+    data: cardioFBS
+  }]
+};
+
+var myBarChart = new Chart(ctx, {
+  type: 'bar',
+  data: data,
+  options: {
+    barValueSpacing: 20,
+    scales: {
+      yAxes: [{
+        ticks: {
+          min: 0,
+        }
+      }]
+    }
+  }
+});
 
 
 
