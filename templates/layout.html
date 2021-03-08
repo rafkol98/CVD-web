@@ -42,10 +42,16 @@
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
-    {# <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script> #}
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.js"
+        integrity="sha512-ICHkAOXzVDEkL5xkXjAWRV/hx6Bq4ID/uhRcnj9zS7QCdCbhVtfgjwt/vTfUBtW1wzBkErImU0huK3LDVeEr8g=="
+        crossorigin="anonymous"></script>
 
     <script type="text/javascript" src="{{ url_for('static', filename = 'js/system.js') }}"></script>
-   
+    
+    <script type="text/javascript" src="{{ url_for('static', filename = 'js/pdf.js') }}"></script>
+
+    {% block scripts %} {% endblock %}
     {% block head %} {% endblock %}
 </head>
 

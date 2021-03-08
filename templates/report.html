@@ -1,81 +1,110 @@
 {% extends 'layout.html' %}
 
+{% block scripts %}
+
+{% endblock %}
+
 {% block body %}
 
-<h2 class="mt-5 mb-5 text-center">{{pred}}</h2>
 
-<div class="mb-5">
-  {{exp|safe}}
-</div>
+  <div class="pdf-download">
+    <button class="btn btn-primary mt-3" id="download"> <i class="fas fa-download"></i> PDF</button>
+  </div>
+  
+  <h2 class="mt-5 mb-5 text-center">{{pred}}</h2>
 
-{# TODO - FIX THE NAMES/ID'S OF GRAPHS! ITS A MESS!!! #}
-<h3 class="text-center mt-5">Patient vs Healthy vs Cardio</h3>
-<canvas id="rbs_chol_max"></canvas>
+  <div class="mb-5">
+    {{exp|safe}}
+  </div>
 
-<div class="mt-3" id="accordion">
-  <div class="card">
-    <div class="card-header" id="headingOne">
-      <h5 class="mb-0">
-        <button class="btn btn-exp" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
-          aria-controls="collapseOne">
-          <i class="fas fa-question-circle"></i> Explanation of values for each parameter in the graph
-        </button>
-      </h5>
-    </div>
+  
 
-    <div id="collapseOne" class="collapse hide" aria-labelledby="headingOne" data-parent="#accordion">
-      <div class="card-body">
-        <h5>Chest pain type</h5>
-        <p>typical - 1, typical angina - 2, non- anginal pain - 3, asymptomatic - 4</p>
-        <h5>Fasting blood sugar</h5>
-        <p>more than 120 mg/dl - 1, less or equal than 120 mg/dl - 0</p>
-        <h5>Resting ECG</h5>
-        <p>Normal - 0, Abnormality in ST-T wave - 1, Left ventricular hypertrophy - 2</p>
-        <h5>Exercise Angina</h5>
-        <p>No - 0, Yes - 1</p>
-        <h5>Oldpeak</h5>
-        <p>Exercise induced ST-depression in comparison with the state of rest (Numerical)</p>
-        <h5>St Slope</h5>
-        <p>Normal - 0, Upsloping - 1, Flat - 2, Downsloping - 3</p>
+  <div id='report'>
+
+  {# TODO - FIX THE NAMES/ID'S OF GRAPHS! ITS A MESS!!! #}
+  <h3 class="text-center mt-5">Patient vs Healthy vs Cardio</h3>
+  <canvas id="rbs_chol_max"></canvas>
+
+  <div class="mt-3" id="accordion">
+    <div class="card">
+      <div class="card-header" id="headingOne">
+        <h5 class="mb-0">
+          <button class="btn btn-exp" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+            aria-controls="collapseOne">
+            <i class="fas fa-question-circle"></i>
+            Explanation of values for each parameter in the graph
+          </button>
+        </h5>
+      </div>
+
+      <div id="collapseOne" class="collapse hide" aria-labelledby="headingOne" data-parent="#accordion">
+        <div class="card-body">
+          <h5>Chest pain type</h5>
+          <p>typical - 1, typical angina - 2, non- anginal pain - 3, asymptomatic - 4</p>
+          <h5>Fasting blood sugar</h5>
+          <p>more than 120 mg/dl - 1, less or equal than 120 mg/dl - 0</p>
+          <h5>Resting ECG</h5>
+          <p>Normal - 0, Abnormality in ST-T wave - 1, Left ventricular hypertrophy - 2</p>
+          <h5>Exercise Angina</h5>
+          <p>No - 0, Yes - 1</p>
+          <h5>Oldpeak</h5>
+          <p>Exercise induced ST-depression in comparison with the state of rest (Numerical)</p>
+          <h5>St Slope</h5>
+          <p>Normal - 0, Upsloping - 1, Flat - 2, Downsloping - 3</p>
+        </div>
       </div>
     </div>
   </div>
+
+  <div class="html2pdf__page-break"></div>
+
+  <h3 class="text-center mt-5">Patient vs Healthy vs Cardio</h3>
+  <canvas id="second_graph"></canvas>
+
+  <div class="html2pdf__page-break"></div>
+
+  <div class="row">
+    <div class="col-md-6">
+      <h3 class="text-center mt-5">Age of Patients vs Cholestrol</h3>
+      <canvas id="scatterChol" width="450" height="300"></canvas>
+    </div>
+
+    <div class="col-md-6">
+      <h3 class="text-center mt-5">Age of Patients vs RBP</h3>
+      <canvas id="scatterRBP" width="450" height="300"></canvas>
+    </div>
+  </div>
+
+  <div class="html2pdf__page-break"></div>
+
+  <div class="row">
+    <div class="col-md-6">
+      <h3 class="text-center mt-5">Age of Patients vs Max Heart</h3>
+      <canvas id="scatterHeart" width="450" height="300"></canvas>
+    </div>
+
+    <div class="col-md-6">
+      <h3 class="text-center mt-5">Age of Patients vs Chest Pain Type</h3>
+      <canvas id="scatterChest" width="450" height="300"></canvas>
+    </div>
+  </div>
+
+  <div class="html2pdf__page-break"></div>
+
+  <div class="row">
+    <div class="col-md-6">
+      <h3 class="text-center mt-5">{{countHealFBS_0}}
+        {{countHealFBS_1}},
+        {{countCardioFBS_0}}
+        {{countCardioFBS_1}}
+      </h3>
+      <canvas id="myChart" width="400" height="400"></canvas>
+
+    </div>
+  </div>
+
 </div>
 
-<h3 class="text-center mt-5">Patient vs Healthy vs Cardio</h3>
-<canvas id="second_graph"></canvas>
-
-<div class="row">
-  <div class="col-md-6">
-    <h3 class="text-center mt-5">Age of Patients vs Cholestrol</h3>
-    <canvas id="scatterChol" width="450" height="300"></canvas>
-  </div>
-
-  <div class="col-md-6">
-    <h3 class="text-center mt-5">Age of Patients vs RBP</h3>
-    <canvas id="scatterRBP" width="450" height="300"></canvas>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col-md-6">
-    <h3 class="text-center mt-5">Age of Patients vs Max Heart</h3>
-    <canvas id="scatterHeart" width="450" height="300"></canvas>
-  </div>
-
-  <div class="col-md-6">
-    <h3 class="text-center mt-5">Age of Patients vs Chest Pain Type</h3>
-    <canvas id="scatterChest" width="450" height="300"></canvas>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col-md-6">
-    <h3 class="text-center mt-5">{{countHealFBS_0}} {{countHealFBS_1}}, {{countCardioFBS_0}} {{countCardioFBS_1}} </h3>
-    <canvas id="myChart" width="400" height="400"></canvas>
-
-  </div>
-</div>
 
 <script>
 
@@ -84,8 +113,7 @@
   var cardioAvg = {{ cardioAvg| tojson }};
 
   var ctx = document.getElementById("rbs_chol_max").getContext("2d");
-  var chart = new Chart(ctx, {
-    // The type of chart we want to create
+  var chart = new Chart(ctx, { // The type of chart we want to create
     type: "radar",
 
     // The data for our dataset
@@ -103,30 +131,29 @@
           label: "Patient Values",
           pointBackgroundColor: "rgb(0, 0, 0,0.2)",
           borderColor: "rgb(0, 0, 0)",
-          data: dataX,
-        },
-        {
+          data: dataX
+        }, {
           label: "Average Healthy Values",
           pointBackgroundColor: "rgb(0, 255, 0,0.3)",
           borderColor: "rgb(0, 255, 0)",
-          data: healthyAvg,
+          data: healthyAvg
         }, {
           label: "Average Cardio Values",
           pointBackgroundColor: "rgb(255, 0, 0,0.3)",
           borderColor: "rgb(255, 0, 0)",
-          data: cardioAvg,
+          data: cardioAvg
         },
-      ],
+      ]
     },
 
     // Configuration options go here
     options: {
       scale: {
         pointLabels: {
-          fontSize: 17,
-        },
+          fontSize: 17
+        }
       }
-    },
+    }
   });
 
   var dataTwo = {{ graphTwo| tojson }};
@@ -135,46 +162,42 @@
 
 
   var ctx = document.getElementById("second_graph").getContext("2d");
-  var chart = new Chart(ctx, {
-    // The type of chart we want to create
+  var chart = new Chart(ctx, { // The type of chart we want to create
     type: "radar",
 
     // The data for our dataset
     data: {
       labels: [
-        "Resting BP S",
-        "Cholestrol",
-        "Max heart"
+        "Resting BP S", "Cholestrol", "Max heart"
       ],
       datasets: [
         {
           label: "Patient Values",
           pointBackgroundColor: "rgb(0, 0, 0,0.2)",
           borderColor: "rgb(0, 0, 0)",
-          data: dataTwo,
-        },
-        {
+          data: dataTwo
+        }, {
           label: "Average Healthy Values",
           pointBackgroundColor: "rgb(0, 255, 0,0.3)",
           borderColor: "rgb(0, 255, 0)",
-          data: healthySecAvg,
+          data: healthySecAvg
         }, {
           label: "Average Cardio Values",
           pointBackgroundColor: "rgb(255, 0, 0,0.3)",
           borderColor: "rgb(255, 0, 0)",
-          data: cardioSecAvg,
+          data: cardioSecAvg
         },
-      ],
+      ]
     },
 
     // Configuration options go here
     options: {
       scale: {
         pointLabels: {
-          fontSize: 17,
-        },
+          fontSize: 17
+        }
       }
-    },
+    }
   });
 
 
@@ -196,25 +219,27 @@
   var scatterChart = new Chart(ctx2, {
     type: 'scatter',
     data: {
-      datasets: [{
-        label: 'Healthy',
-        pointBackgroundColor: "rgb(0, 255, 0, 0.3)",
-        borderColor: "rgb(0, 255, 0)",
-        data: healthy,
-      }, {
-        label: 'Cardio',
-        pointBackgroundColor: "rgb(255, 0, 0, 0.3)",
-        borderColor: "rgb(255, 0, 0)",
-        data: cardio,
-      }, {
-        label: 'Patient',
-        pointBackgroundColor: "rgb(0, 0, 255)",
-        borderColor: "rgb(0, 0, 255)",
-        data: patient,
-        pointRadius: 10,
-        pointHoverRadius: 12
-      }],
-      options: {},
+      datasets: [
+        {
+          label: 'Healthy',
+          pointBackgroundColor: "rgb(0, 255, 0, 0.3)",
+          borderColor: "rgb(0, 255, 0)",
+          data: healthy
+        }, {
+          label: 'Cardio',
+          pointBackgroundColor: "rgb(255, 0, 0, 0.3)",
+          borderColor: "rgb(255, 0, 0)",
+          data: cardio
+        }, {
+          label: 'Patient',
+          pointBackgroundColor: "rgb(0, 0, 255)",
+          borderColor: "rgb(0, 0, 255)",
+          data: patient,
+          pointRadius: 10,
+          pointHoverRadius: 12
+        }
+      ],
+      options: {}
     }
   });
 
@@ -230,27 +255,27 @@
   var scatterChart = new Chart(ctx2, {
     type: 'scatter',
     data: {
-      datasets: [{
-        label: 'Healthy',
-        pointBackgroundColor: "rgb(0, 255, 0, 0.3)",
-        borderColor: "rgb(0, 255, 0)",
-        data: healthy2,
-      }, {
-        label: 'Cardio',
-        pointBackgroundColor: "rgb(255, 0, 0, 0.3)",
-        borderColor: "rgb(255, 0, 0)",
-        data: cardio2,
-      }, {
-        label: 'Patient',
-        pointBackgroundColor: "rgb(0, 0, 255)",
-        borderColor: "rgb(0, 0, 255)",
-        data: patient2,
-        pointRadius: 10,
-        pointHoverRadius: 12
-      }],
-      options: {
-
-      },
+      datasets: [
+        {
+          label: 'Healthy',
+          pointBackgroundColor: "rgb(0, 255, 0, 0.3)",
+          borderColor: "rgb(0, 255, 0)",
+          data: healthy2
+        }, {
+          label: 'Cardio',
+          pointBackgroundColor: "rgb(255, 0, 0, 0.3)",
+          borderColor: "rgb(255, 0, 0)",
+          data: cardio2
+        }, {
+          label: 'Patient',
+          pointBackgroundColor: "rgb(0, 0, 255)",
+          borderColor: "rgb(0, 0, 255)",
+          data: patient2,
+          pointRadius: 10,
+          pointHoverRadius: 12
+        }
+      ],
+      options: {}
     }
   });
 
@@ -266,31 +291,31 @@
   var scatterChart = new Chart(ctx2, {
     type: 'scatter',
     data: {
-      datasets: [{
-        label: 'Healthy',
-        pointBackgroundColor: "rgb(0, 255, 0, 0.3)",
-        borderColor: "rgb(0, 255, 0)",
-        data: healthy3,
-      }, {
-        label: 'Cardio',
-        pointBackgroundColor: "rgb(255, 0, 0, 0.3)",
-        borderColor: "rgb(255, 0, 0)",
-        data: cardio3,
-      }, {
-        label: 'Patient',
-        pointBackgroundColor: "rgb(0, 0, 255)",
-        borderColor: "rgb(0, 0, 255)",
-        data: patient3,
-        pointRadius: 10,
-        pointHoverRadius: 12
-      }],
-      options: {
-        
-      },
+      datasets: [
+        {
+          label: 'Healthy',
+          pointBackgroundColor: "rgb(0, 255, 0, 0.3)",
+          borderColor: "rgb(0, 255, 0)",
+          data: healthy3
+        }, {
+          label: 'Cardio',
+          pointBackgroundColor: "rgb(255, 0, 0, 0.3)",
+          borderColor: "rgb(255, 0, 0)",
+          data: cardio3
+        }, {
+          label: 'Patient',
+          pointBackgroundColor: "rgb(0, 0, 255)",
+          borderColor: "rgb(0, 0, 255)",
+          data: patient3,
+          pointRadius: 10,
+          pointHoverRadius: 12
+        }
+      ],
+      options: {}
     }
   });
 
-  var healChest = {{ healthyChest}}
+  var healChest = {{ healthyChest }}
   var cardioChest = {{ cardioChest }}
 
   let healthy4 = healAge.map((v, i) => ({ x: v, y: healChest[i] }))
@@ -302,74 +327,77 @@
   var scatterChart = new Chart(ctx2, {
     type: 'scatter',
     data: {
-      datasets: [{
-        label: 'Healthy',
-        pointBackgroundColor: "rgb(0, 255, 0, 0.3)",
-        borderColor: "rgb(0, 255, 0)",
-        data: healthy4,
-      }, {
-        label: 'Cardio',
-        pointBackgroundColor: "rgb(255, 0, 0, 0.3)",
-        borderColor: "rgb(255, 0, 0)",
-        data: cardio4,
-      }, {
-        label: 'Patient',
-        pointBackgroundColor: "rgb(0, 0, 255)",
-        borderColor: "rgb(0, 0, 255)",
-        data: patient4,
-        pointRadius: 10,
-        pointHoverRadius: 12
-      }],
+      datasets: [
+        {
+          label: 'Healthy',
+          pointBackgroundColor: "rgb(0, 255, 0, 0.3)",
+          borderColor: "rgb(0, 255, 0)",
+          data: healthy4
+        }, {
+          label: 'Cardio',
+          pointBackgroundColor: "rgb(255, 0, 0, 0.3)",
+          borderColor: "rgb(255, 0, 0)",
+          data: cardio4
+        }, {
+          label: 'Patient',
+          pointBackgroundColor: "rgb(0, 0, 255)",
+          borderColor: "rgb(0, 0, 255)",
+          data: patient4,
+          pointRadius: 10,
+          pointHoverRadius: 12
+        }
+      ],
       options: {
-        yAxes: [{
-          ticks: {
-            min: 1, // 18.1 * 8
-            max: 4, // 18.1 * 13
-            stepSize: 1,
-          },
-        }]
-      },
+        yAxes: [
+          {
+            ticks: {
+              min: 1, // 18.1 * 8
+              max: 4, // 18.1 * 13
+              stepSize: 1
+            }
+          }
+        ]
+      }
     }
   });
 
-  
+
   var ctx = document.getElementById("myChart").getContext("2d");
 
-  var healFBS = {{ healthyFBS}}
+  var healFBS = {{ healthyFBS }}
   var cardioFBS = {{ cardioFBS }}
-var data = {
-  labels: ["FBS - 0", "FBS - 1"],
-  datasets: [{
-    label: "Healthy",
-    backgroundColor: "green",
-    data: healFBS
-  }, {
-    label: "Cardio",
-    backgroundColor: "red",
-    data: cardioFBS
-  }]
-};
+  var data = {
+    labels: [
+      "FBS - 0", "FBS - 1"
+    ],
+    datasets: [
+      {
+        label: "Healthy",
+        backgroundColor: "green",
+        data: healFBS
+      }, {
+        label: "Cardio",
+        backgroundColor: "red",
+        data: cardioFBS
+      }
+    ]
+  };
 
-var myBarChart = new Chart(ctx, {
-  type: 'bar',
-  data: data,
-  options: {
-    barValueSpacing: 20,
-    scales: {
-      yAxes: [{
-        ticks: {
-          min: 0,
-        }
-      }]
+  var myBarChart = new Chart(ctx, {
+    type: 'bar',
+    data: data,
+    options: {
+      barValueSpacing: 20,
+      scales: {
+        yAxes: [
+          {
+            ticks: {
+              min: 0
+            }
+          }
+        ]
+      }
     }
-  }
-});
-
-
-
-
-
+  });
 </script>
-
-
 {% endblock %}

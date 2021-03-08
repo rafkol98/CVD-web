@@ -1,5 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Ubuntu&display=swap');
 
+.pdf-download {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.btn-primary {
+  background-color: #3a51ff !important;
+  color: white !important;
+}
+
 .navblue {
   background-color: #ffffff;
   /* #079191 */
