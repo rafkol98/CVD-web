@@ -16,20 +16,27 @@
   <div class="card">
     <div class="card-header" id="headingOne">
       <h5 class="mb-0">
-        <button class="btn btn-exp" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-         <i class="fas fa-question-circle"></i> Explanation of values for each parameter in the graph
+        <button class="btn btn-exp" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+          aria-controls="collapseOne">
+          <i class="fas fa-question-circle"></i> Explanation of values for each parameter in the graph
         </button>
       </h5>
     </div>
 
     <div id="collapseOne" class="collapse hide" aria-labelledby="headingOne" data-parent="#accordion">
       <div class="card-body">
-       <h5>Chest pain type</h5> <p>typical - 1, typical angina - 2, non- anginal pain - 3, asymptomatic - 4</p>
-       <h5>Fasting blood sugar</h5> <p>more than 120 mg/dl - 1, less or equal than 120 mg/dl - 0</p>
-       <h5>Resting ECG</h5> <p>Normal - 0, Abnormality in ST-T wave - 1, Left ventricular hypertrophy - 2</p>
-       <h5>Exercise Angina</h5> <p>No - 0, Yes - 1</p>
-       <h5>Oldpeak</h5> <p>Exercise induced ST-depression in comparison with the state of rest (Numerical)</p>
-       <h5>St Slope</h5> <p>Normal - 0, Upsloping - 1, Flat - 2, Downsloping - 3</p>
+        <h5>Chest pain type</h5>
+        <p>typical - 1, typical angina - 2, non- anginal pain - 3, asymptomatic - 4</p>
+        <h5>Fasting blood sugar</h5>
+        <p>more than 120 mg/dl - 1, less or equal than 120 mg/dl - 0</p>
+        <h5>Resting ECG</h5>
+        <p>Normal - 0, Abnormality in ST-T wave - 1, Left ventricular hypertrophy - 2</p>
+        <h5>Exercise Angina</h5>
+        <p>No - 0, Yes - 1</p>
+        <h5>Oldpeak</h5>
+        <p>Exercise induced ST-depression in comparison with the state of rest (Numerical)</p>
+        <h5>St Slope</h5>
+        <p>Normal - 0, Upsloping - 1, Flat - 2, Downsloping - 3</p>
       </div>
     </div>
   </div>
@@ -38,11 +45,18 @@
 <h3 class="text-center mt-5">Patient vs Healthy vs Cardio</h3>
 <canvas id="second_graph"></canvas>
 
-<h3 class="text-center mt-5">Age of Patient vs Cholestrol</h3>
-<canvas id="scatterChol" width="400" height="200"></canvas>
+<div class="row">
+  <div class="col-md-6">
+    <h3 class="text-center mt-5">Age of Patients vs Cholestrol</h3>
+    <canvas id="scatterChol" width="450" height="300"></canvas>
+  </div>
 
-<h3 class="text-center mt-5">Age of Patient vs RBP</h3>
-<canvas id="scatterRBP" width="400" height="200"></canvas>
+  <div class="col-md-6">
+    <h3 class="text-center mt-5">Age of Patients vs RBP</h3>
+    <canvas id="scatterRBP" width="450" height="300"></canvas>
+  </div>
+</div>
+
 
 
 <script>
@@ -89,12 +103,18 @@
 
     // Configuration options go here
     options: {
+      scale: {
+        pointLabels: {
+          fontSize: 17,
+        },
+      }
     },
   });
 
   var dataTwo = {{ graphTwo| tojson }};
   var healthySecAvg = {{ healthySecAvg| tojson }};
   var cardioSecAvg = {{ cardioSecAvg| tojson }};
+
 
   var ctx = document.getElementById("second_graph").getContext("2d");
   var chart = new Chart(ctx, {
@@ -131,6 +151,11 @@
 
     // Configuration options go here
     options: {
+      scale: {
+        pointLabels: {
+          fontSize: 17,
+        },
+      }
     },
   });
 
@@ -205,12 +230,14 @@
         pointRadius: 10,
         pointHoverRadius: 12
       }],
-      options: {},
+      options: {
+
+      },
     }
   });
 
 
- 
+
 
 
 
