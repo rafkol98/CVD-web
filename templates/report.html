@@ -7,19 +7,17 @@
 {% block body %}
 
 
-  <div class="pdf-download">
-    <button class="btn btn-primary mt-3" id="download"> <i class="fas fa-download"></i> PDF</button>
-  </div>
-  
-  <h2 class="mt-5 mb-5 text-center">{{pred}}</h2>
+<div class="pdf-download">
+  <button class="btn btn-primary mt-3" id="download"> <i class="fas fa-download"></i> PDF</button>
+</div>
 
-  <div class="mb-5">
-    {{exp|safe}}
-  </div>
+<h2 class="mt-5 mb-5 text-center">{{pred}}</h2>
 
-  
+<div class="mb-5">
+  {{exp|safe}}
+</div>
 
-  <div id='report'>
+<div id='report'>
 
   {# TODO - FIX THE NAMES/ID'S OF GRAPHS! ITS A MESS!!! #}
   <h3 class="text-center mt-5">Patient vs Healthy vs Cardio</h3>
@@ -67,11 +65,13 @@
     <div class="col-md-6">
       <h3 class="text-center mt-5">Age of Patients vs Cholestrol</h3>
       <canvas id="scatterChol" width="450" height="300"></canvas>
+      <h5 class="text-center xlabel">Age of Patients</h5>
     </div>
 
     <div class="col-md-6">
       <h3 class="text-center mt-5">Age of Patients vs RBP</h3>
       <canvas id="scatterRBP" width="450" height="300"></canvas>
+      <h5 class="text-center xlabel">Age of Patients</h5>
     </div>
   </div>
 
@@ -81,11 +81,13 @@
     <div class="col-md-6">
       <h3 class="text-center mt-5">Age of Patients vs Max Heart</h3>
       <canvas id="scatterHeart" width="450" height="300"></canvas>
+      <h5 class="text-center xlabel">Age of Patients</h5>
     </div>
 
     <div class="col-md-6">
       <h3 class="text-center mt-5">Age of Patients vs Chest Pain Type</h3>
       <canvas id="scatterChest" width="450" height="300"></canvas>
+      <h5 class="text-center xlabel">Age of Patients</h5>
     </div>
   </div>
 
@@ -93,12 +95,10 @@
 
   <div class="row">
     <div class="col-md-6">
-      <h3 class="text-center mt-5">{{countHealFBS_0}}
-        {{countHealFBS_1}},
-        {{countCardioFBS_0}}
-        {{countCardioFBS_1}}
-      </h3>
-      <canvas id="myChart" width="400" height="400"></canvas>
+      <h3 class="text-center mt-5">Age of Patients vs FBS</h3>
+      <canvas id="scatterFBS" width="450" height="300"></canvas>
+      <h5 class="text-center xlabel">Age of Patients</h5>
+      <p class="caption-chart text-center">FBS 0 - Less or equal than 120 mg, FBS 1 - More than 120 mg</p>
 
     </div>
   </div>
@@ -275,7 +275,16 @@
           pointHoverRadius: 12
         }
       ],
-      options: {}
+      options: {
+        scales: {
+          yAxes: [{
+            scaleLabel: {
+              display: true,
+              labelString: 'probability'
+            }
+          }]
+        }
+      }
     }
   });
 
@@ -311,8 +320,16 @@
           pointHoverRadius: 12
         }
       ],
-      options: {}
-    }
+      options: {
+     
+          scales: {
+              y: {
+                  suggestedMin: 50,
+                  suggestedMax: 100
+              }
+        
+      }
+    }}
   });
 
   var healChest = {{ healthyChest }}
@@ -362,42 +379,42 @@
   });
 
 
-  var ctx = document.getElementById("myChart").getContext("2d");
-
   var healFBS = {{ healthyFBS }}
   var cardioFBS = {{ cardioFBS }}
-  var data = {
-    labels: [
-      "FBS - 0", "FBS - 1"
-    ],
-    datasets: [
-      {
-        label: "Healthy",
-        backgroundColor: "green",
-        data: healFBS
-      }, {
-        label: "Cardio",
-        backgroundColor: "red",
-        data: cardioFBS
-      }
-    ]
-  };
 
-  var myBarChart = new Chart(ctx, {
-    type: 'bar',
-    data: data,
-    options: {
-      barValueSpacing: 20,
-      scales: {
-        yAxes: [
-          {
-            ticks: {
-              min: 0
-            }
-          }
-        ]
+  let healthy5 = healAge.map((v, i) => ({ x: v, y: healFBS[i] }))
+  let cardio5 = cardioAge.map((v, i) => ({ x: v, y: cardioFBS[i] }))
+
+  let patientY5 = [{{ fbs }}]
+  let patient5 = patientX.map((v, i) => ({ x: v, y: patientY5[i] }))
+  var ctx2 = document.getElementById("scatterFBS").getContext("2d");
+  var scatterChart = new Chart(ctx2, {
+    type: 'scatter',
+    data: {
+      datasets: [
+        {
+          label: 'Healthy',
+          pointBackgroundColor: "rgb(0, 255, 0, 0.3)",
+          borderColor: "rgb(0, 255, 0)",
+          data: healthy5
+        }, {
+          label: 'Cardio',
+          pointBackgroundColor: "rgb(255, 0, 0, 0.3)",
+          borderColor: "rgb(255, 0, 0)",
+          data: cardio5
+        }, {
+          label: 'Patient',
+          pointBackgroundColor: "rgb(0, 0, 255)",
+          borderColor: "rgb(0, 0, 255)",
+          data: patient5,
+          pointRadius: 10,
+          pointHoverRadius: 12
+        }
+      ],
+      options: {
       }
     }
   });
+
 </script>
 {% endblock %}

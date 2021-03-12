@@ -143,17 +143,20 @@ def report():
     healthyChest = getVar("chest pain type", 0)
     cardioChest = getVar("chest pain type", 1)
 
+    healthyFBS = getVar("fasting blood sugar", 0)
+    cardioFBS = getVar("fasting blood sugar", 1)
+
 #   Count of healthy that have fbs value 0.
-    countHealFBS_0 = countVar("fasting blood sugar",0,0)
-    countHealFBS_1 = countVar("fasting blood sugar",0,1)
+    # countHealFBS_0 = countVar("fasting blood sugar",0,0)
+    # countHealFBS_1 = countVar("fasting blood sugar",0,1)
 
-    countCardioFBS_0 = countVar("fasting blood sugar",1,0)
-    countCardioFBS_1 = countVar("fasting blood sugar",1,1)
+    # countCardioFBS_0 = countVar("fasting blood sugar",1,0)
+    # countCardioFBS_1 = countVar("fasting blood sugar",1,1)
 
-    healthyFBS = [countHealFBS_0, countHealFBS_1]
-    cardioFBS = [countCardioFBS_0, countCardioFBS_1]
+    # healthyFBS = [countHealFBS_0, countHealFBS_1]
+    # cardioFBS = [countCardioFBS_0, countCardioFBS_1]
 
-    return render_template('report.html', pred = pred, neg = neg, exp = exp, pos = pos, pid = pid, data = data, graphOne = graphOne, healthyChol = healthyChol, healthyAge = healthyAge, cardioChol = cardioChol, cardioAge = cardioAge, rbp = diagnosisData.val()['bps'] , age = patient.val()['age'], chol = diagnosisData.val()['chol'], maxHeart = diagnosisData.val()['maxheart'], chest = diagnosisData.val()['chest'], fbs = diagnosisData.val()['fbs'], healthyAvg = healthyAvg, cardioAvg = cardioAvg, healthySecAvg = healthySecAvg, cardioSecAvg = cardioSecAvg, graphTwo = graphTwo, healthyRBP = healthyRBP, cardioRBP = cardioRBP, healthyHeart = healthyHeart, cardioHeart = cardioHeart, healthyChest = healthyChest, cardioChest = cardioChest, countHealFBS_0 = countHealFBS_0, countHealFBS_1 = countHealFBS_1, countCardioFBS_0 = countCardioFBS_0, countCardioFBS_1 = countCardioFBS_1, healthyFBS = healthyFBS, cardioFBS = cardioFBS)
+    return render_template('report.html', pred = pred, neg = neg, exp = exp, pos = pos, pid = pid, data = data, graphOne = graphOne, healthyChol = healthyChol, healthyAge = healthyAge, cardioChol = cardioChol, cardioAge = cardioAge, rbp = diagnosisData.val()['bps'] , age = patient.val()['age'], chol = diagnosisData.val()['chol'], maxHeart = diagnosisData.val()['maxheart'], chest = diagnosisData.val()['chest'], fbs = diagnosisData.val()['fbs'], healthyAvg = healthyAvg, cardioAvg = cardioAvg, healthySecAvg = healthySecAvg, cardioSecAvg = cardioSecAvg, graphTwo = graphTwo, healthyRBP = healthyRBP, cardioRBP = cardioRBP, healthyHeart = healthyHeart, cardioHeart = cardioHeart, healthyChest = healthyChest, cardioChest = cardioChest, healthyFBS = healthyFBS, cardioFBS = cardioFBS )
 
 
 # Get patients of user.
