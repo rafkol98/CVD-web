@@ -95,10 +95,9 @@
 
   <div class="row">
     <div class="col-md-6">
-      <h3 class="text-center mt-5">Age of Patients vs FBS</h3>
-      <canvas id="scatterFBS" width="450" height="300"></canvas>
-      <h5 class="text-center xlabel">Age of Patients</h5>
-      <p class="caption-chart text-center">FBS 0 - Less or equal than 120 mg, FBS 1 - More than 120 mg</p>
+      <h3 class="text-center mt-5">Healthy/Cardio FBS vs NO FBS</h3>
+      <p><span class="caption-H-FBS">Healthy - No FBS</span><span class="caption-H-NO-FBS">Healthy - FBS</span><span class="caption-C-NO-FBS">Cardio - No FBS</span><span class="caption-C-FBS">Cardio - FBS</span></p>
+      <canvas id="myChart" width="400" height="300"></canvas>
 
     </div>
   </div>
@@ -379,42 +378,42 @@
   });
 
 
+  var ctx = document.getElementById("myChart").getContext("2d");
+
   var healFBS = {{ healthyFBS }}
   var cardioFBS = {{ cardioFBS }}
+  var data = {
+   
+    datasets: [
+      {
+        backgroundColor: ["rgb(100, 255, 100)","rgb(0, 21, 255)"],
+        data: healFBS,
+        label: 'Healthy',
+        labels: ['Healthy - No FBS ', 'Healthy - FBS']
+      }, {
+        backgroundColor: ["rgb(250, 150, 150, 1)","rgb(255, 0, 0, 1)"],
+        data: cardioFBS,
+        label: 'Cardio',
+        labels: ['Cardio - No FBS ', 'Cardio - FBS']
+      }
+    ],
 
-  let healthy5 = healAge.map((v, i) => ({ x: v, y: healFBS[i] }))
-  let cardio5 = cardioAge.map((v, i) => ({ x: v, y: cardioFBS[i] }))
+  };
 
-  let patientY5 = [{{ fbs }}]
-  let patient5 = patientX.map((v, i) => ({ x: v, y: patientY5[i] }))
-  var ctx2 = document.getElementById("scatterFBS").getContext("2d");
-  var scatterChart = new Chart(ctx2, {
-    type: 'scatter',
-    data: {
-      datasets: [
-        {
-          label: 'Healthy',
-          pointBackgroundColor: "rgb(0, 255, 0, 0.3)",
-          borderColor: "rgb(0, 255, 0)",
-          data: healthy5
-        }, {
-          label: 'Cardio',
-          pointBackgroundColor: "rgb(255, 0, 0, 0.3)",
-          borderColor: "rgb(255, 0, 0)",
-          data: cardio5
-        }, {
-          label: 'Patient',
-          pointBackgroundColor: "rgb(0, 0, 255)",
-          borderColor: "rgb(0, 0, 255)",
-          data: patient5,
-          pointRadius: 10,
-          pointHoverRadius: 12
+  var myBarChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: data,
+    options: {
+      tooltips: {
+        callbacks: {
+          label: function(tooltipItem, data) {
+            var dataset = data.datasets[tooltipItem.datasetIndex];
+            var index = tooltipItem.index;
+            return dataset.labels[index] + ": " + dataset.data[index];
+          }
         }
-      ],
-      options: {
       }
     }
   });
-
 </script>
 {% endblock %}
