@@ -61,6 +61,7 @@
 
   <div class="html2pdf__page-break"></div>
 
+  <h4 class="text-center">Cholestrol</h4>
   <div class="row">
     <div class="col-md-6">
       <h3 class="text-center mt-5">Age of Patients vs Cholestrol</h3>
@@ -69,11 +70,13 @@
     </div>
 
     <div class="col-md-6">
+      <h3>{{numMoreHealthyChol}}, {{numMoreCardioChol}}</h3>
       <h3 class="text-center mt-5">Age of Patients vs RBP</h3>
-      <canvas id="scatterRBP" width="450" height="300"></canvas>
-      <h5 class="text-center xlabel">Age of Patients</h5>
+    <canvas id="scatterRBP" width="450" height="300"></canvas>
+    <h5 class="text-center xlabel">Age of Patients</h5>
     </div>
   </div>
+
 
   <div class="html2pdf__page-break"></div>
 
@@ -96,12 +99,39 @@
   <div class="row">
     <div class="col-md-6">
       <h3 class="text-center mt-5">Healthy/Cardio FBS vs NO FBS</h3>
-      <p><span class="caption-H-FBS">Healthy - No FBS</span><span class="caption-H-NO-FBS">Healthy - FBS</span><span class="caption-C-NO-FBS">Cardio - No FBS</span><span class="caption-C-FBS">Cardio - FBS</span></p>
-      <canvas id="myChart" width="400" height="300"></canvas>
+      <p class="text-center"><span class="caption-H-NO-FBS">Healthy - FBS <= 120 mg/dl</span><span class="caption-H-FBS">Healthy - FBS > 120 mg/dl</span><br><br><span class="caption-C-NO-FBS">Cardio - FBS <= 120 mg/dl</span><span class="caption-C-FBS">Cardio - FBS > 120 mg/dl</span></p>
+      <canvas id="myChart" width="400" height="250"></canvas>
+    </div>
 
+    <div class="col-md-6">
+      <h3 class="text-center mt-5">Age of Patients vs Oldpeak</h3>
+      <canvas id="scatterOldpeak" width="450" height="300"></canvas>
+      <h5 class="text-center xlabel">Age of Patients</h5>
     </div>
   </div>
 
+  <div class="row">
+    <div class="col-md-6">
+      <h3 class="text-center mt-5">Healthy/Cardio Exercise Angina</h3>
+      <p class="text-center"><span class="caption-H-NO-FBS">Healthy - NO Ex.Angina</span><span class="caption-H-FBS">Healthy - Ex. Angina</span><br><br><span class="caption-C-NO-FBS">Cardio - NO Ex.Angina</span><span class="caption-C-FBS">Cardio - Ex.Angina</span></p>
+      <canvas id="exangChart" width="400" height="250"></canvas>
+    </div>
+
+    <div class="col-md-6">
+      <h3 class="text-center mt-5">Age of Patients vs ST Slope</h3>
+      <canvas id="scatterStSlope" width="450" height="300"></canvas>
+      <h5 class="text-center xlabel">Age of Patients</h5>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6">
+      <h3 class="text-center mt-5">Age of Patients vs ECG</h3>
+      <canvas id="scatterECG" width="450" height="300"></canvas>
+      <h5 class="text-center xlabel">Age of Patients</h5>
+    </div>
+
+  </div>
 </div>
 
 
@@ -386,7 +416,7 @@
    
     datasets: [
       {
-        backgroundColor: ["rgb(100, 255, 100)","rgb(0, 21, 255)"],
+        backgroundColor: ["rgb(100, 255, 100)","rgb(50, 130, 255)"],
         data: healFBS,
         label: 'Healthy',
         labels: ['Healthy - No FBS ', 'Healthy - FBS']
@@ -415,5 +445,185 @@
       }
     }
   });
+
+
+  var healOldpeak = {{ healthyOldpeak }}
+  var cardioOldpeak = {{ cardioOldpeak }}
+
+  let healthy5 = healAge.map((v, i) => ({ x: v, y: healOldpeak[i] }))
+  let cardio5 = cardioAge.map((v, i) => ({ x: v, y: cardioOldpeak[i] }))
+
+  let patientY5 = [{{ oldpeak }}]
+  let patient5 = patientX.map((v, i) => ({ x: v, y: patientY5[i] }))
+  var ctx2 = document.getElementById("scatterOldpeak").getContext("2d");
+  var scatterChart = new Chart(ctx2, {
+    type: 'scatter',
+    data: {
+      datasets: [
+        {
+          label: 'Healthy',
+          pointBackgroundColor: "rgb(0, 255, 0, 0.3)",
+          borderColor: "rgb(0, 255, 0)",
+          data: healthy5
+        }, {
+          label: 'Cardio',
+          pointBackgroundColor: "rgb(255, 0, 0, 0.3)",
+          borderColor: "rgb(255, 0, 0)",
+          data: cardio5
+        }, {
+          label: 'Patient',
+          pointBackgroundColor: "rgb(0, 0, 255)",
+          borderColor: "rgb(0, 0, 255)",
+          data: patient5,
+          pointRadius: 10,
+          pointHoverRadius: 12
+        }
+      ],
+      options: {
+        yAxes: [
+          {
+            ticks: {
+              min: 1, // 18.1 * 8
+              max: 4, // 18.1 * 13
+              stepSize: 1
+            }
+          }
+        ]
+      }
+    }
+  });
+
+
+  var ctxExang = document.getElementById("exangChart").getContext("2d");
+
+  var healExang = {{ healthyExang }}
+  var cardioExang = {{ cardioExang }}
+  var data = {
+   
+    datasets: [
+      {
+        backgroundColor: ["rgb(100, 255, 100)","rgb(50, 130, 255)"],
+        data: healExang,
+        label: 'Healthy',
+        labels: ['Healthy - No Ex. Angina ', 'Healthy - Ex. Angina']
+      }, {
+        backgroundColor: ["rgb(250, 150, 150, 1)","rgb(255, 0, 0, 1)"],
+        data: cardioExang,
+        label: 'Cardio',
+        labels: ['Cardio - No Ex. Angina ', 'Cardio - Ex. Angina']
+      }
+    ],
+
+  };
+
+  var myBarChart = new Chart(ctxExang, {
+    type: 'doughnut',
+    data: data,
+    options: {
+      tooltips: {
+        callbacks: {
+          label: function(tooltipItem, data) {
+            var dataset = data.datasets[tooltipItem.datasetIndex];
+            var index = tooltipItem.index;
+            return dataset.labels[index] + ": " + dataset.data[index];
+          }
+        }
+      }
+    }
+  });
+
+
+  var healStSlope = {{ healthyStSlope }}
+  var cardioStSlope = {{ cardioStSlope }}
+
+  let healthy6 = healAge.map((v, i) => ({ x: v, y: healStSlope[i] }))
+  let cardio6 = cardioAge.map((v, i) => ({ x: v, y: cardioStSlope[i] }))
+
+  let patientY6 = [{{ stslope }}]
+  let patient6 = patientX.map((v, i) => ({ x: v, y: patientY6[i] }))
+  var ctx2 = document.getElementById("scatterStSlope").getContext("2d");
+  var scatterChart = new Chart(ctx2, {
+    type: 'scatter',
+    data: {
+      datasets: [
+        {
+          label: 'Healthy',
+          pointBackgroundColor: "rgb(0, 255, 0, 0.3)",
+          borderColor: "rgb(0, 255, 0)",
+          data: healthy6
+        }, {
+          label: 'Cardio',
+          pointBackgroundColor: "rgb(255, 0, 0, 0.3)",
+          borderColor: "rgb(255, 0, 0)",
+          data: cardio6
+        }, {
+          label: 'Patient',
+          pointBackgroundColor: "rgb(0, 0, 255)",
+          borderColor: "rgb(0, 0, 255)",
+          data: patient6,
+          pointRadius: 10,
+          pointHoverRadius: 12
+        }
+      ],
+      options: {
+        yAxes: [
+          {
+            ticks: {
+              min: 1, // 18.1 * 8
+              max: 4, // 18.1 * 13
+              stepSize: 1
+            }
+          }
+        ]
+      }
+    }
+  });
+
+  var healECG = {{ healthyECG }}
+  var cardioECG = {{ cardioECG }}
+
+  let healthy7 = healAge.map((v, i) => ({ x: v, y: healECG[i] }))
+  let cardio7 = cardioAge.map((v, i) => ({ x: v, y: cardioECG[i] }))
+
+  let patientY7 = [{{ ecg }}]
+  let patient7 = patientX.map((v, i) => ({ x: v, y: patientY7[i] }))
+  var ctx2 = document.getElementById("scatterECG").getContext("2d");
+  var scatterChart = new Chart(ctx2, {
+    type: 'scatter',
+    data: {
+      datasets: [
+        {
+          label: 'Healthy',
+          pointBackgroundColor: "rgb(0, 255, 0, 0.3)",
+          borderColor: "rgb(0, 255, 0)",
+          data: healthy7
+        }, {
+          label: 'Cardio',
+          pointBackgroundColor: "rgb(255, 0, 0, 0.3)",
+          borderColor: "rgb(255, 0, 0)",
+          data: cardio7
+        }, {
+          label: 'Patient',
+          pointBackgroundColor: "rgb(0, 0, 255)",
+          borderColor: "rgb(0, 0, 255)",
+          data: patient7,
+          pointRadius: 10,
+          pointHoverRadius: 12
+        }
+      ],
+      options: {
+        yAxes: [
+          {
+            ticks: {
+              min: 1, // 18.1 * 8
+              max: 4, // 18.1 * 13
+              stepSize: 1
+            }
+          }
+        ]
+      }
+    }
+  });
+
 </script>
 {% endblock %}

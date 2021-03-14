@@ -14,6 +14,12 @@ def countVar(variable, pred, value):
     x = list(np.array(data[variable]))
     return x.count(value)
 
+# Get number of patients that have a value higher than the patient's value for the variable passed in.
+def getNumberPatientsMore(variable, patient_value, condition):
+    data = df[df["target"] == condition]
+    x = list(np.array(data[variable]))
+    return sum(i > int(patient_value) for i in x)
+
 # Get average for all values in the dataset.
 def firstGraph(pred):
     data = df[df["target"] == pred]
