@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify, after_this_request
 import lime
 import pdfkit
-from dataset import firstGraph, secondGraph, getVar, countVar, getNumberPatientsMore
+from dataset import firstGraph, secondGraph, getVar, countVar, getNumberPatientsMore, getNumberPatientsLess
 from lime import lime_tabular
 import pickle
 import datetime
@@ -139,9 +139,33 @@ def report():
     
     # Get number of healthy patients more than patient's value.
     numMoreHealthyChol = getNumberPatientsMore("cholesterol", diagnosisData.val()['chol'], 0)
+    numLessHealthyChol = getNumberPatientsLess("cholesterol", diagnosisData.val()['chol'], 0)
+    healthyCholMoreLess = [numLessHealthyChol, numMoreHealthyChol]
+
     # Get number of cardio patients more than patient's value.
     numMoreCardioChol = getNumberPatientsMore("cholesterol", diagnosisData.val()['chol'], 1)
+    numLessCardioChol = getNumberPatientsLess("cholesterol", diagnosisData.val()['chol'], 1)
+    cardioCholMoreLess = [numLessCardioChol, numMoreCardioChol]
 
+    # Get number of healthy patients more than patient's value.
+    numMoreHealthyRBP = getNumberPatientsMore("resting bp s", diagnosisData.val()['bps'], 0)
+    numLessHealthyRBP = getNumberPatientsLess("resting bp s", diagnosisData.val()['bps'], 0)
+    healthyRBPMoreLess = [numLessHealthyRBP, numMoreHealthyRBP]
+
+    # Get number of cardio patients more than patient's value.
+    numMoreCardioRBP = getNumberPatientsMore("resting bp s", diagnosisData.val()['bps'], 1)
+    numLessCardioRBP = getNumberPatientsLess("resting bp s", diagnosisData.val()['bps'], 1)
+    cardioRBPMoreLess = [numLessCardioRBP, numMoreCardioRBP]
+
+    # Get number of healthy patients more than patient's value.
+    numMoreHealthyMaxHeart = getNumberPatientsMore("max heart rate", diagnosisData.val()['maxheart'], 0)
+    numLessHealthyMaxHeart = getNumberPatientsLess("max heart rate", diagnosisData.val()['maxheart'], 0)
+    healthyMaxHeartMoreLess = [numLessHealthyMaxHeart, numMoreHealthyMaxHeart]
+
+    # Get number of cardio patients more than patient's value.
+    numMoreCardioMaxHeart = getNumberPatientsMore("max heart rate", diagnosisData.val()['maxheart'], 1)
+    numLessCardioMaxHeart = getNumberPatientsLess("max heart rate", diagnosisData.val()['maxheart'], 1)
+    cardioMaxHeartMoreLess = [numLessCardioMaxHeart, numMoreCardioMaxHeart]
 
     healthyRBP = getVar("resting bp s", 0)
     cardioRBP = getVar("resting bp s", 1)
@@ -175,7 +199,7 @@ def report():
     healthyExang = [countVar("exercise angina",0,0), countVar("exercise angina",0,1)]
     cardioExang = [countVar("exercise angina",1,0), countVar("exercise angina",1,1)]
 
-    return render_template('report.html', pred = pred, neg = neg, exp = exp, pos = pos, pid = pid, data = data, graphOne = graphOne, healthyChol = healthyChol, healthyAge = healthyAge, cardioChol = cardioChol, cardioAge = cardioAge, rbp = diagnosisData.val()['bps'], sex = patient.val()['gender'], age = patient.val()['age'], chol = diagnosisData.val()['chol'], maxHeart = diagnosisData.val()['maxheart'], chest = diagnosisData.val()['chest'], fbs = diagnosisData.val()['fbs'], oldpeak = diagnosisData.val()['oldpeak'], exang = diagnosisData.val()['exang'], stslope = diagnosisData.val()['stslope'], ecg = diagnosisData.val()['ecg'], healthyAvg = healthyAvg, cardioAvg = cardioAvg, healthySecAvg = healthySecAvg, cardioSecAvg = cardioSecAvg, graphTwo = graphTwo, healthyRBP = healthyRBP, cardioRBP = cardioRBP, healthyHeart = healthyHeart, cardioHeart = cardioHeart, healthyChest = healthyChest, cardioChest = cardioChest, countHealFBS_0 = countHealFBS_0, countHealFBS_1 = countHealFBS_1, countCardioFBS_0 = countCardioFBS_0, countCardioFBS_1 = countCardioFBS_1, healthyFBS = healthyFBS, cardioFBS = cardioFBS, healthyOldpeak = healthyOldpeak, cardioOldpeak = cardioOldpeak, healthyExang = healthyExang, cardioExang = cardioExang, healthyStSlope = healthyStSlope, cardioStSlope = cardioStSlope, healthyECG = healthyECG, cardioECG = cardioECG, healthyGender = healthyGender, cardioGender = cardioGender, numMoreHealthyChol = numMoreHealthyChol, numMoreCardioChol = numMoreCardioChol)
+    return render_template('report.html', pred = pred, neg = neg, exp = exp, pos = pos, pid = pid, data = data, graphOne = graphOne, healthyChol = healthyChol, healthyAge = healthyAge, cardioChol = cardioChol, cardioAge = cardioAge, rbp = diagnosisData.val()['bps'], sex = patient.val()['gender'], age = patient.val()['age'], chol = diagnosisData.val()['chol'], maxHeart = diagnosisData.val()['maxheart'], chest = diagnosisData.val()['chest'], fbs = diagnosisData.val()['fbs'], oldpeak = diagnosisData.val()['oldpeak'], exang = diagnosisData.val()['exang'], stslope = diagnosisData.val()['stslope'], ecg = diagnosisData.val()['ecg'], healthyAvg = healthyAvg, cardioAvg = cardioAvg, healthySecAvg = healthySecAvg, cardioSecAvg = cardioSecAvg, graphTwo = graphTwo, healthyRBP = healthyRBP, cardioRBP = cardioRBP, healthyHeart = healthyHeart, cardioHeart = cardioHeart, healthyChest = healthyChest, cardioChest = cardioChest, countHealFBS_0 = countHealFBS_0, countHealFBS_1 = countHealFBS_1, countCardioFBS_0 = countCardioFBS_0, countCardioFBS_1 = countCardioFBS_1, healthyFBS = healthyFBS, cardioFBS = cardioFBS, healthyOldpeak = healthyOldpeak, cardioOldpeak = cardioOldpeak, healthyExang = healthyExang, cardioExang = cardioExang, healthyStSlope = healthyStSlope, cardioStSlope = cardioStSlope, healthyECG = healthyECG, cardioECG = cardioECG, healthyGender = healthyGender, cardioGender = cardioGender, healthyCholMoreLess = healthyCholMoreLess, cardioCholMoreLess = cardioCholMoreLess, healthyRBPMoreLess = healthyRBPMoreLess, cardioRBPMoreLess = cardioRBPMoreLess, healthyMaxHeartMoreLess = healthyMaxHeartMoreLess, cardioMaxHeartMoreLess = cardioMaxHeartMoreLess)
 
 
 # Get patients of user.
