@@ -33,6 +33,9 @@ app = Flask(__name__)
 model = pickle.load(open('cvd-model.pkl','rb'))
 with open("explainer.pkl", 'rb') as f: exp_load = dill.load(f)
 
+def getLastId(list):
+    return list[-1]
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -199,7 +202,7 @@ def report():
     healthyExang = [countVar("exercise angina",0,0), countVar("exercise angina",0,1)]
     cardioExang = [countVar("exercise angina",1,0), countVar("exercise angina",1,1)]
 
-    return render_template('report.html', pred = pred, neg = neg, exp = exp, pos = pos, pid = pid, data = data, graphOne = graphOne, healthyChol = healthyChol, healthyAge = healthyAge, cardioChol = cardioChol, cardioAge = cardioAge, rbp = diagnosisData.val()['bps'], sex = patient.val()['gender'], age = patient.val()['age'], chol = diagnosisData.val()['chol'], maxHeart = diagnosisData.val()['maxheart'], chest = diagnosisData.val()['chest'], fbs = diagnosisData.val()['fbs'], oldpeak = diagnosisData.val()['oldpeak'], exang = diagnosisData.val()['exang'], stslope = diagnosisData.val()['stslope'], ecg = diagnosisData.val()['ecg'], healthyAvg = healthyAvg, cardioAvg = cardioAvg, healthySecAvg = healthySecAvg, cardioSecAvg = cardioSecAvg, graphTwo = graphTwo, healthyRBP = healthyRBP, cardioRBP = cardioRBP, healthyHeart = healthyHeart, cardioHeart = cardioHeart, healthyChest = healthyChest, cardioChest = cardioChest, countHealFBS_0 = countHealFBS_0, countHealFBS_1 = countHealFBS_1, countCardioFBS_0 = countCardioFBS_0, countCardioFBS_1 = countCardioFBS_1, healthyFBS = healthyFBS, cardioFBS = cardioFBS, healthyOldpeak = healthyOldpeak, cardioOldpeak = cardioOldpeak, healthyExang = healthyExang, cardioExang = cardioExang, healthyStSlope = healthyStSlope, cardioStSlope = cardioStSlope, healthyECG = healthyECG, cardioECG = cardioECG, healthyGender = healthyGender, cardioGender = cardioGender, healthyCholMoreLess = healthyCholMoreLess, cardioCholMoreLess = cardioCholMoreLess, healthyRBPMoreLess = healthyRBPMoreLess, cardioRBPMoreLess = cardioRBPMoreLess, healthyMaxHeartMoreLess = healthyMaxHeartMoreLess, cardioMaxHeartMoreLess = cardioMaxHeartMoreLess)
+    return render_template('report.html', pred = pred, neg = neg, exp = exp, pos = pos, uid = uid, pid = pid, data = data, graphOne = graphOne, healthyChol = healthyChol, healthyAge = healthyAge, cardioChol = cardioChol, cardioAge = cardioAge, rbp = diagnosisData.val()['bps'], sex = patient.val()['gender'], age = patient.val()['age'], chol = diagnosisData.val()['chol'], maxHeart = diagnosisData.val()['maxheart'], chest = diagnosisData.val()['chest'], fbs = diagnosisData.val()['fbs'], oldpeak = diagnosisData.val()['oldpeak'], exang = diagnosisData.val()['exang'], stslope = diagnosisData.val()['stslope'], ecg = diagnosisData.val()['ecg'], healthyAvg = healthyAvg, cardioAvg = cardioAvg, healthySecAvg = healthySecAvg, cardioSecAvg = cardioSecAvg, graphTwo = graphTwo, healthyRBP = healthyRBP, cardioRBP = cardioRBP, healthyHeart = healthyHeart, cardioHeart = cardioHeart, healthyChest = healthyChest, cardioChest = cardioChest, countHealFBS_0 = countHealFBS_0, countHealFBS_1 = countHealFBS_1, countCardioFBS_0 = countCardioFBS_0, countCardioFBS_1 = countCardioFBS_1, healthyFBS = healthyFBS, cardioFBS = cardioFBS, healthyOldpeak = healthyOldpeak, cardioOldpeak = cardioOldpeak, healthyExang = healthyExang, cardioExang = cardioExang, healthyStSlope = healthyStSlope, cardioStSlope = cardioStSlope, healthyECG = healthyECG, cardioECG = cardioECG, healthyGender = healthyGender, cardioGender = cardioGender, healthyCholMoreLess = healthyCholMoreLess, cardioCholMoreLess = cardioCholMoreLess, healthyRBPMoreLess = healthyRBPMoreLess, cardioRBPMoreLess = cardioRBPMoreLess, healthyMaxHeartMoreLess = healthyMaxHeartMoreLess, cardioMaxHeartMoreLess = cardioMaxHeartMoreLess)
 
 
 # Get patients of user.
@@ -214,6 +217,29 @@ def getPatients():
     patients = db.child(uid).child("Patients").get().val()
 
     return jsonify(patients)
+
+
+# POST input box.
+@app.route('/report/comments', methods=['POST'])
+def report_comments():
+    # comment = request.form['comment']
+    uid = request.args.get('uid')
+    pid = request.args.get('pid')
+
+    comments = request.form['comments']
+    # db.child(uid).child("Patients").child(pid).child("current").update({"comments":comments})
+
+    listHistory = []
+    snapshot = db.child(uid).child("Patients").child(pid).child("history").get().val()
+    for key in snapshot:
+        listHistory.append(key)
+    
+    smallest = getLastId(listHistory)
+    db.child(uid).child("Patients").child(pid).child("current").update({"comments":comments})
+    db.child(uid).child("Patients").child(pid).child("history").child(smallest).update({"comments":comments})
+    
+    return ('', 204)
+
 
 
 # Get a patient's info.
