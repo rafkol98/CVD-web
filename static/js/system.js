@@ -83,6 +83,7 @@ function getPatients() {
   });
 }
 
+// Get info of patient.
 function info(userId, pid) {
   const url = `/patients/info?uid=${userId}&pid=${pid}`
   fetch(url)
@@ -96,6 +97,7 @@ function info(userId, pid) {
     });
 }
 
+// Get history of patient.
 function getHistory(userId, pid) {
   const url = `/patients/history?uid=${userId}&pid=${pid}`
   fetch(url)
@@ -135,6 +137,7 @@ function getHistory(userId, pid) {
     });
 }
 
+// Get specific history for info.
 function infoSpecificHistory(userId,pid,key) {
   console.log(userId+"  "+pid+"  "+key);
   const url = `/patients/history/specific?uid=${userId}&pid=${pid}&key=${key}`
@@ -147,6 +150,6 @@ function infoSpecificHistory(userId,pid,key) {
       hist_spec = document.getElementById("hist_spec");
       hist_spec.innerHTML = '';
     
-      hist_spec.innerHTML +=  `<div class="text-center"><h5>Bps:${history.bps}</h5><br><h5>Chest: ${history.chest}</h5><br><h5>Cholestrol: ${history.chol}</h5><br><h5>Electro Cardiogram: ${history.ecg}</h5><br><h5>Exang: ${history.exang}</h5><br><h5>Fasting Blood Sugar: ${history.fbs}</h5><br><h5>Max Heart Rate Achieved: ${history.maxheart}</h5><br><h5>Oldpeak: ${history.oldpeak}</h5><br><h5>St Slope: ${history.stslope}</h5><br> <div class="bg-outcome"><h4 class="text-center">Cardio: ${history.cardio}</h4></div> </div>`    
+      hist_spec.innerHTML +=  `<div class="text-center"><h5>Bps:${history.bps}</h5><br><h5>Chest: ${history.chest}</h5><br><h5>Cholestrol: ${history.chol}</h5><br><h5>Electro Cardiogram: ${history.ecg}</h5><br><h5>Exang: ${history.exang}</h5><br><h5>Fasting Blood Sugar: ${history.fbs}</h5><br><h5>Max Heart Rate Achieved: ${history.maxheart}</h5><br><h5>Oldpeak: ${history.oldpeak}</h5><br><h5>St Slope: ${history.stslope}</h5><br> <div class="bg-outcome"><h6 class="text-left">${history.comments}</h6></div> </div>`    
     });
   }
