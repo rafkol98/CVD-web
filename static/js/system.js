@@ -147,7 +147,7 @@ function getHistory(userId, pid) {
                 `<tr><td> ${date}` +
                 "</td>"+"<td>" +
                 `<h5><span class="badge badge-${badge}">${condition}</span></h5>` +
-                `</td> <td><a href="javascript:infoSpecificHistory('${history[key]}','${userId}','${key}');"><i class="fas fa-info-circle"></i> View Details</a></td>  <td><a href=""><i class="fas fa-download"></i> PDF</a></td> </tr>`;
+                `</td> <td><a href="javascript:infoSpecificHistory('${userId}','${pid}','${key}');"><i class="fas fa-eye"></i> View</a></td>  <td><a href=""><i class="fas fa-download"></i> PDF</a></td> </tr>`;
         }
 
       } else {
@@ -157,10 +157,18 @@ function getHistory(userId, pid) {
     });
 }
 
-function infoSpecificHistory(history,userId, pid) {
-  $("#specificModal").modal('show');
-  console.log(history);
-  hist_spec = document.getElementById("hist_spec");
-
-  hist_spec.innerHTML +=  `<h6>Bps:${history.bps}</h6><br><h6>Chest: ${history.chest}</h6><br><h6>Cholestrol: ${history.chol}</h6><br><h6>Electro Cardiogram: ${history.ecg}</h6><br><h6>Exang: ${history.exang}</h6><br><h6>Fasting Blood Sugar: ${history.fbs}</h6><br><h6>Max Heart Rate Achieved: ${history.maxheart}</h6><br><h6>Oldpeak: ${history.oldpeak}</h6><br><h6>St Slope: ${history.stslope}</h6><br><h4 class="text-center">Cardio: ${history.cardio}</h4>`
-}
+function infoSpecificHistory(userId,pid,key) {
+  console.log(userId+"  "+pid+"  "+key);
+  const url = `/patients/history/specific?uid=${userId}&pid=${pid}&key=${key}`
+  fetch(url)
+    .then(response => response.json())
+    .then(history => {
+      console.log(history);
+      $("#specificModal").modal('show');
+      
+      hist_spec = document.getElementById("hist_spec");
+      hist_spec.innerHTML = '';
+    
+      hist_spec.innerHTML +=  `<div class="text-center"><h5>Bps:${history.bps}</h5><br><h5>Chest: ${history.chest}</h5><br><h5>Cholestrol: ${history.chol}</h5><br><h5>Electro Cardiogram: ${history.ecg}</h5><br><h5>Exang: ${history.exang}</h5><br><h5>Fasting Blood Sugar: ${history.fbs}</h5><br><h5>Max Heart Rate Achieved: ${history.maxheart}</h5><br><h5>Oldpeak: ${history.oldpeak}</h5><br><h5>St Slope: ${history.stslope}</h5><br> <div class="bg-outcome"><h4 class="text-center">Cardio: ${history.cardio}</h4></div> </div>`    
+    });
+  }

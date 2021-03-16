@@ -267,6 +267,20 @@ def history():
 
     return render_template('history.html', history = history, uid = uid, pid = pid, patient = patient)
 
+# Get specific history.
+@app.route('/patients/history/specific')
+def history_specific():
+    @after_this_request
+    def add_header(response):
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        return response
+    
+    uid = request.args.get('uid')
+    pid = request.args.get('pid')
+    key = request.args.get('key')
+
+    specific = db.child(uid).child("Patients").child(pid).child("history").child(key).get().val()
+    return jsonify(specific)
 
 
 # Get a patient's history.
