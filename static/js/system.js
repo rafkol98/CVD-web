@@ -89,34 +89,12 @@ function info(userId, pid) {
     .then(response => response.json())
     .then(json => {
         $("#infoModal").modal('show');
+        $("#info-pid").html(pid);
         $("#info-age").html(json.age);
         $("#info-gender").html(json.gender);
         $("#info-email").html(json.email);
     });
 }
-
-// function getHistory(userId, pid) {
-//   const url = `/patients/history?uid=${userId}&pid=${pid}`
-//   fetch(url)
-//     .then(response => response.json())
-//     .then(history => {
-
-//       if (history !== null) {
-//         $("#historyModal").modal('show');
-//         console.log(history);
-
-//         for (var key in history) {
-//           var date = new Date(key * 1000).toISOString().slice(0, 19).replace('T', ' ');
-//           console.log(key + " " + history[key].bps);
-//           document.getElementById("history-accord").innerHTML += `<div class="card"><div class="card-header" id="headingOne"><h2 class="mb-0"> <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapse${key}" aria-expanded="true" aria-controls="collapse${key}"> ${date} </button> </h2> </div> <div id="collapse${key}" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample"> <div class="card-body"> <h6>Bps:${history[key].bps}</h6><br><h6>Chest: ${history[key].chest}</h6><br><h6>Cholestrol: ${history[key].chol}</h6><br><h6>Electro Cardiogram: ${history[key].ecg}</h6><br><h6>Exang: ${history[key].exang}</h6><br><h6>Fasting Blood Sugar: ${history[key].fbs}</h6><br><h6>Max Heart Rate Achieved: ${history[key].maxheart}</h6><br><h6>Oldpeak: ${history[key].oldpeak}</h6><br><h6>St Slope: ${history[key].stslope}</h6><br><h4 class="text-center">Cardio: ${history[key].cardio}</h4>  </div></div></div>`
-//         }
-
-//       } else {
-//         alert("This patient does not have any medical history yet.")
-//       }
-
-//     });
-// }
 
 function getHistory(userId, pid) {
   const url = `/patients/history?uid=${userId}&pid=${pid}`

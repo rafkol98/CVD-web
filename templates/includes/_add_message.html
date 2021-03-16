@@ -1,0 +1,18 @@
+<div id="msg_com" class="alert alert-primary mt-3" >
+    Your comment was added!
+</div>
+
+<form id='form' action='/report/comments?uid={{uid}}&pid={{pid}}' class="p-1 mt-3 mb-3" method="POST">
+
+    <label for="comments">Comments:</label>
+    <textarea class="form-control" rows="5" id="comments" name="comments"></textarea>
+
+    <div class="button-right">
+        <button type="submit" id="btn-save-com" class="btn btn-primary mt-3 mb-3" onclick="$('#msg_com').show();"><i class="fas fa-comment"></i> Save Comments</button>
+    </div>
+</form>
+
+<script>
+    //Show message.
+    $('#msg_com').hide();
+</script>
