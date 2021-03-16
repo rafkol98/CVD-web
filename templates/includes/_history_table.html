@@ -1,0 +1,19 @@
+<div class="table-responsive">
+    <table class="table table-hover mt-3 text-center">
+      <thead>
+        <tr>
+          <th scope="col"><i class="fas fa-calendar-alt"></i> Date</th>
+          <th scope="col"><i class="fas fa-heartbeat"></i> Diagnosis Result</th>
+          <th scope="col"><i class="fas fa-info-circle"></i> View Details</th>
+          <th scope="col"><i class="fas fa-file-pdf"></i> PDF</th>
+        </tr>
+      </thead>
+      <tbody id="history_items_table">
+        
+      </tbody>
+    </table>
+  </div>
+  
+  <script>
+    getHistory({{uid| tojson}},{{pid| tojson}});
+  </script>

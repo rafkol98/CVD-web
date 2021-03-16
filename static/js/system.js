@@ -71,7 +71,8 @@ function getPatients() {
                 `<tr><td> <a href="/edit/?uid=${userId}&pid=${key}"><i class='fas fa-edit'></i></a>` +
                 "</td>"+"<td>" +
                 patients[key].name + " " + patients[key].lastName +
-                `</td> <td><a href="javascript:info('${userId}','${key}');"><i class="fas fa-info-circle"></i> Info</a></td>  <td><a href="javascript:getHistory('${userId}','${key}');"><i class="fas fa-file-medical-alt"></i> History</a></td> <td><h5><span class="badge badge-${badge}">${condition}</span></h5></td> <td><a href="/diagnose/?pid=${key}" class="btn btn-function"><i class="fas fa-heartbeat"></i> Diagnose</a></td> </tr>`;
+                `</td> <td><a href="javascript:info('${userId}','${key}');"><i class="fas fa-info-circle"></i> Info</a></td>  <td><a href="/history?uid=${userId}&pid=${key}");"><i class="fas fa-file-medical-alt"></i> History</a></td> <td><h5><span class="badge badge-${badge}">${condition}</span></h5></td> <td><a href="/diagnose/?pid=${key}" class="btn btn-function"><i class="fas fa-heartbeat"></i> Diagnose</a></td> </tr>`;
+                // `</td> <td><a href="javascript:info('${userId}','${key}');"><i class="fas fa-info-circle"></i> Info</a></td>  <td><a href="javascript:getHistory('${userId}','${key}');"><i class="fas fa-file-medical-alt"></i> History</a></td> <td><h5><span class="badge badge-${badge}">${condition}</span></h5></td> <td><a href="/diagnose/?pid=${key}" class="btn btn-function"><i class="fas fa-heartbeat"></i> Diagnose</a></td> </tr>`;
             }
     
           }
@@ -94,6 +95,29 @@ function info(userId, pid) {
     });
 }
 
+// function getHistory(userId, pid) {
+//   const url = `/patients/history?uid=${userId}&pid=${pid}`
+//   fetch(url)
+//     .then(response => response.json())
+//     .then(history => {
+
+//       if (history !== null) {
+//         $("#historyModal").modal('show');
+//         console.log(history);
+
+//         for (var key in history) {
+//           var date = new Date(key * 1000).toISOString().slice(0, 19).replace('T', ' ');
+//           console.log(key + " " + history[key].bps);
+//           document.getElementById("history-accord").innerHTML += `<div class="card"><div class="card-header" id="headingOne"><h2 class="mb-0"> <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapse${key}" aria-expanded="true" aria-controls="collapse${key}"> ${date} </button> </h2> </div> <div id="collapse${key}" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample"> <div class="card-body"> <h6>Bps:${history[key].bps}</h6><br><h6>Chest: ${history[key].chest}</h6><br><h6>Cholestrol: ${history[key].chol}</h6><br><h6>Electro Cardiogram: ${history[key].ecg}</h6><br><h6>Exang: ${history[key].exang}</h6><br><h6>Fasting Blood Sugar: ${history[key].fbs}</h6><br><h6>Max Heart Rate Achieved: ${history[key].maxheart}</h6><br><h6>Oldpeak: ${history[key].oldpeak}</h6><br><h6>St Slope: ${history[key].stslope}</h6><br><h4 class="text-center">Cardio: ${history[key].cardio}</h4>  </div></div></div>`
+//         }
+
+//       } else {
+//         alert("This patient does not have any medical history yet.")
+//       }
+
+//     });
+// }
+
 function getHistory(userId, pid) {
   const url = `/patients/history?uid=${userId}&pid=${pid}`
   fetch(url)
@@ -101,13 +125,29 @@ function getHistory(userId, pid) {
     .then(history => {
 
       if (history !== null) {
-        $("#historyModal").modal('show');
+        // $("#historyModal").modal('show');
         console.log(history);
+        items_table = document.getElementById("history_items_table");
 
         for (var key in history) {
+
+          var condition = history[key].cardio;
+          var badge;
+
+          if (condition == 1) {
+            condition = "Cardio";
+            badge = "danger";
+          } else {
+            condition = "Healthy";
+            badge = "success";
+          }
+
           var date = new Date(key * 1000).toISOString().slice(0, 19).replace('T', ' ');
-          console.log(key + " " + history[key].bps);
-          document.getElementById("history-accord").innerHTML += `<div class="card"><div class="card-header" id="headingOne"><h2 class="mb-0"> <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapse${key}" aria-expanded="true" aria-controls="collapse${key}"> ${date} </button> </h2> </div> <div id="collapse${key}" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample"> <div class="card-body"> <h6>Bps:${history[key].bps}</h6><br><h6>Chest: ${history[key].chest}</h6><br><h6>Cholestrol: ${history[key].chol}</h6><br><h6>Electro Cardiogram: ${history[key].ecg}</h6><br><h6>Exang: ${history[key].exang}</h6><br><h6>Fasting Blood Sugar: ${history[key].fbs}</h6><br><h6>Max Heart Rate Achieved: ${history[key].maxheart}</h6><br><h6>Oldpeak: ${history[key].oldpeak}</h6><br><h6>St Slope: ${history[key].stslope}</h6><br><h4 class="text-center">Cardio: ${history[key].cardio}</h4>  </div></div></div>`
+          items_table.innerHTML +=
+                `<tr><td> ${date}` +
+                "</td>"+"<td>" +
+                `<h5><span class="badge badge-${badge}">${condition}</span></h5>` +
+                `</td> <td><a href="javascript:infoSpecificHistory('${history[key]}','${userId}','${key}');"><i class="fas fa-info-circle"></i> View Details</a></td>  <td><a href=""><i class="fas fa-download"></i> PDF</a></td> </tr>`;
         }
 
       } else {
@@ -115,4 +155,12 @@ function getHistory(userId, pid) {
       }
 
     });
+}
+
+function infoSpecificHistory(history,userId, pid) {
+  $("#specificModal").modal('show');
+  console.log(history);
+  hist_spec = document.getElementById("hist_spec");
+
+  hist_spec.innerHTML +=  `<h6>Bps:${history.bps}</h6><br><h6>Chest: ${history.chest}</h6><br><h6>Cholestrol: ${history.chol}</h6><br><h6>Electro Cardiogram: ${history.ecg}</h6><br><h6>Exang: ${history.exang}</h6><br><h6>Fasting Blood Sugar: ${history.fbs}</h6><br><h6>Max Heart Rate Achieved: ${history.maxheart}</h6><br><h6>Oldpeak: ${history.oldpeak}</h6><br><h6>St Slope: ${history.stslope}</h6><br><h4 class="text-center">Cardio: ${history.cardio}</h4>`
 }

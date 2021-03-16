@@ -257,10 +257,21 @@ def info():
     jsonResp = {'name': patient.val()['name'],'age': patient.val()['age'], 'gender': patient.val()['gender'], 'email': patient.val()['email']}
     return jsonify(jsonResp)
 
+@app.route('/history')
+def history():
+    uid = request.args.get('uid')
+    pid = request.args.get('pid')
+
+    history = db.child(uid).child("Patients").child(pid).child("history").get().val()
+    patient = db.child(uid).child("Patients").child(pid).get().val()
+
+    return render_template('history.html', history = history, uid = uid, pid = pid, patient = patient)
+
+
 
 # Get a patient's history.
 @app.route('/patients/history', methods=['GET'])
-def history():
+def patients_history():
     @after_this_request
     def add_header(response):
         response.headers.add('Access-Control-Allow-Origin', '*')

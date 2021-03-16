@@ -1,0 +1,22 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<div class="mt-3">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/patients">Patients</a></li>
+            <li class="breadcrumb-item"><a href="">History</a></li>
+        </ol>
+    </nav>
+</div>
+
+<div class="row mt-3">
+    <div class="col">
+        <h3><i class="fas fa-file-medical-alt"></i> History</h3>
+    </div>
+</div>
+<h5 class="mt-3"><i class="fas fa-user-circle"></i> {{patient.name}} {{patient.lastName}}, {{patient.age}}, {{patient.gender}}, {{patient.email}}</h5>
+{% include 'includes/_history_table.html' %}
+{% include 'includes/_specific_modal.html' %}
+
+{% endblock %}
