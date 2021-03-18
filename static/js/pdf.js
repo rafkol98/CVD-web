@@ -7,7 +7,15 @@ window.onload = function() {
             html2canvas: { scale: 2, letterRendering: true },
             jsPDF: {orientation: 'landscape'}
         }
-        html2pdf().from(report).set(opt).save();
+        html2pdf().from(report).set(opt).outputPdf().then(function(pdf) {
+            // This logs the right base64
+            // console.log(btoa(pdf));
+            const ref = firebase.storage().ref("image/2.pdf");
+            ref.putString(btoa(pdf), 'base64');
+            // ref.put(pdf);
+    
+        });
+        
 
     })
 }

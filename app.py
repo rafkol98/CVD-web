@@ -27,6 +27,8 @@ firebase = pyrebase.initialize_app(config)
 
 # Get firebase database.
 db = firebase.database()
+# Get firebase storage.
+storage = firebase.storage()
 
 app = Flask(__name__)
 # Load model.
@@ -338,6 +340,14 @@ def delete():
     return render_template('patients.html', update="Patient was deleted successfully." )
 
 
+
+# @app.context_processor
+# def utility_processor():
+#     def save_pdf(pdf):
+#         print("here inside")
+#         storage.child("pdf").put(pdf)
+#         return ''
+#     return ''
 
 if __name__ == '__main__':
     app.run(debug=True)
