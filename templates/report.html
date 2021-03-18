@@ -19,6 +19,39 @@
 
 {% include 'includes/_graphs.html' %}
 {% include 'includes/_add_message.html' %}
-<script type="text/javascript" src="{{ url_for('static', filename = 'js/pdf.js') }}"></script>
+{# <script type="text/javascript" src="{{ url_for('static', filename = 'js/pdf.js') }}"></script> #}
+<script>
+ 
 
+    this.document.getElementById("download").addEventListener("click", ()=>{
+     
+        const report = this.document.getElementById("report");
+        name = {{ct|tojson}};
+        console.log(name);
+        var opt = {
+            filename: name,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, letterRendering: true },
+            jsPDF: {orientation: 'landscape'}
+        }
+        html2pdf().from(report).set(opt).save();
+        html2pdf().from(report).set(opt).outputPdf().then(function(pdf) {
+            // This logs the right base64
+            // console.log(btoa(pdf));
+            const ref = firebase.storage().ref(`image/${name}.pdf`);
+            ref.putString(btoa(pdf), 'base64');
+            // ref.put(pdf);
+    
+        });
+        firebase.storage().ref(`image/${name}.pdf`).getDownloadURL()
+        .then((url) => {
+          window.open(url, "_blank");
+        })
+        .catch((error) => {
+            // Handle any errors
+        });
+
+    })
+
+</script>
 {% endblock %}
