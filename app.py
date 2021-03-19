@@ -243,6 +243,21 @@ def report_comments():
     
     return ('', 204)
 
+    # POST input box.
+@app.route('/save_pdf', methods=['POST'])
+def save_pdf():
+    # comment = request.form['comment']
+    uid = request.args.get('uid')
+    pid = request.args.get('pid')
+    ct = request.args.get('ct')
+
+    url = request.get_json()
+    
+    db.child(uid).child("Patients").child(pid).child("current").update({"pdf":url})
+    db.child(uid).child("Patients").child(pid).child("history").child(ct).update({"pdf":url})
+    
+    return ('', 204)
+
 
 
 # Get a patient's info.
@@ -342,13 +357,6 @@ def delete():
 
 
 
-# @app.context_processor
-# def utility_processor():
-#     def save_pdf(pdf):
-#         print("here inside")
-#         storage.child("pdf").put(pdf)
-#         return ''
-#     return ''
 
 if __name__ == '__main__':
     app.run(debug=True)
