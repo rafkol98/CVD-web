@@ -112,6 +112,8 @@ function getHistory(userId, pid) {
         for (var key in history) {
 
           var condition = history[key].cardio;
+          var pdf_url = history[key].pdf;
+  
           var badge;
 
           if (condition == 1) {
@@ -127,7 +129,7 @@ function getHistory(userId, pid) {
                 `<tr><td> ${date}` +
                 "</td>"+"<td>" +
                 `<h5><span class="badge badge-${badge}">${condition}</span></h5>` +
-                `</td> <td><a href="javascript:infoSpecificHistory('${userId}','${pid}','${key}');"><i class="fas fa-eye"></i> View</a></td>  <td><a href=""><i class="fas fa-download"></i> PDF</a></td> </tr>`;
+                `</td> <td><a href="javascript:infoSpecificHistory('${userId}','${pid}','${key}');"><i class="fas fa-eye"></i> View</a></td>  <td><a href="${pdf_url}" target="_blank"><i class="fas fa-download"></i> PDF</a></td> </tr>`;
         }
 
       } else {
