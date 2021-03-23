@@ -1,8 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify, after_this_request
-import lime
-import pdfkit
 from dataset import firstGraph, secondGraph, getVar, countVar, getNumberPatientsMore, getNumberPatientsLess
-from lime import lime_tabular
 import pickle
 import datetime
 import numpy as np
@@ -34,6 +31,12 @@ app = Flask(__name__)
 # Load model.
 model = pickle.load(open('cvd-model.pkl','rb'))
 with open("explainer.pkl", 'rb') as f: exp_load = dill.load(f)
+
+# Get number of more and less of the condition and variable passed in.
+def getNumbers(name, variable, condition):
+    numMore = getNumberPatientsMore(name, variable, condition)
+    numLess = getNumberPatientsLess(name, variable, condition)
+    return [numMore, numLess]
 
 def getLastId(list):
     return list[-1]
@@ -144,34 +147,22 @@ def report():
     cardioChol = getVar("cholesterol", 1)
     
     # Get number of healthy patients more than patient's value.
-    numMoreHealthyChol = getNumberPatientsMore("cholesterol", diagnosisData.val()['chol'], 0)
-    numLessHealthyChol = getNumberPatientsLess("cholesterol", diagnosisData.val()['chol'], 0)
-    healthyCholMoreLess = [numLessHealthyChol, numMoreHealthyChol]
+    healthyCholMoreLess = getNumbers("cholesterol", diagnosisData.val()['chol'], 0)
 
     # Get number of cardio patients more than patient's value.
-    numMoreCardioChol = getNumberPatientsMore("cholesterol", diagnosisData.val()['chol'], 1)
-    numLessCardioChol = getNumberPatientsLess("cholesterol", diagnosisData.val()['chol'], 1)
-    cardioCholMoreLess = [numLessCardioChol, numMoreCardioChol]
+    cardioCholMoreLess = getNumbers("cholesterol", diagnosisData.val()['chol'], 1)
 
     # Get number of healthy patients more than patient's value.
-    numMoreHealthyRBP = getNumberPatientsMore("resting bp s", diagnosisData.val()['bps'], 0)
-    numLessHealthyRBP = getNumberPatientsLess("resting bp s", diagnosisData.val()['bps'], 0)
-    healthyRBPMoreLess = [numLessHealthyRBP, numMoreHealthyRBP]
+    healthyRBPMoreLess = getNumbers("resting bp s", diagnosisData.val()['bps'], 0)
 
     # Get number of cardio patients more than patient's value.
-    numMoreCardioRBP = getNumberPatientsMore("resting bp s", diagnosisData.val()['bps'], 1)
-    numLessCardioRBP = getNumberPatientsLess("resting bp s", diagnosisData.val()['bps'], 1)
-    cardioRBPMoreLess = [numLessCardioRBP, numMoreCardioRBP]
+    cardioRBPMoreLess = getNumbers("resting bp s", diagnosisData.val()['bps'], 1)
 
     # Get number of healthy patients more than patient's value.
-    numMoreHealthyMaxHeart = getNumberPatientsMore("max heart rate", diagnosisData.val()['maxheart'], 0)
-    numLessHealthyMaxHeart = getNumberPatientsLess("max heart rate", diagnosisData.val()['maxheart'], 0)
-    healthyMaxHeartMoreLess = [numLessHealthyMaxHeart, numMoreHealthyMaxHeart]
+    healthyMaxHeartMoreLess = getNumbers("max heart rate", diagnosisData.val()['maxheart'], 0)
 
     # Get number of cardio patients more than patient's value.
-    numMoreCardioMaxHeart = getNumberPatientsMore("max heart rate", diagnosisData.val()['maxheart'], 1)
-    numLessCardioMaxHeart = getNumberPatientsLess("max heart rate", diagnosisData.val()['maxheart'], 1)
-    cardioMaxHeartMoreLess = [numLessCardioMaxHeart, numMoreCardioMaxHeart]
+    cardioMaxHeartMoreLess = getNumbers("max heart rate", diagnosisData.val()['maxheart'], 1)
 
     healthyRBP = getVar("resting bp s", 0)
     cardioRBP = getVar("resting bp s", 1)
