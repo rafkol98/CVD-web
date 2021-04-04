@@ -9,7 +9,7 @@ firebase.auth().onAuthStateChanged((user) => {
     $("#user_id").val(user.uid);
     console.log(user.uid);
   } else {
-    console.log("not logged in");
+    window.location.replace("/");
     // User not logged in or has just logged out.
   }
 });
