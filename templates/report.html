@@ -1,18 +1,24 @@
-{% extends 'layout.html' %} {% block scripts %} {% endblock %} {% block body %}
+{% extends 'layout.html' %}
+{% block scripts %}{% endblock %}
+{% block body %}
 
-<div class="button-right">
-  <button class="btn btn-primary mt-3" id="download">
-    <i class="fas fa-download"></i> PDF
-  </button>
-</div>
+	<div class="button-right">
+		<button class="btn btn-primary mt-3" id="download">
+			<i class="fas fa-download"></i>
+			PDF
+		</button>
+	</div>
 
-<h2 class="mt-5 mb-5 text-center">{{pred}}</h2>
+	<h2 class="mt-5 mb-5 text-center">{{pred}}</h2>
 
-<div class="mb-5">{{exp|safe}}</div>
+	<div class="mb-5">{{exp|safe}}</div>
+	{# Indlude Graphs #}
+	{% include 'includes/_graphs.html' %}
 
-{% include 'includes/_graphs.html' %} 
-{% include 'includes/_add_message.html' %}
-{% include 'includes/_pdf.html' %}
+	{# Include message box #}
+	{% include 'includes/_add_message.html' %}
 
+	{# Add download PDF functionality #}
+	{% include 'includes/_pdf.html' %}
 
 {% endblock %}

@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify, after_this_request
+from flask import Flask, render_template, request, redirect, url_for, jsonify, after_this_request, abort
+from flask_mail import Mail, Message
 from dataset import firstGraph, secondGraph, getVar, countVar, getNumberPatientsMore, getNumberPatientsLess
 import pickle
 import datetime
@@ -7,8 +8,11 @@ import pandas as pd
 import pyrebase
 import dill
 import json
-# import dataset
 
+
+app = Flask(__name__)
+
+# Firebase
 config = {
     "apiKey": "AIzaSyB6qq3TuV541bSWJzmnOgHm1F90a7sH0yE",
     "authDomain": "cardio-82209.firebaseapp.com",
@@ -22,15 +26,25 @@ config = {
 
 firebase = pyrebase.initialize_app(config)
 
-# Get firebase database.
 db = firebase.database()
-# Get firebase storage.
+
 storage = firebase.storage()
 
-app = Flask(__name__)
+# Mail
+app.config['MAIL_SERVER']='smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = 'cardio.ncl@gmail.com'
+app.config['MAIL_PASSWORD'] = 'CardioWeb100!'
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+mail = Mail(app)
+
+
+
 # Load model.
-model = pickle.load(open('cvd-model.pkl','rb'))
-with open("explainer.pkl", 'rb') as f: exp_load = dill.load(f)
+# model = pickle.load(open('cvd-model.pkl','rb'))
+model = pickle.load(open('random_forest.pkl','rb'))
+with open("explainer_lime.pkl", 'rb') as f: exp_load = dill.load(f)
 
 # Get number of more and less of the condition and variable passed in.
 def getNumbers(name, variable, condition):
@@ -41,6 +55,27 @@ def getNumbers(name, variable, condition):
 def getLastId(list):
     return list[-1]
 
+def email_admin(topic, message):
+    msg = Message(topic, sender = 'cardio.web@gmail.com', recipients = ['rafcall98@hotmail.com'])
+    msg.body = message
+    mail.send(msg)
+
+
+# Not found error.
+@app.errorhandler(404)
+def not_found(e):
+    return render_template("404.html")
+
+# Server error.
+@app.errorhandler(500)
+def server_error(e):
+    # Email admin about the error immediately.
+    email_admin("Server error!", f"SERVER ERROR: {e}, ROUTE: {request.url}")
+    return render_template("500.html")
+
+
+
+# Main functions
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -64,29 +99,34 @@ def diagnose():
             # Get all the values from the form.
             ints = [age, gender, request.form['chest'],request.form['bps'], request.form['chol'],request.form['fbs'],request.form['ecg'], request.form['maxheart'], request.form['exang'], request.form['oldpeak'], request.form['stslope']]
             # TODO - ERROR CHECKING.
-
         
             # Get current timestamp.
             ct = int(datetime.datetime.now().timestamp())
-        
 
+            # Use model to make prediction.
             final = [np.array(ints)]
             prediction = model.predict(final)
             a = pd.Series(final).to_json(orient='values') 
 
             prob_neg = str(model.predict_proba(final)[:,0])[1:-1]
             prob_pos = str(model.predict_proba(final)[:,1])[1:-1]
-        
+
+            # Write to the database.
             if prediction==1:
-                db.child(uid).child("Patients").child(pid).child("latest").set({"cardio":1})
+                db.child(uid).child("Patients").child(pid).child("latest").set({"latest":1})
                 db.child(uid).child("Patients").child(pid).child("current").update({"chest":request.form['chest'], "bps":request.form['bps'], "chol":request.form['chol'], "fbs":request.form['fbs'], "ecg":request.form['ecg'], "maxheart":request.form['maxheart'], "exang":request.form['exang'], "oldpeak":request.form['oldpeak'], "stslope":request.form['stslope'], "cardio":1})
                 db.child(uid).child("Patients").child(pid).child("history").child(ct).set({"chest":request.form['chest'], "bps":request.form['bps'], "chol":request.form['chol'], "fbs":request.form['fbs'], "ecg":request.form['ecg'], "maxheart":request.form['maxheart'], "exang":request.form['exang'], "oldpeak":request.form['oldpeak'], "stslope":request.form['stslope'], "cardio":1})
+                # Redirect to the report page.
                 return redirect(url_for('report', pred = "Suffers from a CVD", neg = prob_neg, pos = prob_pos, pid = pid, uid = uid, ct = ct ))
             else:
                 db.child(uid).child("Patients").child(pid).child("latest").set({"latest":0})
                 db.child(uid).child("Patients").child(pid).child("current").update({"chest":request.form['chest'], "bps":request.form['bps'], "chol":request.form['chol'], "fbs":request.form['fbs'], "ecg":request.form['ecg'], "maxheart":request.form['maxheart'], "exang":request.form['exang'], "oldpeak":request.form['oldpeak'], "stslope":request.form['stslope'], "cardio":0})
                 db.child(uid).child("Patients").child(pid).child("history").child(ct).set({"chest":request.form['chest'], "bps":request.form['bps'], "chol":request.form['chol'], "fbs":request.form['fbs'], "ecg":request.form['ecg'], "maxheart":request.form['maxheart'], "exang":request.form['exang'], "oldpeak":request.form['oldpeak'], "stslope":request.form['stslope'], "cardio":0})
+                # Redirect to the report page.
                 return redirect(url_for('report', pred= "Most Likely Healthy", neg = prob_neg, pos = prob_pos, pid = pid, uid = uid, ct = ct ))
+        else:
+            # If error abort operation.
+            abort(500)
     else:
         pid = request.args.get('pid')
         return render_template('diagnose.html', pid = pid)
@@ -347,7 +387,6 @@ def delete():
     return render_template('patients.html', update="Patient was deleted successfully." )
 
 
-
-
 if __name__ == '__main__':
     app.run(debug=True)
+

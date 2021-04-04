@@ -1,14 +1,14 @@
 import pandas as pd
 import numpy as np
 
-df = pd.read_csv("heart_dataset.csv", sep=",")
+df = pd.read_csv("dataset.csv", sep=",")
 
-# TODO : MAKE ONE FUNCTION THAT JUST TAKES THE NAME OF THE VARIABLE. NO NEED FOR A FUNCTION FOR EACH!
-
+# Get all the values of patients with the given prediction.
 def getVar(variable,pred):
     data = df[df["target"] == pred]
     return list(np.array(data[variable]))
 
+# count how many patients there are in the given variable with the given value.
 def countVar(variable, pred, value):
     data = df[df["target"] == pred]
     x = list(np.array(data[variable]))
