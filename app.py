@@ -80,7 +80,7 @@ def server_error(e):
 def index():
     return render_template('index.html')
 
-@app.route('/diagnose/', methods=['GET','POST'])
+@app.route('/diagnose', methods=['GET','POST'])
 def diagnose():
     if request.method == 'POST':
 
@@ -347,7 +347,7 @@ def patients_history():
     return jsonify(history)
 
 
-@app.route('/edit/', methods=['GET','POST'])
+@app.route('/edit', methods=['GET','POST'])
 def edit():
     if request.method == 'POST':
         uid = request.args.get('uid')

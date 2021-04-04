@@ -68,10 +68,10 @@ function getPatients() {
               
   
               items_table.innerHTML +=
-                `<tr><td> <a href="/edit/?uid=${userId}&pid=${key}"><i class='fas fa-edit'></i></a>` +
+                `<tr><td> <a href="/edit?uid=${userId}&pid=${key}"><i class='fas fa-edit'></i></a>` +
                 "</td>"+"<td>" +
                 patients[key].name + " " + patients[key].lastName +
-                `</td> <td><a href="javascript:info('${userId}','${key}');"><i class="fas fa-info-circle"></i> Info</a></td>  <td><a href="/history?uid=${userId}&pid=${key}");"><i class="fas fa-file-medical-alt"></i> History</a></td> <td><h5><span class="badge badge-${badge}">${condition}</span></h5></td> <td><a href="/diagnose/?pid=${key}" class="btn btn-function"><i class="fas fa-heartbeat"></i> Diagnose</a></td> </tr>`;
+                `</td> <td><a href="javascript:info('${userId}','${key}');"><i class="fas fa-info-circle"></i> Info</a></td>  <td><a href="/history?uid=${userId}&pid=${key}");"><i class="fas fa-file-medical-alt"></i> History</a></td> <td><h5><span class="badge badge-${badge}">${condition}</span></h5></td> <td><a href="/diagnose?pid=${key}" class="btn btn-function"><i class="fas fa-heartbeat"></i> Diagnose</a></td> </tr>`;
                 // `</td> <td><a href="javascript:info('${userId}','${key}');"><i class="fas fa-info-circle"></i> Info</a></td>  <td><a href="javascript:getHistory('${userId}','${key}');"><i class="fas fa-file-medical-alt"></i> History</a></td> <td><h5><span class="badge badge-${badge}">${condition}</span></h5></td> <td><a href="/diagnose/?pid=${key}" class="btn btn-function"><i class="fas fa-heartbeat"></i> Diagnose</a></td> </tr>`;
             }
     
