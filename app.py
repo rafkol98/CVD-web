@@ -73,7 +73,10 @@ def server_error(e):
     email_admin("Server error!", f"SERVER ERROR: {e}, ROUTE: {request.url}")
     return render_template("500.html")
 
-
+# Forbidden error.
+@app.errorhandler(403)
+def forbidden_error(e):
+    return render_template("403.html")
 
 # Main functions
 @app.route('/')

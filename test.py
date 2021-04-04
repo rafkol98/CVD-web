@@ -33,6 +33,11 @@ class FlaskTest(unittest.TestCase):
         statuscode = response.status_code
         self.assertEqual(statuscode, 200)
 
+   def test_report(self):
+        tester = app.test_client(self)
+        response = tester.get("/history?uid=qr34AfcGffe1rSFrz4JtUzuEYWj2&pid=-MWZ3OxxmQoRFayfFbLF")
+        statuscode = response.status_code
+        self.assertEqual(statuscode, 200)
 
     
 
