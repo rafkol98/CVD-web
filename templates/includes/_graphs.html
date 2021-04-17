@@ -89,6 +89,7 @@
             <p class="text-center"><span class="caption-H-FBS">Healthy - No. Patients More Max Heart</span><span
                     class="caption-H-NO-FBS">Healthy - No. Patients Less Max Hear</span><br><br><span
                     class="caption-C-FBS">Cardio -  No. Patients More Max Heart</span><span class="caption-C-NO-FBS">Cardio -  No. Patients Less Max Heart</span></p>
+            <h5 class="text-center">Patient's Max Heart: {{maxHeart}}</h5>
             <canvas id="HeartMoreLessChart" width="400" height="215"></canvas>
         </div>
     </div>
@@ -151,7 +152,7 @@
 
 <script>
 
-
+    // Radar graph used to compare chest pain type, fasting blood sugar, resting ecg, exercise angina, oldpeak and st slope with the average healthy and average CVD values.
     var dataX = {{ graphOne| tojson }};
     var healthyAvg = {{ healthyAvg| tojson }};
     var cardioAvg = {{ cardioAvg| tojson }};
@@ -200,6 +201,7 @@
         }
     });
 
+    // Radar graph used to compare resting bp s, cholesterol and max heart with the average healthy and average CVD values.
     var dataTwo = {{ graphTwo| tojson }};
     var healthySecAvg = {{ healthySecAvg| tojson }};
     var cardioSecAvg = {{ cardioSecAvg| tojson }};
@@ -263,7 +265,7 @@
     //Map patient data.
     let patient = patientX.map((v, i) => ({ x: v, y: patientY[i] }))
 
-    //Generate scatter chart.
+    //Generate scatter chart for cholesterol.
     var ctx2 = document.getElementById("scatterChol").getContext("2d");
     var scatterChart = new Chart(ctx2, {
         type: 'scatter',
@@ -292,6 +294,7 @@
         }
     });
 
+    //Generate pie chart for cholesterol comparing more and less value with patient.
     var ctxCholMoreLess = document.getElementById("cholMoreLessChart").getContext("2d");
 
     var healCholMoreLess = {{ healthyCholMoreLess }}
@@ -334,6 +337,7 @@
         }
     });
 
+    //Generate scatter chart for Resting Blood Pressure.
     var healRBP = {{ healthyRBP }}
     var cardioRBP = {{ cardioRBP }}
 
@@ -379,6 +383,7 @@
         }
     });
 
+    //Generate pie chart for cholesterol comparing more and less value with patient.
     var ctxRBPMoreLess = document.getElementById("RBPMoreLessChart").getContext("2d");
 
     var healRBPMoreLess = {{ healthyRBPMoreLess }}
@@ -421,18 +426,16 @@
         }
     });
 
-    //Get healthy and cardio maxHeart values.
+    //Generate scatter chart for Max Heart Rate.
     var healHeart = {{ healthyHeart }}
     var cardioHeart = {{ cardioHeart }}
     
-    //map healthy/cardio age with healthy/cardio heart.
     let healthy3 = healAge.map((v, i) => ({ x: v, y: healHeart[i] }))
     let cardio3 = cardioAge.map((v, i) => ({ x: v, y: cardioHeart[i] }))
 
-    //Get patient maxHeart and map it to their age.
     let patientY3 = [{{ maxHeart }}]
     let patient3 = patientX.map((v, i) => ({ x: v, y: patientY3[i] }))
-    //Generate the scatter diagram.
+
     var ctx2 = document.getElementById("scatterHeart").getContext("2d");
     var scatterChart = new Chart(ctx2, {
         type: 'scatter',
@@ -471,6 +474,7 @@
     });
 
 
+    //Generate doughnut chart for max heart comparing more and less value with patient.
     var ctxHeartMoreLess = document.getElementById("HeartMoreLessChart").getContext("2d");
 
     var healHeartMoreLess = {{ healthyMaxHeartMoreLess }}
@@ -514,7 +518,7 @@
     });
 
 
-
+    //Generate scatter chart for Chest Pain Type.
     var healChest = {{ healthyChest }}
     var cardioChest = {{ cardioChest }}
 
@@ -561,7 +565,7 @@
         }
     });
 
-
+    //Generate doughnut chart for max heart comparing more and less value with patient.
     var ctx = document.getElementById("myChart").getContext("2d");
 
     var healFBS = {{ healthyFBS }}
@@ -600,7 +604,8 @@
         }
     });
 
-
+    
+    //Generate scatter chart for Oldpeak.
     var healOldpeak = {{ healthyOldpeak }}
     var cardioOldpeak = {{ cardioOldpeak }}
 
@@ -648,6 +653,7 @@
     });
 
 
+    //Generate doughnut chart for Exercise Angina comparing more and less value with patient.
     var ctxExang = document.getElementById("exangChart").getContext("2d");
 
     var healExang = {{ healthyExang }}
@@ -687,6 +693,7 @@
     });
 
 
+    //Generate scatter chart for ST Slope.
     var healStSlope = {{ healthyStSlope }}
     var cardioStSlope = {{ cardioStSlope }}
 
@@ -733,6 +740,7 @@
         }
     });
 
+    //Generate scatter chart for Electrocardiogram.
     var healECG = {{ healthyECG }}
     var cardioECG = {{ cardioECG }}
 

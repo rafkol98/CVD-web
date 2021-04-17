@@ -83,6 +83,7 @@ def forbidden_error(e):
 def index():
     return render_template('index.html')
 
+# Diagnose patient.
 @app.route('/diagnose', methods=['GET','POST'])
 def diagnose():
     if request.method == 'POST':
@@ -277,7 +278,7 @@ def report_comments():
     
     return ('', 204)
 
-    # POST input box.
+# Save PDF's url to the database.
 @app.route('/save_pdf', methods=['POST'])
 def save_pdf():
     # comment = request.form['comment']
@@ -291,8 +292,6 @@ def save_pdf():
     db.child(uid).child("Patients").child(pid).child("history").child(ct).update({"pdf":url})
     
     return ('', 204)
-
-
 
 # Get a patient's info.
 @app.route('/patients/info', methods=['GET'])
@@ -309,6 +308,7 @@ def info():
     jsonResp = {'name': patient.val()['name'],'age': patient.val()['age'], 'gender': patient.val()['gender'], 'email': patient.val()['email']}
     return jsonify(jsonResp)
 
+# Get history of patient.
 @app.route('/history')
 def history():
     uid = request.args.get('uid')
@@ -349,9 +349,10 @@ def patients_history():
 
     return jsonify(history)
 
-
+# Edit patient.
 @app.route('/edit', methods=['GET','POST'])
 def edit():
+    # Edit patient's data on firebase.
     if request.method == 'POST':
         uid = request.args.get('uid')
         pid = request.args.get('pid')
@@ -361,6 +362,7 @@ def edit():
 
         return redirect(url_for('edit', uid = uid, pid = pid, update="Patient data was successfully updated!"))
 
+    # Get patien's basic information.
     else:
         uid = request.args.get('uid')
         pid = request.args.get('pid')
@@ -377,8 +379,10 @@ def edit():
 
             return render_template('edit.html', uid = uid, pid = pid, name = name, lastName = lastName, email = email, gender = gender, age = age)
         else:
+            # TODO: Send message error on patients page!!
             return render_template('patients.html')
 
+# Delete a patient.
 @app.route('/delete/')
 def delete():
     

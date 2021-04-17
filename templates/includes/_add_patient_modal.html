@@ -1,5 +1,6 @@
 <script type="text/javascript" src="{{ url_for('static', filename = 'js/system.js') }}"></script>
 
+{# Modal used to add a patient. #}
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
     aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -11,8 +12,8 @@
                 </button>
             </div>
             <div class="modal-body">
-                <!-- Form -->
-                <form id='form' action='/patients' class="p-1 mt-3 mb-3" method="POST">
+                
+                <form id='form' action='/patients/' class="p-1 mt-3 mb-3" method="POST">
 
                     <label for="inputName">First Name</label>
                     <input name="name" type="name" class="form-control mb-3" id="inputName" placeholder="Enter name..." required>

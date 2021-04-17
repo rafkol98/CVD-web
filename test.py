@@ -27,6 +27,7 @@ class FlaskTest(unittest.TestCase):
         statuscode = response.status_code
         self.assertEqual(statuscode, 200)
 
+    # Test that the patient's page is returned correctly.
     def test_patients(self):
         tester = app.test_client(self)
         response = tester.get("/patients")

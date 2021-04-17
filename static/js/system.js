@@ -14,6 +14,7 @@ firebase.auth().onAuthStateChanged((user) => {
   }
 });
 
+// Function used to redirect logged in users to patients page.
 function loggedIn() {
   firebase.auth().onAuthStateChanged((user) => {
     if (user) {
@@ -22,6 +23,7 @@ function loggedIn() {
   });
 }
 
+// Function used to logout.
 function logout() {
   firebase.auth().onAuthStateChanged((user) => {
     if (user) {
@@ -34,6 +36,7 @@ function logout() {
   });
 }
 
+// Get patients from the server and populate "patients" table.
 function getPatients() {
   $("#items_table").empty();
   firebase.auth().onAuthStateChanged((user) => {
@@ -52,7 +55,8 @@ function getPatients() {
               
               var condition = patients[key].latest
               var badge;
-  
+
+              // Change the badge colour and text depending on patient's condition.
               if(condition!== undefined) {
                 if (condition == 1) {
                   condition = "Cardio";
@@ -65,20 +69,16 @@ function getPatients() {
                 condition = "Not Diagnosed";
                 badge = "dark";
               }
-              
-  
+
+              // Populate table.
               items_table.innerHTML +=
                 `<tr><td> <a href="/edit?uid=${userId}&pid=${key}"><i class='fas fa-edit'></i></a>` +
                 "</td>"+"<td>" +
                 patients[key].name + " " + patients[key].lastName +
                 `</td> <td><a href="javascript:info('${userId}','${key}');"><i class="fas fa-info-circle"></i> Info</a></td>  <td><a href="/history?uid=${userId}&pid=${key}");"><i class="fas fa-file-medical-alt"></i> History</a></td> <td><h5><span class="badge badge-${badge}">${condition}</span></h5></td> <td><a href="/diagnose?pid=${key}" class="btn btn-function"><i class="fas fa-heartbeat"></i> Diagnose</a></td> </tr>`;
-                // `</td> <td><a href="javascript:info('${userId}','${key}');"><i class="fas fa-info-circle"></i> Info</a></td>  <td><a href="javascript:getHistory('${userId}','${key}');"><i class="fas fa-file-medical-alt"></i> History</a></td> <td><h5><span class="badge badge-${badge}">${condition}</span></h5></td> <td><a href="/diagnose/?pid=${key}" class="btn btn-function"><i class="fas fa-heartbeat"></i> Diagnose</a></td> </tr>`;
             }
-    
           }
-    
         });
-
     }
   });
 }
@@ -105,10 +105,10 @@ function getHistory(userId, pid) {
     .then(history => {
 
       if (history !== null) {
-        // $("#historyModal").modal('show');
         console.log(history);
         items_table = document.getElementById("history_items_table");
 
+        // Loop through every child of history.
         for (var key in history) {
 
           var condition = history[key].cardio;
@@ -116,6 +116,7 @@ function getHistory(userId, pid) {
   
           var badge;
 
+           // Change the badge colour and text depending on patient's condition.
           if (condition == 1) {
             condition = "Cardio";
             badge = "danger";
@@ -124,6 +125,7 @@ function getHistory(userId, pid) {
             badge = "success";
           }
 
+          // Populate history table.
           var date = new Date(key * 1000).toISOString().slice(0, 19).replace('T', ' ');
           items_table.innerHTML +=
                 `<tr><td> ${date}` +
@@ -132,7 +134,9 @@ function getHistory(userId, pid) {
                 `</td> <td><a href="javascript:infoSpecificHistory('${userId}','${pid}','${key}');"><i class="fas fa-eye"></i> View</a></td>  <td><a href="${pdf_url}" target="_blank"><i class="fas fa-download"></i> PDF</a></td> </tr>`;
         }
 
-      } else {
+      } 
+      // If the patient doesn't have any medical history show an alert.
+      else {
         alert("This patient does not have any medical history yet.")
       }
 
@@ -141,17 +145,19 @@ function getHistory(userId, pid) {
 
 // Get specific history for info.
 function infoSpecificHistory(userId,pid,key) {
-  console.log(userId+"  "+pid+"  "+key);
+  // Fetch data from the server.
   const url = `/patients/history/specific?uid=${userId}&pid=${pid}&key=${key}`
   fetch(url)
     .then(response => response.json())
     .then(history => {
       console.log(history);
+      // Show history specific modal.
       $("#specificModal").modal('show');
       
       hist_spec = document.getElementById("hist_spec");
       hist_spec.innerHTML = '';
-    
+      
+      // Populate the history specific modal with the specific history data.
       hist_spec.innerHTML +=  `<div class="text-center"><h5>Bps:${history.bps}</h5><br><h5>Chest: ${history.chest}</h5><br><h5>Cholestrol: ${history.chol}</h5><br><h5>Electro Cardiogram: ${history.ecg}</h5><br><h5>Exang: ${history.exang}</h5><br><h5>Fasting Blood Sugar: ${history.fbs}</h5><br><h5>Max Heart Rate Achieved: ${history.maxheart}</h5><br><h5>Oldpeak: ${history.oldpeak}</h5><br><h5>St Slope: ${history.stslope}</h5><br> <div class="bg-outcome"><h6 class="text-left">${history.comments}</h6></div> </div>`    
     });
   }

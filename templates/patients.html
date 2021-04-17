@@ -22,6 +22,7 @@
   </div>
 </div>
 
+{# Show update message. #}
 {% if update %}
   <div class="alert alert-primary mt-3" id="alert" role="alert">
     {{update}}
@@ -30,11 +31,10 @@
 
 
 
-
+{# Include patients_table, add_patient_modal, info_modal components. #}
 {% include 'includes/_patients_table.html' %}
 {% include 'includes/_add_patient_modal.html' %}
 {% include 'includes/_info_modal.html' %}
-{% include 'includes/_history_modal.html' %}
 
 <p>{{patients}}</p>
 

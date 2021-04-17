@@ -17,15 +17,17 @@
     </div>
   
     <div>
-      <!-- Button trigger modal -->
+      {# Call delete patient view function on flask server. #}
       <a href="/delete?uid={{uid}}&pid={{pid}}" class="btn btn-delete"><i class="fas fa-user"></i> Delete patient</a>
     </div>
   </div>
-  
+
+  {# Show modal that patient was successfully updated. #}
   <div class="alert alert-primary showOrNot mt-3" id="alert" role="alert">
     Patient data was successfully updated!
   </div>
 
+  {# Edit patient form. #}
   {% include 'includes/_edit_patient_form.html' %}
 
   <script>
