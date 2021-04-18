@@ -1,7 +1,8 @@
 <script type="text/javascript" src="{{ url_for('static', filename = 'js/system.js') }}"></script>
 
 {# Send diagnose form to the server to utilise the ML. #}
-<form id='form' action='/diagnose?pid={{pid}}' class="p-1 mt-3 mb-3" method="POST">
+
+<form id='form' action='/diagnose?pid={{pid}}' class="p-1 mt-3 mb-3" method="POST" data-parsley-validate="">
 
     <div class="form-row">
         <div class="form-group col-md-6">
@@ -22,8 +23,7 @@
             <a href="#" data-toggle="popover" title="Resting Blood Pressure"
                 data-content="Please type the level of blood pressure of the patient at resting mode in mm/Hg"><i
                     class="fas fa-question-circle"></i></a>
-            <input name="bps" class="form-control" id="inputBPS" placeholder="Enter BP s" required
-                data-parsley-minlength="1">
+            <input name="bps" class="form-control" id="inputBPS" placeholder="Enter BP s" required data-parsley-type="number">
         </div>
     </div>
 
@@ -33,7 +33,7 @@
             <a href="#" data-toggle="popover" title="Cholestrol"
                 data-content="Please type the level of Total Cholestrol of the patient"><i
                     class="fas fa-question-circle"></i></a>
-            <input name="chol" type="age" class="form-control" id="inputChol" placeholder="Enter Cholestrol" required>
+            <input name="chol" type="age" class="form-control" id="inputChol" placeholder="Enter Cholestrol" data-parsley-type="number" required>
         </div>
 
         <div class="form-group col-md-6">
@@ -67,7 +67,7 @@
                 data-content="Please type the maximum heart rate that the patient achieved."><i
                     class="fas fa-question-circle"></i></a>
             <input name="maxheart" type="age" class="form-control" id="inputHeart"
-                placeholder="Enter Heart Rate Achieved" required>
+                placeholder="Enter Heart Rate Achieved" data-parsley-type="number" required>
         </div>
     </div>
 
@@ -87,7 +87,7 @@
             <label for="inputOldPeak">Oldpeak</label>
             <a href="#" data-toggle="popover" title="Oldpeak" data-content="Please type the Exercise induced ST-depression in comparison with the state of
             rest."><i class="fas fa-question-circle"></i></a>
-            <input name="oldpeak" class="form-control" id="inputOldPeak" placeholder="Enter Oldpeak result" required>
+            <input name="oldpeak" class="form-control" id="inputOldPeak" placeholder="Enter Oldpeak result" data-parsley-type="number" required>
         </div>
     </div>
 
@@ -104,7 +104,7 @@
 
     <input hidden id="user_id" name="user_id">
     <div class="row justify-content-center">
-        <button type="submit" class="btn btn-function center mb-4" onclick="$('#loading').show();"><i class="fas fa-file-medical-alt"></i> Diagnose</button>
+        <button type="submit" class="btn btn-function center mb-4" onclick=""><i class="fas fa-file-medical-alt"></i> Diagnose</button>
     </div>
 </form>
 
@@ -112,4 +112,14 @@
     $(document).ready(function () {
         $('[data-toggle="popover"]').popover();
     });
+
+    $(function () {
+        $('#form').parsley().on('field:validated', function() {
+          var ok = $('.parsley-error').length === 0;
+          console.log("OKK")
+        })
+        .on('form:submit', function() {
+            $('#loading').show();
+        });
+      });
 </script>

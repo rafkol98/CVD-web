@@ -99,38 +99,36 @@ def diagnose():
         gender = db.child(uid).child("Patients").child(pid).child("gender").get().val()
 
         if((age is not None) and (gender is not None)):
-
+            
             # Get all the values from the form.
             ints = [age, gender, request.form['chest'],request.form['bps'], request.form['chol'],request.form['fbs'],request.form['ecg'], request.form['maxheart'], request.form['exang'], request.form['oldpeak'], request.form['stslope']]
-            # TODO - ERROR CHECKING.
-        
-            # Get current timestamp.
-            ct = int(datetime.datetime.now().timestamp())
+            
+            # Check if the list does not contain any empty values and that all values are greater than 0.
+            if all(ints):
+                # Get current timestamp.
+                ct = int(datetime.datetime.now().timestamp())
 
-            # Use model to make prediction.
-            final = [np.array(ints)]
-            prediction = model.predict(final)
-            a = pd.Series(final).to_json(orient='values') 
+                # Use model to make prediction.
+                final = [np.array(ints)]
+                prediction = model.predict(final)
+                a = pd.Series(final).to_json(orient='values') 
 
-            prob_neg = str(model.predict_proba(final)[:,0])[1:-1]
-            prob_pos = str(model.predict_proba(final)[:,1])[1:-1]
+                prob_neg = str(model.predict_proba(final)[:,0])[1:-1]
+                prob_pos = str(model.predict_proba(final)[:,1])[1:-1]
 
-            # Write to the database.
-            if prediction==1:
-                db.child(uid).child("Patients").child(pid).child("latest").set({"latest":1})
-                db.child(uid).child("Patients").child(pid).child("current").update({"chest":request.form['chest'], "bps":request.form['bps'], "chol":request.form['chol'], "fbs":request.form['fbs'], "ecg":request.form['ecg'], "maxheart":request.form['maxheart'], "exang":request.form['exang'], "oldpeak":request.form['oldpeak'], "stslope":request.form['stslope'], "cardio":1})
-                db.child(uid).child("Patients").child(pid).child("history").child(ct).set({"chest":request.form['chest'], "bps":request.form['bps'], "chol":request.form['chol'], "fbs":request.form['fbs'], "ecg":request.form['ecg'], "maxheart":request.form['maxheart'], "exang":request.form['exang'], "oldpeak":request.form['oldpeak'], "stslope":request.form['stslope'], "cardio":1})
-                # Redirect to the report page.
-                return redirect(url_for('report', pred = "Suffers from a CVD", neg = prob_neg, pos = prob_pos, pid = pid, uid = uid, ct = ct ))
-            else:
-                db.child(uid).child("Patients").child(pid).child("latest").set({"latest":0})
-                db.child(uid).child("Patients").child(pid).child("current").update({"chest":request.form['chest'], "bps":request.form['bps'], "chol":request.form['chol'], "fbs":request.form['fbs'], "ecg":request.form['ecg'], "maxheart":request.form['maxheart'], "exang":request.form['exang'], "oldpeak":request.form['oldpeak'], "stslope":request.form['stslope'], "cardio":0})
-                db.child(uid).child("Patients").child(pid).child("history").child(ct).set({"chest":request.form['chest'], "bps":request.form['bps'], "chol":request.form['chol'], "fbs":request.form['fbs'], "ecg":request.form['ecg'], "maxheart":request.form['maxheart'], "exang":request.form['exang'], "oldpeak":request.form['oldpeak'], "stslope":request.form['stslope'], "cardio":0})
-                # Redirect to the report page.
-                return redirect(url_for('report', pred= "Most Likely Healthy", neg = prob_neg, pos = prob_pos, pid = pid, uid = uid, ct = ct ))
-        else:
-            # If error abort operation.
-            abort(500)
+                # Write to the database.
+                if prediction==1:
+                    db.child(uid).child("Patients").child(pid).child("latest").set({"latest":1})
+                    db.child(uid).child("Patients").child(pid).child("current").update({"chest":request.form['chest'], "bps":request.form['bps'], "chol":request.form['chol'], "fbs":request.form['fbs'], "ecg":request.form['ecg'], "maxheart":request.form['maxheart'], "exang":request.form['exang'], "oldpeak":request.form['oldpeak'], "stslope":request.form['stslope'], "cardio":1})
+                    db.child(uid).child("Patients").child(pid).child("history").child(ct).set({"chest":request.form['chest'], "bps":request.form['bps'], "chol":request.form['chol'], "fbs":request.form['fbs'], "ecg":request.form['ecg'], "maxheart":request.form['maxheart'], "exang":request.form['exang'], "oldpeak":request.form['oldpeak'], "stslope":request.form['stslope'], "cardio":1})
+                    # Redirect to the report page.
+                    return redirect(url_for('report', pred = "Suffers from a CVD", neg = prob_neg, pos = prob_pos, pid = pid, uid = uid, ct = ct ))
+                else:
+                    db.child(uid).child("Patients").child(pid).child("latest").set({"latest":0})
+                    db.child(uid).child("Patients").child(pid).child("current").update({"chest":request.form['chest'], "bps":request.form['bps'], "chol":request.form['chol'], "fbs":request.form['fbs'], "ecg":request.form['ecg'], "maxheart":request.form['maxheart'], "exang":request.form['exang'], "oldpeak":request.form['oldpeak'], "stslope":request.form['stslope'], "cardio":0})
+                    db.child(uid).child("Patients").child(pid).child("history").child(ct).set({"chest":request.form['chest'], "bps":request.form['bps'], "chol":request.form['chol'], "fbs":request.form['fbs'], "ecg":request.form['ecg'], "maxheart":request.form['maxheart'], "exang":request.form['exang'], "oldpeak":request.form['oldpeak'], "stslope":request.form['stslope'], "cardio":0})
+                    # Redirect to the report page.
+                    return redirect(url_for('report', pred= "Most Likely Healthy", neg = prob_neg, pos = prob_pos, pid = pid, uid = uid, ct = ct ))
     else:
         pid = request.args.get('pid')
         return render_template('diagnose.html', pid = pid)
