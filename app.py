@@ -104,7 +104,7 @@ def diagnose():
             ints = [age, gender, request.form['chest'],request.form['bps'], request.form['chol'],request.form['fbs'],request.form['ecg'], request.form['maxheart'], request.form['exang'], request.form['oldpeak'], request.form['stslope']]
             
             # Check if the list does not contain any empty values and that all values are greater than 0.
-            if all(ints):
+            if all(ints) and (0 <= int(request.form['bps']) <= 300) and (0 <= int(request.form['chol']) <= 700) and (0 <= int(request.form['maxheart']) <= 300) and (0 <= float(request.form['oldpeak']) <= 7):
                 # Get current timestamp.
                 ct = int(datetime.datetime.now().timestamp())
 
@@ -129,6 +129,8 @@ def diagnose():
                     db.child(uid).child("Patients").child(pid).child("history").child(ct).set({"chest":request.form['chest'], "bps":request.form['bps'], "chol":request.form['chol'], "fbs":request.form['fbs'], "ecg":request.form['ecg'], "maxheart":request.form['maxheart'], "exang":request.form['exang'], "oldpeak":request.form['oldpeak'], "stslope":request.form['stslope'], "cardio":0})
                     # Redirect to the report page.
                     return redirect(url_for('report', pred= "Most Likely Healthy", neg = prob_neg, pos = prob_pos, pid = pid, uid = uid, ct = ct ))
+            else:
+                return render_template('diagnose.html', pid = pid, update = "Please fill all the boxes according to the instructions" )
     else:
         pid = request.args.get('pid')
         return render_template('diagnose.html', pid = pid)
