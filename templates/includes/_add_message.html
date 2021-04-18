@@ -6,14 +6,26 @@
 <form id='form' action='/report/comments?uid={{uid}}&pid={{pid}}' class="p-1 mt-3 mb-3" method="POST">
 
     <label for="comments">Comments:</label>
-    <textarea class="form-control" rows="5" id="comments" name="comments"></textarea>
+    <textarea class="form-control" rows="5" id="comments" name="comments" data-parsley-type="alphanum" required></textarea>
 
     <div class="button-right">
-        <button type="submit" id="btn-save-com" class="btn btn-primary mt-3 mb-3" onclick="$('#msg_com').show();"><i class="fas fa-comment"></i> Save Comments</button>
+        <button type="submit" id="btn-save-com" class="btn btn-primary mt-3 mb-3"><i class="fas fa-comment"></i> Save Comments</button>
     </div>
 </form>
 
 <script>
-    //Show message.
+    //Hide message
     $('#msg_com').hide();
+
+    //On submit form validate with parsley.
+    $(function () {
+        $('#form').parsley().on('field:validated', function() {
+          var ok = $('.parsley-error').length === 0;
+          console.log("OKK")
+        })
+        .on('form:submit', function() {
+            //Show message.
+            $('#msg_com').show();
+        });
+      });
 </script>
