@@ -8,6 +8,7 @@ import pandas as pd
 import pyrebase
 import dill
 import json
+import re
 
 
 app = Flask(__name__)
@@ -24,13 +25,15 @@ config = {
     "measurementId": "G-H0RD6F6TJQ"
   }
 
+# Firebase initialisation
 firebase = pyrebase.initialize_app(config)
 
+# Initialisation of Firebase database
 db = firebase.database()
-
+# Initialisation of Firebase storage
 storage = firebase.storage()
 
-# Mail
+# Mail configuration
 app.config['MAIL_SERVER']='smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USERNAME'] = 'cardio.ncl@gmail.com'
@@ -52,14 +55,24 @@ def getNumbers(name, variable, condition):
     numLess = getNumberPatientsLess(name, variable, condition)
     return [numMore, numLess]
 
-def getLastId(list):
-    return list[-1]
-
+# Emails admin about an error that occured.
 def email_admin(topic, message):
     msg = Message(topic, sender = 'cardio.web@gmail.com', recipients = ['rafcall98@hotmail.com'])
     msg.body = message
     mail.send(msg)
 
+# Check if string contains only letters.
+def only_letters(string):
+    return all(letter.isalpha() for letter in string)
+
+# Check if string contains only letters.
+def check_email(email):
+    regex = '^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,3}$'
+    return re.search(regex, email)
+
+# Get id of last child in the list.
+def getLastId(list):
+    return list[-1]
 
 # Not found error.
 @app.errorhandler(404)
@@ -103,8 +116,8 @@ def diagnose():
             # Get all the values from the form.
             ints = [age, gender, request.form['chest'],request.form['bps'], request.form['chol'],request.form['fbs'],request.form['ecg'], request.form['maxheart'], request.form['exang'], request.form['oldpeak'], request.form['stslope']]
             
-            # Check if the list does not contain any empty values and that all values are greater than 0.
-            if all(ints) and (0 <= int(request.form['bps']) <= 300) and (0 <= int(request.form['chol']) <= 700) and (0 <= int(request.form['maxheart']) <= 300) and (0 <= float(request.form['oldpeak']) <= 7):
+            # Check if the list does not contain any empty values and evaluate that all the values are between the limits.
+            if all(ints) and (0 <= int(request.form['bps']) <= 300) and (0 <= int(request.form['chol']) <= 700) and (0 <= int(request.form['maxheart']) <= 300) and (0 <= float(request.form['oldpeak']) <= 7) and (1 <= int(request.form['chest']) <= 4) and (0 <= int(request.form['fbs']) <= 1) and (0 <= int(request.form['ecg']) <= 2) and (0 <= int(request.form['exang']) <= 1) and (0 <= int(request.form['stslope']) <= 3):
                 # Get current timestamp.
                 ct = int(datetime.datetime.now().timestamp())
 
@@ -117,6 +130,7 @@ def diagnose():
                 prob_pos = str(model.predict_proba(final)[:,1])[1:-1]
 
                 # Write to the database.
+                # TODO: CREATE FUNCTION THAT DOES THIS -> VERY REPETITIVE.
                 if prediction==1:
                     db.child(uid).child("Patients").child(pid).child("latest").set({"latest":1})
                     db.child(uid).child("Patients").child(pid).child("current").update({"chest":request.form['chest'], "bps":request.form['bps'], "chol":request.form['chol'], "fbs":request.form['fbs'], "ecg":request.form['ecg'], "maxheart":request.form['maxheart'], "exang":request.form['exang'], "oldpeak":request.form['oldpeak'], "stslope":request.form['stslope'], "cardio":1})
@@ -138,14 +152,27 @@ def diagnose():
 @app.route('/patients/', methods=['GET','POST'])
 def patients():
         if request.method == 'POST':
-        # Get uid of user logged in.
-            uid = request.form['user_id']
+            # Get uid of user logged in.
+            try:
+                uid = request.form['user_id']
+                age = request.form['age']
+                gender = request.form['gender']
+                name = request.form['name']
+                lastName = request.form['lastName']
+                email = request.form['email']
 
-            patient_data = {"age":request.form['age'], "gender":request.form['gender'], "name":request.form['name'], "lastName":request.form['lastName'], "email":request.form['email']}
-            db.child(uid).child("Patients").push(patient_data)
-            
-            return redirect(url_for('patients'))
+            except:
+                return render_template('patients.html', update="There was an error with Doctor's id or Patient's id." )
+
+            # Validate input passed in.
+            if uid is not None and only_letters(name) and only_letters(lastName) and (0 <= int(gender) <= 1) and check_email(email) and (0 <= int(age) <= 120):
+               patient_data = {"age": age, "gender": gender, "name": name, "lastName": lastName, "email": email}
+               db.child(uid).child("Patients").push(patient_data)
+               return redirect(url_for('patients'))
+            else:
+                 return render_template('patients.html', update="PATIENT WAS NOT ADDED: Please follow the form's instructions when filling out the form." )
         else:
+            # GET Request.
             return render_template('patients.html')
 
 # Generate visual report.
@@ -354,13 +381,27 @@ def patients_history():
 def edit():
     # Edit patient's data on firebase.
     if request.method == 'POST':
-        uid = request.args.get('uid')
-        pid = request.args.get('pid')
+        # Get data passed in.
+        try:
+            uid = request.args.get('uid')
+            pid = request.args.get('pid')
 
-        patient_data = {"age":request.form['age'], "gender":request.form['gender'], "name":request.form['name'], "lastName":request.form['lastName'], "email":request.form['email']}
-        db.child(uid).child("Patients").child(pid).update(patient_data)
+            age = request.form['age']
+            gender = request.form['gender']
+            name = request.form['name']
+            lastName = request.form['lastName']
+            email = request.form['email']
+        except:
+            return redirect(url_for('edit', uid = uid, pid = pid, update="There was a problem fetching data passed with the form!"))
+        
+        # Validate that data is of the appropriate type.
+        if uid is not None and pid is not None and only_letters(name) and only_letters(lastName) and (0 <= int(gender) <= 1) and check_email(email) and (0 <= int(age) <= 120):
+            patient_data = {"age": age, "gender": gender, "name": name, "lastName": lastName, "email": email}
+            db.child(uid).child("Patients").child(pid).update(patient_data)
 
-        return redirect(url_for('edit', uid = uid, pid = pid, update="Patient data was successfully updated!"))
+            return redirect(url_for('edit', uid = uid, pid = pid, update="Patient data was successfully updated!"))
+        else:
+            return redirect(url_for('edit', uid = uid, pid = pid, update= "There was an error with the form, please follow the form's instructions." ))
 
     # Get patien's basic information.
     else:
@@ -371,6 +412,7 @@ def edit():
         if uid is not None and pid is not None:
             patient = db.child(uid).child("Patients").child(pid).get()
 
+            # TODO : try catch.
             name = patient.val()['name']
             lastName = patient.val()['lastName']
             email = patient.val()['email']
@@ -386,13 +428,22 @@ def edit():
 @app.route('/delete/')
 def delete():
     
-    uid = request.args.get('uid')
-    pid = request.args.get('pid')
+    try:
+        uid = request.args.get('uid')
+        pid = request.args.get('pid')
+    except:
+        return render_template('patients.html', update="There was an error with Doctor's id or Patient's id." )
 
-    db.child(uid).child("Patients").child(pid).remove()
-
-    return render_template('patients.html', update="Patient was deleted successfully." )
-
+    # if uid and pid are not None, then proceed to delete selected patient.
+    if uid is not None and pid is not None:
+        try:
+            db.child(uid).child("Patients").child(pid).remove()
+            return render_template('patients.html', update="Patient was deleted successfully." )
+        except:
+            return render_template('patients.html', update="There was an error deleting the patient." )
+    else:
+        return render_template('patients.html', update="There was an error with Doctor's id or Patient's id." )
+    
 
 if __name__ == '__main__':
     app.run(debug=True)
