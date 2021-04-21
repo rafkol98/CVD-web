@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify, after_this_request, abort
+from flask import Flask, render_template, request, redirect, url_for, jsonify, after_this_request, abort, flash
 from flask_mail import Mail, Message
 from dataset import firstGraph, secondGraph, getVar, countVar, getNumberPatientsMore, getNumberPatientsLess
 import pickle
@@ -61,6 +61,13 @@ def email_admin(topic, message):
     msg.body = message
     mail.send(msg)
 
+def check_number(string, min, max):
+    if string.isdecimal():
+        numeric = int(string)
+        return min <= numeric <= max
+    else:
+        return False 
+
 # Check if string contains only letters.
 def only_letters(string):
     return all(letter.isalpha() for letter in string)
@@ -73,6 +80,12 @@ def check_email(email):
 # Get id of last child in the list.
 def getLastId(list):
     return list[-1]
+
+# Save to database.
+def save_to_db(ct, uid, pid, chest, bps, chol, fbs, ecg, maxheart, exang, oldpeak, stslope, outcome):
+    db.child(uid).child("Patients").child(pid).update({"latest":outcome})
+    db.child(uid).child("Patients").child(pid).child("current").update({"chest":chest, "bps":bps, "chol":chol, "fbs":fbs, "ecg":ecg, "maxheart":maxheart, "exang":exang, "oldpeak":oldpeak, "stslope":stslope, "cardio":outcome})
+    db.child(uid).child("Patients").child(pid).child("history").child(ct).set({"chest":chest, "bps":bps, "chol":chol, "fbs":fbs, "ecg":ecg, "maxheart":maxheart, "exang":exang, "oldpeak":oldpeak, "stslope":stslope, "cardio":outcome})
 
 # Not found error.
 @app.errorhandler(404)
@@ -110,14 +123,25 @@ def diagnose():
         age = db.child(uid).child("Patients").child(pid).child("age").get().val()
 
         gender = db.child(uid).child("Patients").child(pid).child("gender").get().val()
+       
+        chest = request.form['chest']
+        bps = request.form['bps']
+        chol = request.form['chol'] 
+        fbs = request.form['fbs']
+        ecg = request.form['ecg']
+        maxheart = request.form['maxheart']
+        exang = request.form['exang']
+        oldpeak = request.form['oldpeak']
+        stslope = request.form['stslope']
+
 
         if((age is not None) and (gender is not None)):
             
             # Get all the values from the form.
-            ints = [age, gender, request.form['chest'],request.form['bps'], request.form['chol'],request.form['fbs'],request.form['ecg'], request.form['maxheart'], request.form['exang'], request.form['oldpeak'], request.form['stslope']]
+            ints = [age, gender, chest, bps, chol, fbs, ecg, maxheart, exang, oldpeak, stslope]
             
             # Check if the list does not contain any empty values and evaluate that all the values are between the limits.
-            if all(ints) and (0 <= int(request.form['bps']) <= 300) and (0 <= int(request.form['chol']) <= 700) and (0 <= int(request.form['maxheart']) <= 300) and (0 <= float(request.form['oldpeak']) <= 7) and (1 <= int(request.form['chest']) <= 4) and (0 <= int(request.form['fbs']) <= 1) and (0 <= int(request.form['ecg']) <= 2) and (0 <= int(request.form['exang']) <= 1) and (0 <= int(request.form['stslope']) <= 3):
+            if all(ints) and check_number(bps, 0, 300) and check_number(chol, 0, 700) and check_number(maxheart, 0, 300) and (0 <= float(oldpeak) <= 7) and check_number(chest, 1, 4) and check_number(fbs, 0, 1) and check_number(ecg, 0, 2) and check_number(exang, 0, 1) and check_number(stslope, 0, 3):
                 # Get current timestamp.
                 ct = int(datetime.datetime.now().timestamp())
 
@@ -130,21 +154,19 @@ def diagnose():
                 prob_pos = str(model.predict_proba(final)[:,1])[1:-1]
 
                 # Write to the database.
-                # TODO: CREATE FUNCTION THAT DOES THIS -> VERY REPETITIVE.
                 if prediction==1:
-                    db.child(uid).child("Patients").child(pid).child("latest").set({"latest":1})
-                    db.child(uid).child("Patients").child(pid).child("current").update({"chest":request.form['chest'], "bps":request.form['bps'], "chol":request.form['chol'], "fbs":request.form['fbs'], "ecg":request.form['ecg'], "maxheart":request.form['maxheart'], "exang":request.form['exang'], "oldpeak":request.form['oldpeak'], "stslope":request.form['stslope'], "cardio":1})
-                    db.child(uid).child("Patients").child(pid).child("history").child(ct).set({"chest":request.form['chest'], "bps":request.form['bps'], "chol":request.form['chol'], "fbs":request.form['fbs'], "ecg":request.form['ecg'], "maxheart":request.form['maxheart'], "exang":request.form['exang'], "oldpeak":request.form['oldpeak'], "stslope":request.form['stslope'], "cardio":1})
+                    # Save to database.
+                    save_to_db(ct, uid, pid, chest, bps, chol, fbs, ecg, maxheart, exang, oldpeak, stslope, 1)
                     # Redirect to the report page.
                     return redirect(url_for('report', pred = "Suffers from a CVD", neg = prob_neg, pos = prob_pos, pid = pid, uid = uid, ct = ct ))
                 else:
-                    db.child(uid).child("Patients").child(pid).child("latest").set({"latest":0})
-                    db.child(uid).child("Patients").child(pid).child("current").update({"chest":request.form['chest'], "bps":request.form['bps'], "chol":request.form['chol'], "fbs":request.form['fbs'], "ecg":request.form['ecg'], "maxheart":request.form['maxheart'], "exang":request.form['exang'], "oldpeak":request.form['oldpeak'], "stslope":request.form['stslope'], "cardio":0})
-                    db.child(uid).child("Patients").child(pid).child("history").child(ct).set({"chest":request.form['chest'], "bps":request.form['bps'], "chol":request.form['chol'], "fbs":request.form['fbs'], "ecg":request.form['ecg'], "maxheart":request.form['maxheart'], "exang":request.form['exang'], "oldpeak":request.form['oldpeak'], "stslope":request.form['stslope'], "cardio":0})
+                    # Save to database.
+                    save_to_db(ct, uid, pid, chest, bps, chol, fbs, ecg, maxheart, exang, oldpeak, stslope, 0)
                     # Redirect to the report page.
                     return redirect(url_for('report', pred= "Most Likely Healthy", neg = prob_neg, pos = prob_pos, pid = pid, uid = uid, ct = ct ))
             else:
-                return render_template('diagnose.html', pid = pid, update = "Please fill all the boxes according to the instructions" )
+                flash("Please fill all the boxes according to the instructions.", "danger")
+                return redirect(request.url)
     else:
         pid = request.args.get('pid')
         return render_template('diagnose.html', pid = pid)
@@ -162,15 +184,20 @@ def patients():
                 email = request.form['email']
 
             except:
-                return render_template('patients.html', update="There was an error with Doctor's id or Patient's id." )
-
+                # Show error message to user.
+                flash("There was an error with Doctor's id or Patient's id.", "danger")
+                return redirect(request.url)
+                
             # Validate input passed in.
             if uid is not None and only_letters(name) and only_letters(lastName) and (0 <= int(gender) <= 1) and check_email(email) and (0 <= int(age) <= 120):
                patient_data = {"age": age, "gender": gender, "name": name, "lastName": lastName, "email": email}
                db.child(uid).child("Patients").push(patient_data)
-               return redirect(url_for('patients'))
+               flash("Patient was added.", "success")
+               return redirect(request.url)
             else:
-                 return render_template('patients.html', update="PATIENT WAS NOT ADDED: Please follow the form's instructions when filling out the form." )
+                # Show error message to user.
+                flash("PATIENT WAS NOT ADDED: Please follow the form's instructions when filling out the form.", "danger")
+                return redirect(request.url)
         else:
             # GET Request.
             return render_template('patients.html')
@@ -292,7 +319,6 @@ def report_comments():
     pid = request.args.get('pid')
 
     comments = request.form['comments']
-    # db.child(uid).child("Patients").child(pid).child("current").update({"comments":comments})
 
     listHistory = []
     snapshot = db.child(uid).child("Patients").child(pid).child("history").get().val()
@@ -381,70 +407,89 @@ def patients_history():
 def edit():
     # Edit patient's data on firebase.
     if request.method == 'POST':
-        # Get data passed in.
-        try:
-            uid = request.args.get('uid')
-            pid = request.args.get('pid')
-
-            age = request.form['age']
-            gender = request.form['gender']
-            name = request.form['name']
-            lastName = request.form['lastName']
-            email = request.form['email']
-        except:
-            return redirect(url_for('edit', uid = uid, pid = pid, update="There was a problem fetching data passed with the form!"))
-        
+        uid = request.args.get('uid')
+        pid = request.args.get('pid')
+        if uid is not None and pid is not None:
+            # Get data passed in.
+            try:
+                age = request.form['age']
+                gender = request.form['gender']
+                name = request.form['name']
+                lastName = request.form['lastName']
+                email = request.form['email']
+            except:
+                # Show error message to user.
+                flash("There was a problem fetching data passed with the form!", "danger")
+                return redirect(request.url)
+                
         # Validate that data is of the appropriate type.
         if uid is not None and pid is not None and only_letters(name) and only_letters(lastName) and (0 <= int(gender) <= 1) and check_email(email) and (0 <= int(age) <= 120):
             patient_data = {"age": age, "gender": gender, "name": name, "lastName": lastName, "email": email}
             db.child(uid).child("Patients").child(pid).update(patient_data)
 
-            return redirect(url_for('edit', uid = uid, pid = pid, update="Patient data was successfully updated!"))
-        else:
-            return redirect(url_for('edit', uid = uid, pid = pid, update= "There was an error with the form, please follow the form's instructions." ))
+            flash("Patient data was successfully updated!", "success")
+            return redirect(request.url)
 
-    # Get patien's basic information.
+        else:
+            # Show error message to user.
+            flash("There was an error with the form, please follow the form's instructions.", "danger")
+            return redirect(request.url)
+            
+    # GET patien's basic information.
     else:
-        uid = request.args.get('uid')
-        pid = request.args.get('pid')
-       
+        try:
+            uid = request.args.get('uid')
+            pid = request.args.get('pid')
+        except:
+            # Show error message to user.
+            flash("There was an error with Doctor's id or Patient's id.", "danger")
+            return redirect(request.url)
+    
         # if uid and pid are not None, then return edit form for patient.
         if uid is not None and pid is not None:
-            patient = db.child(uid).child("Patients").child(pid).get()
+            try:
+                patient = db.child(uid).child("Patients").child(pid).get()
 
-            # TODO : try catch.
-            name = patient.val()['name']
-            lastName = patient.val()['lastName']
-            email = patient.val()['email']
-            gender = patient.val()['gender']
-            age =  patient.val()['age']
-
+                name = patient.val()['name']
+                lastName = patient.val()['lastName']
+                email = patient.val()['email']
+                gender = patient.val()['gender']
+                age =  patient.val()['age']
+            except:
+                # Show error message to user.
+                flash("There was an error with fetch patient's data from the database.", "danger")
+                return redirect(request.url)
+                
             return render_template('edit.html', uid = uid, pid = pid, name = name, lastName = lastName, email = email, gender = gender, age = age)
         else:
-            # TODO: Send message error on patients page!!
-            return render_template('patients.html')
-
+            # Show error message to user.
+            flash("Either doctor's or patient's ID were not found.", "danger")
+            return redirect(request.url)
+            
 # Delete a patient.
 @app.route('/delete/')
 def delete():
-    
     try:
         uid = request.args.get('uid')
         pid = request.args.get('pid')
     except:
-        return render_template('patients.html', update="There was an error with Doctor's id or Patient's id." )
+        flash("There was an error with Doctor's id or Patient's id.", "danger")
+        return redirect(request.url)
 
     # if uid and pid are not None, then proceed to delete selected patient.
     if uid is not None and pid is not None:
         try:
             db.child(uid).child("Patients").child(pid).remove()
-            return render_template('patients.html', update="Patient was deleted successfully." )
+            return render_template('patients.html', update="Patient was deleted successfully.", type="success")
         except:
-            return render_template('patients.html', update="There was an error deleting the patient." )
+            # Show error message to user.
+            return render_template('patients.html', update="There was an error deleting the patient.", type="danger" )
     else:
-        return render_template('patients.html', update="There was an error with Doctor's id or Patient's id." )
+        # Show error message to user.
+        return render_template('patients.html', update="There was an error with Doctor's id or Patient's id.", type="danger")
     
 
 if __name__ == '__main__':
+    app.secret_key = 'OMONOIALAOSPROTATHLIMA'
     app.run(debug=True)
 

@@ -1,44 +1,40 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-  
-  <div class="mt-3">
-    <nav aria-label="breadcrumb">
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="/patients">Patients</a></li>
-        <li class="breadcrumb-item"><a href="">Edit</a></li>
-      </ol>
-    </nav>
+
+<div class="mt-3">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/patients">Patients</a></li>
+      <li class="breadcrumb-item"><a href="">Edit</a></li>
+    </ol>
+  </nav>
+</div>
+
+<div class="row mt-3">
+  <div class="col">
+    <h3><i class="fas fa-user-edit"></i> Edit Patient</h3>
   </div>
 
-  <div class="row mt-3">
-    <div class="col">
-      <h3><i class="fas fa-user-edit"></i> Edit Patient</h3>
-    </div>
-  
-    <div>
-      {# Call delete patient view function on flask server. #}
-      <a href="/delete?uid={{uid}}&pid={{pid}}" class="btn btn-delete"><i class="fas fa-user"></i> Delete patient</a>
-    </div>
+  <div>
+    {# Call delete patient view function on flask server. #}
+    <a href="/delete?uid={{uid}}&pid={{pid}}" class="btn btn-delete"><i class="fas fa-user"></i> Delete patient</a>
   </div>
+</div>
 
-  {# Show modal that patient was successfully updated. #}
-  <div class="alert alert-primary showOrNot mt-3" id="alert" role="alert">
-    Patient data was successfully updated!
-  </div>
+<!--  -->
+{% include 'includes/_update_msg.html' %}
 
-  {# Edit patient form. #}
-  {% include 'includes/_edit_patient_form.html' %}
+{# Edit patient form. #}
+{% include 'includes/_edit_patient_form.html' %}
 
-  <script>
+<!-- <script>
     const urlParams = new URLSearchParams(window.location.search);
     const update = urlParams.get('update');
     
     if(update != null) {
       document.getElementById('alert').style.display= 'block' ;
     }
-  </script>
-  
+  </script> -->
+
 {% endblock %}
-
-

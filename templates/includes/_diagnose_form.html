@@ -3,11 +3,7 @@
 {# Send diagnose form to the server to utilise the ML. #}
 
 {# Show update message. #}
-{% if update %}
-  <div class="alert alert-primary mt-3" id="alert" role="alert">
-    {{update}}
-  </div>
-{% endif %}
+{% include 'includes/_update_msg.html' %}
 
 <form id='form' action='/diagnose?pid={{pid}}' class="p-1 mt-3 mb-3" method="POST" data-parsley-validate="">
 

@@ -22,14 +22,14 @@
   </div>
 </div>
 
+{% include 'includes/_update_msg.html' %}
+
 {# Show update message. #}
 {% if update %}
-  <div class="alert alert-primary mt-3" id="alert" role="alert">
+  <div class="alert alert-{{type}} mt-3" id="alert" role="alert">
     {{update}}
   </div>
 {% endif %}
-
-
 
 {# Include patients_table, add_patient_modal, info_modal components. #}
 {% include 'includes/_patients_table.html' %}
