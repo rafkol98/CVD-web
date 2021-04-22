@@ -42,7 +42,8 @@ app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 mail = Mail(app)
 
-
+#Initialze person as dictionary
+person = {"uid": ""}
 
 # Load model.
 # model = pickle.load(open('cvd-model.pkl','rb'))
@@ -109,6 +110,17 @@ def forbidden_error(e):
 def index():
     return render_template('index.html')
 
+# Main functions
+@app.route('/setup', methods=['POST'])
+def setup():
+    global person
+    uid = request.args.get('uid')
+    person["uid"] = uid
+    print("OK")
+    print(person["uid"])
+    return ('', 204)
+
+
 # Diagnose patient.
 @app.route('/diagnose', methods=['GET','POST'])
 def diagnose():
@@ -174,7 +186,6 @@ def diagnose():
 @app.route('/patients/', methods=['GET','POST'])
 def patients():
         if request.method == 'POST':
-            # Get uid of user logged in.
             try:
                 uid = request.form['user_id']
                 age = request.form['age']

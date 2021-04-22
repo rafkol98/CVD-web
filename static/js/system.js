@@ -18,6 +18,18 @@ firebase.auth().onAuthStateChanged((user) => {
 function loggedIn() {
   firebase.auth().onAuthStateChanged((user) => {
     if (user) {
+      const path = `/setup?uid=${user.uid}`;
+      //Fetch response.
+      fetch(path, {
+        method: "POST",
+        credentials: "include",
+        body: JSON.stringify(),
+        cache: "no-cache",
+        headers: new Headers({
+          "content-type": "application/json"
+        }
+        )
+      });
       window.location.replace("/patients");
     }
   });
@@ -89,10 +101,13 @@ function info(userId, pid) {
   fetch(url)
     .then(response => response.json())
     .then(json => {
+      // var gender =  ? "0"
+      var gender = (json.gender === "0") ? "Male" : (json.gender === "1") ? "Female" : "";
+
         $("#infoModal").modal('show');
         $("#info-pid").html(pid);
         $("#info-age").html(json.age);
-        $("#info-gender").html(json.gender);
+        $("#info-gender").html(gender);
         $("#info-email").html(json.email);
     });
 }

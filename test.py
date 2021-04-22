@@ -30,15 +30,23 @@ class FlaskTest(unittest.TestCase):
     # Test that the patient's page is returned correctly.
     def test_patients(self):
         tester = app.test_client(self)
-        response = tester.get("/patients")
+        response = tester.get("/patients/")
         statuscode = response.status_code
         self.assertEqual(statuscode, 200)
 
-   def test_report(self):
+        # Test that the patient's page is returned correctly.
+    def test_add_patient_correct(self):
         tester = app.test_client(self)
-        response = tester.get("/history?uid=qr34AfcGffe1rSFrz4JtUzuEYWj2&pid=-MWZ3OxxmQoRFayfFbLF")
+        response = tester.post('/patients/', data=dict(uid = "qr34AfcGffe1rSFrz4JtUzuEYWj2",
+                age = "34",
+                gender = "1",
+                name = "Test",
+                lastName = "Test2",
+                email = "test@test.com"))
         statuscode = response.status_code
         self.assertEqual(statuscode, 200)
+
+
 
     
 
