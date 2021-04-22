@@ -125,9 +125,6 @@ def setup():
 def diagnose():
     if request.method == 'POST':
 
-        # Get uid of user logged in.
-        # uid = request.form['user_id']
-
         # Get patient id.
         pid = request.args.get('pid')
 
@@ -169,12 +166,12 @@ def diagnose():
                     # Save to database.
                     save_to_db(ct, userID, pid, chest, bps, chol, fbs, ecg, maxheart, exang, oldpeak, stslope, 1)
                     # Redirect to the report page.
-                    return redirect(url_for('report', pred = "Suffers from a CVD", neg = prob_neg, pos = prob_pos, pid = pid, uid = userID, ct = ct ))
+                    return redirect(url_for('report', pred = "Suffers from a CVD", neg = prob_neg, pos = prob_pos, pid = pid, ct = ct ))
                 else:
                     # Save to database.
                     save_to_db(ct, userID, pid, chest, bps, chol, fbs, ecg, maxheart, exang, oldpeak, stslope, 0)
                     # Redirect to the report page.
-                    return redirect(url_for('report', pred= "Most Likely Healthy", neg = prob_neg, pos = prob_pos, pid = pid, uid = userID, ct = ct ))
+                    return redirect(url_for('report', pred= "Most Likely Healthy", neg = prob_neg, pos = prob_pos, pid = pid, ct = ct ))
             else:
                 flash("Please fill all the boxes according to the instructions.", "danger")
                 return redirect(request.url)
@@ -186,7 +183,6 @@ def diagnose():
 def patients():
         if request.method == 'POST':
             try:
-                # uid = request.form['user_id']
                 age = request.form['age']
                 gender = request.form['gender']
                 name = request.form['name']
@@ -218,7 +214,6 @@ def report():
     pred = request.args.get('pred')
     neg = request.args.get('neg')
     pos = request.args.get('pos')
-    # uid = request.args.get('uid')
     pid = request.args.get('pid')
     ct = request.args.get('ct')
 
@@ -304,7 +299,7 @@ def report():
     healthyExang = [countVar("exercise angina",0,0), countVar("exercise angina",0,1)]
     cardioExang = [countVar("exercise angina",1,0), countVar("exercise angina",1,1)]
 
-    return render_template('report.html', ct = ct, pred = pred, neg = neg, exp = exp, pos = pos, uid = userID, pid = pid, data = data, graphOne = graphOne, healthyChol = healthyChol, healthyAge = healthyAge, cardioChol = cardioChol, cardioAge = cardioAge, rbp = diagnosisData.val()['bps'], sex = patient.val()['gender'], age = patient.val()['age'], chol = diagnosisData.val()['chol'], maxHeart = diagnosisData.val()['maxheart'], chest = diagnosisData.val()['chest'], fbs = diagnosisData.val()['fbs'], oldpeak = diagnosisData.val()['oldpeak'], exang = diagnosisData.val()['exang'], stslope = diagnosisData.val()['stslope'], ecg = diagnosisData.val()['ecg'], healthyAvg = healthyAvg, cardioAvg = cardioAvg, healthySecAvg = healthySecAvg, cardioSecAvg = cardioSecAvg, graphTwo = graphTwo, healthyRBP = healthyRBP, cardioRBP = cardioRBP, healthyHeart = healthyHeart, cardioHeart = cardioHeart, healthyChest = healthyChest, cardioChest = cardioChest, countHealFBS_0 = countHealFBS_0, countHealFBS_1 = countHealFBS_1, countCardioFBS_0 = countCardioFBS_0, countCardioFBS_1 = countCardioFBS_1, healthyFBS = healthyFBS, cardioFBS = cardioFBS, healthyOldpeak = healthyOldpeak, cardioOldpeak = cardioOldpeak, healthyExang = healthyExang, cardioExang = cardioExang, healthyStSlope = healthyStSlope, cardioStSlope = cardioStSlope, healthyECG = healthyECG, cardioECG = cardioECG, healthyGender = healthyGender, cardioGender = cardioGender, healthyCholMoreLess = healthyCholMoreLess, cardioCholMoreLess = cardioCholMoreLess, healthyRBPMoreLess = healthyRBPMoreLess, cardioRBPMoreLess = cardioRBPMoreLess, healthyMaxHeartMoreLess = healthyMaxHeartMoreLess, cardioMaxHeartMoreLess = cardioMaxHeartMoreLess)
+    return render_template('report.html', ct = ct, pred = pred, neg = neg, exp = exp, pos = pos, pid = pid, data = data, graphOne = graphOne, healthyChol = healthyChol, healthyAge = healthyAge, cardioChol = cardioChol, cardioAge = cardioAge, rbp = diagnosisData.val()['bps'], sex = patient.val()['gender'], age = patient.val()['age'], chol = diagnosisData.val()['chol'], maxHeart = diagnosisData.val()['maxheart'], chest = diagnosisData.val()['chest'], fbs = diagnosisData.val()['fbs'], oldpeak = diagnosisData.val()['oldpeak'], exang = diagnosisData.val()['exang'], stslope = diagnosisData.val()['stslope'], ecg = diagnosisData.val()['ecg'], healthyAvg = healthyAvg, cardioAvg = cardioAvg, healthySecAvg = healthySecAvg, cardioSecAvg = cardioSecAvg, graphTwo = graphTwo, healthyRBP = healthyRBP, cardioRBP = cardioRBP, healthyHeart = healthyHeart, cardioHeart = cardioHeart, healthyChest = healthyChest, cardioChest = cardioChest, countHealFBS_0 = countHealFBS_0, countHealFBS_1 = countHealFBS_1, countCardioFBS_0 = countCardioFBS_0, countCardioFBS_1 = countCardioFBS_1, healthyFBS = healthyFBS, cardioFBS = cardioFBS, healthyOldpeak = healthyOldpeak, cardioOldpeak = cardioOldpeak, healthyExang = healthyExang, cardioExang = cardioExang, healthyStSlope = healthyStSlope, cardioStSlope = cardioStSlope, healthyECG = healthyECG, cardioECG = cardioECG, healthyGender = healthyGender, cardioGender = cardioGender, healthyCholMoreLess = healthyCholMoreLess, cardioCholMoreLess = cardioCholMoreLess, healthyRBPMoreLess = healthyRBPMoreLess, cardioRBPMoreLess = cardioRBPMoreLess, healthyMaxHeartMoreLess = healthyMaxHeartMoreLess, cardioMaxHeartMoreLess = cardioMaxHeartMoreLess)
 
 
 # Get patients of user.
@@ -314,7 +309,6 @@ def getPatients():
     def add_header(response):
         response.headers.add('Access-Control-Allow-Origin', '*')
         return response
-    # uid = request.args.get('uid')
     print(userID)
     patients = db.child(userID).child("Patients").get().val()
 
@@ -324,8 +318,6 @@ def getPatients():
 # POST input box.
 @app.route('/report/comments', methods=['POST'])
 def report_comments():
-    # comment = request.form['comment']
-    # uid = request.args.get('uid')
     pid = request.args.get('pid')
 
     comments = request.form['comments']
@@ -344,8 +336,6 @@ def report_comments():
 # Save PDF's url to the database.
 @app.route('/save_pdf', methods=['POST'])
 def save_pdf():
-    # comment = request.form['comment']
-    # uid = request.args.get('uid')
     pid = request.args.get('pid')
     ct = request.args.get('ct')
 
@@ -363,7 +353,6 @@ def info():
     def add_header(response):
         response.headers.add('Access-Control-Allow-Origin', '*')
         return response
-    # uid = request.args.get('uid')
     pid = request.args.get('pid')
 
     patient = db.child(userID).child("Patients").child(pid).get()
@@ -374,13 +363,12 @@ def info():
 # Get history of patient.
 @app.route('/history')
 def history():
-    # uid = request.args.get('uid')
     pid = request.args.get('pid')
 
     history = db.child(userID).child("Patients").child(pid).child("history").get().val()
     patient = db.child(userID).child("Patients").child(pid).get().val()
 
-    return render_template('history.html', history = history, uid = userID, pid = pid, patient = patient)
+    return render_template('history.html', history = history, pid = pid, patient = patient)
 
 # Get specific history.
 @app.route('/patients/history/specific')
@@ -390,7 +378,6 @@ def history_specific():
         response.headers.add('Access-Control-Allow-Origin', '*')
         return response
     
-    # uid = request.args.get('uid')
     pid = request.args.get('pid')
     key = request.args.get('key')
 
@@ -405,7 +392,7 @@ def patients_history():
     def add_header(response):
         response.headers.add('Access-Control-Allow-Origin', '*')
         return response
-    # uid = request.args.get('uid')
+    
     pid = request.args.get('pid')
 
     history = db.child(userID).child("Patients").child(pid).child("history").get().val()
@@ -417,7 +404,7 @@ def patients_history():
 def edit():
     # Edit patient's data on firebase.
     if request.method == 'POST':
-        # uid = request.args.get('uid')
+
         pid = request.args.get('pid')
         if userID is not None and pid is not None:
             # Get data passed in.
@@ -448,11 +435,10 @@ def edit():
     # GET patien's basic information.
     else:
         try:
-            # uid = request.args.get('uid')
             pid = request.args.get('pid')
         except:
             # Show error message to user.
-            flash("There was an error with Doctor's id or Patient's id.", "danger")
+            flash("There was an error with Patient's id.", "danger")
             return redirect(request.url)
     
         # if userID and pid are not None, then return edit form for patient.
@@ -470,7 +456,7 @@ def edit():
                 flash("There was an error with fetch patient's data from the database.", "danger")
                 return redirect(request.url)
                 
-            return render_template('edit.html', uid = userID, pid = pid, name = name, lastName = lastName, email = email, gender = gender, age = age)
+            return render_template('edit.html', pid = pid, name = name, lastName = lastName, email = email, gender = gender, age = age)
         else:
             # Show error message to user.
             flash("Either doctor's or patient's ID were not found.", "danger")
@@ -480,7 +466,6 @@ def edit():
 @app.route('/delete/')
 def delete():
     try:
-        # uid = request.args.get('uid')
         pid = request.args.get('pid')
     except:
         flash("There was an error with Doctor's id or Patient's id.", "danger")

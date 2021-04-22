@@ -34,7 +34,7 @@
           firebase.storage().ref(pdf_url).getDownloadURL()
           .then((url) => {
             console.log("here,"+url);
-            const path = `/save_pdf?uid=${userid}&pid=${patientid}&ct=${name}`;
+            const path = `/save_pdf?pid=${patientid}&ct=${name}`;
             //Fetch response.
             fetch(path, {
               method: "POST",

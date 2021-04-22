@@ -84,10 +84,10 @@ function getPatients() {
 
               // Populate table.
               items_table.innerHTML +=
-                `<tr><td> <a href="/edit?uid=${userId}&pid=${key}"><i class='fas fa-edit'></i></a>` +
+                `<tr><td> <a href="/edit?pid=${key}"><i class='fas fa-edit'></i></a>` +
                 "</td>"+"<td>" +
                 patients[key].name + " " + patients[key].lastName +
-                `</td> <td><a href="javascript:info('${userId}','${key}');"><i class="fas fa-info-circle"></i> Info</a></td>  <td><a href="/history?uid=${userId}&pid=${key}");"><i class="fas fa-file-medical-alt"></i> History</a></td> <td><h5><span class="badge badge-${badge}">${condition}</span></h5></td> <td><a href="/diagnose?pid=${key}" class="btn btn-function"><i class="fas fa-heartbeat"></i> Diagnose</a></td> </tr>`;
+                `</td> <td><a href="javascript:info('${key}');"><i class="fas fa-info-circle"></i> Info</a></td>  <td><a href="/history?pid=${key}");"><i class="fas fa-file-medical-alt"></i> History</a></td> <td><h5><span class="badge badge-${badge}">${condition}</span></h5></td> <td><a href="/diagnose?pid=${key}" class="btn btn-function"><i class="fas fa-heartbeat"></i> Diagnose</a></td> </tr>`;
             }
           }
         });
@@ -96,8 +96,8 @@ function getPatients() {
 }
 
 // Get info of patient.
-function info(userId, pid) {
-  const url = `/patients/info?uid=${userId}&pid=${pid}`
+function info( pid) {
+  const url = `/patients/info?pid=${pid}`
   fetch(url)
     .then(response => response.json())
     .then(json => {
@@ -113,8 +113,8 @@ function info(userId, pid) {
 }
 
 // Get history of patient.
-function getHistory(userId, pid) {
-  const url = `/patients/history?uid=${userId}&pid=${pid}`
+function getHistory(pid) {
+  const url = `/patients/history?pid=${pid}`
   fetch(url)
     .then(response => response.json())
     .then(history => {
@@ -146,7 +146,7 @@ function getHistory(userId, pid) {
                 `<tr><td> ${date}` +
                 "</td>"+"<td>" +
                 `<h5><span class="badge badge-${badge}">${condition}</span></h5>` +
-                `</td> <td><a href="javascript:infoSpecificHistory('${userId}','${pid}','${key}');"><i class="fas fa-eye"></i> View</a></td>  <td><a href="${pdf_url}" target="_blank"><i class="fas fa-download"></i> PDF</a></td> </tr>`;
+                `</td> <td><a href="javascript:infoSpecificHistory('${pid}','${key}');"><i class="fas fa-eye"></i> View</a></td>  <td><a href="${pdf_url}" target="_blank"><i class="fas fa-download"></i> PDF</a></td> </tr>`;
         }
 
       } 
@@ -159,9 +159,9 @@ function getHistory(userId, pid) {
 }
 
 // Get specific history for info.
-function infoSpecificHistory(userId,pid,key) {
+function infoSpecificHistory(pid,key) {
   // Fetch data from the server.
-  const url = `/patients/history/specific?uid=${userId}&pid=${pid}&key=${key}`
+  const url = `/patients/history/specific?pid=${pid}&key=${key}`
   fetch(url)
     .then(response => response.json())
     .then(history => {

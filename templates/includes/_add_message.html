@@ -3,7 +3,7 @@
 </div>
 
 {# Send comment to the server to be added on the diagnosis. #}
-<form id='form' action='/report/comments?uid={{uid}}&pid={{pid}}' class="p-1 mt-3 mb-3" method="POST">
+<form id='form' action='/report/comments?pid={{pid}}' class="p-1 mt-3 mb-3" method="POST">
 
     <label for="comments">Comments:</label>
     <textarea class="form-control" rows="5" id="comments" name="comments" data-parsley-type="alphanum" required></textarea>
