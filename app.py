@@ -124,57 +124,58 @@ def setup():
 @app.route('/diagnose', methods=['GET','POST'])
 def diagnose():
     if request.method == 'POST':
+        try:
+            # Get patient id.
+            pid = request.args.get('pid')
 
-        # Get patient id.
-        pid = request.args.get('pid')
+            age = db.child(userID).child("Patients").child(pid).child("age").get().val()
 
-        age = db.child(userID).child("Patients").child(pid).child("age").get().val()
-
-        gender = db.child(userID).child("Patients").child(pid).child("gender").get().val()
-       
-        chest = request.form['chest']
-        bps = request.form['bps']
-        chol = request.form['chol'] 
-        fbs = request.form['fbs']
-        ecg = request.form['ecg']
-        maxheart = request.form['maxheart']
-        exang = request.form['exang']
-        oldpeak = request.form['oldpeak']
-        stslope = request.form['stslope']
+            gender = db.child(userID).child("Patients").child(pid).child("gender").get().val()
+        
+            chest = request.form['chest']
+            bps = request.form['bps']
+            chol = request.form['chol'] 
+            fbs = request.form['fbs']
+            ecg = request.form['ecg']
+            maxheart = request.form['maxheart']
+            exang = request.form['exang']
+            oldpeak = request.form['oldpeak']
+            stslope = request.form['stslope']
 
 
-        if((age is not None) and (gender is not None)):
-            
-            # Get all the values from the form.
-            ints = [age, gender, chest, bps, chol, fbs, ecg, maxheart, exang, oldpeak, stslope]
-            
-            # Check if the list does not contain any empty values and evaluate that all the values are between the limits.
-            if all(ints) and check_number(bps, 0, 300) and check_number(chol, 0, 700) and check_number(maxheart, 0, 300) and (0 <= float(oldpeak) <= 7) and check_number(chest, 1, 4) and check_number(fbs, 0, 1) and check_number(ecg, 0, 2) and check_number(exang, 0, 1) and check_number(stslope, 0, 3):
-                # Get current timestamp.
-                ct = int(datetime.datetime.now().timestamp())
+            if((age is not None) and (gender is not None)):
+                
+                # Get all the values from the form.
+                ints = [age, gender, chest, bps, chol, fbs, ecg, maxheart, exang, oldpeak, stslope]
+                
+                # Check if the list does not contain any empty values and evaluate that all the values are between the limits.
+                if all(ints) and check_number(bps, 0, 300) and check_number(chol, 0, 700) and check_number(maxheart, 0, 300) and (0 <= float(oldpeak) <= 7) and check_number(chest, 1, 4) and check_number(fbs, 0, 1) and check_number(ecg, 0, 2) and check_number(exang, 0, 1) and check_number(stslope, 0, 3):
+                    # Get current timestamp.
+                    ct = int(datetime.datetime.now().timestamp())
 
-                # Use model to make prediction.
-                final = [np.array(ints)]
-                prediction = model.predict(final)
-                a = pd.Series(final).to_json(orient='values') 
+                    # Use model to make prediction.
+                    final = [np.array(ints)]
+                    prediction = model.predict(final)
 
-                prob_neg = str(model.predict_proba(final)[:,0])[1:-1]
-                prob_pos = str(model.predict_proba(final)[:,1])[1:-1]
+                    prob_neg = str(model.predict_proba(final)[:,0])[1:-1]
+                    prob_pos = str(model.predict_proba(final)[:,1])[1:-1]
 
-                # Write to the database.
-                if prediction==1:
-                    # Save to database.
-                    save_to_db(ct, userID, pid, chest, bps, chol, fbs, ecg, maxheart, exang, oldpeak, stslope, 1)
-                    # Redirect to the report page.
-                    return redirect(url_for('report', pred = "Suffers from a CVD", neg = prob_neg, pos = prob_pos, pid = pid, ct = ct ))
+                    # Write to the database.
+                    if prediction==1:
+                        # Save to database.
+                        save_to_db(ct, userID, pid, chest, bps, chol, fbs, ecg, maxheart, exang, oldpeak, stslope, 1)
+                        # Redirect to the report page.
+                        return redirect(url_for('report', pred = "Suffers from a CVD", neg = prob_neg, pos = prob_pos, pid = pid, ct = ct ))
+                    else:
+                        # Save to database.
+                        save_to_db(ct, userID, pid, chest, bps, chol, fbs, ecg, maxheart, exang, oldpeak, stslope, 0)
+                        # Redirect to the report page.
+                        return redirect(url_for('report', pred= "Most Likely Healthy", neg = prob_neg, pos = prob_pos, pid = pid, ct = ct ))
                 else:
-                    # Save to database.
-                    save_to_db(ct, userID, pid, chest, bps, chol, fbs, ecg, maxheart, exang, oldpeak, stslope, 0)
-                    # Redirect to the report page.
-                    return redirect(url_for('report', pred= "Most Likely Healthy", neg = prob_neg, pos = prob_pos, pid = pid, ct = ct ))
-            else:
-                flash("Please fill all the boxes according to the instructions.", "danger")
-                return redirect(request.url)
+                    flash("Please fill all the boxes according to the instructions.", "danger")
+                    return redirect(request.url)
+        except:
+            abort(404)
     else:
         pid = request.args.get('pid')
         return render_template('diagnose.html', pid = pid)
@@ -189,20 +190,19 @@ def patients():
                 lastName = request.form['lastName']
                 email = request.form['email']
 
+                # Validate input passed in.
+                if userID is not None and only_letters(name) and only_letters(lastName) and (0 <= int(gender) <= 1) and check_email(email) and (0 <= int(age) <= 120):
+                    patient_data = {"age": age, "gender": gender, "name": name, "lastName": lastName, "email": email}
+                    db.child(userID).child("Patients").push(patient_data)
+                    flash("Patient was added.", "success")
+                    return redirect(request.url)
+                else:
+                    # Show error message to user.
+                    flash("PATIENT WAS NOT ADDED: Please follow the form's instructions when filling out the form.", "danger")
+                    return redirect(request.url)
             except:
                 # Show error message to user.
-                flash("There was an error with Doctor's id or Patient's id.", "danger")
-                return redirect(request.url)
-                
-            # Validate input passed in.
-            if userID is not None and only_letters(name) and only_letters(lastName) and (0 <= int(gender) <= 1) and check_email(email) and (0 <= int(age) <= 120):
-               patient_data = {"age": age, "gender": gender, "name": name, "lastName": lastName, "email": email}
-               db.child(userID).child("Patients").push(patient_data)
-               flash("Patient was added.", "success")
-               return redirect(request.url)
-            else:
-                # Show error message to user.
-                flash("PATIENT WAS NOT ADDED: Please follow the form's instructions when filling out the form.", "danger")
+                flash("There was a problem ading the patient", "danger")
                 return redirect(request.url)
         else:
             # GET Request.
@@ -211,96 +211,99 @@ def patients():
 # Generate visual report.
 @app.route('/report')
 def report():
-    pred = request.args.get('pred')
-    neg = request.args.get('neg')
-    pos = request.args.get('pos')
-    pid = request.args.get('pid')
-    ct = request.args.get('ct')
+    try:
+        pred = request.args.get('pred')
+        neg = request.args.get('neg')
+        pos = request.args.get('pos')
+        pid = request.args.get('pid')
+        ct = request.args.get('ct')
 
-    # Get patient.
-    patient = db.child(userID).child("Patients").child(pid).get()
-    # Get current diagnosis data.
-    diagnosisData = db.child(userID).child("Patients").child(pid).child("current").get()
+        # Get patient.
+        patient = db.child(userID).child("Patients").child(pid).get()
+        # Get current diagnosis data.
+        diagnosisData = db.child(userID).child("Patients").child(pid).child("current").get()
 
-    # Make an array with all the patient's data.
-    data = (np.array([patient.val()['age'], patient.val()['gender'], diagnosisData.val()['chest'], diagnosisData.val()['bps'], diagnosisData.val()['chol'], diagnosisData.val()['fbs'], diagnosisData.val()['ecg'], diagnosisData.val()['maxheart'], diagnosisData.val()['exang'], diagnosisData.val()['oldpeak'], diagnosisData.val()['stslope']])).astype(float)
-    
-    # Make the first graph.
-    graphOne = [ diagnosisData.val()['chest'], diagnosisData.val()['fbs'], diagnosisData.val()['ecg'], diagnosisData.val()['exang'], diagnosisData.val()['oldpeak'], diagnosisData.val()['stslope'] ]
+        # Make an array with all the patient's data.
+        data = (np.array([patient.val()['age'], patient.val()['gender'], diagnosisData.val()['chest'], diagnosisData.val()['bps'], diagnosisData.val()['chol'], diagnosisData.val()['fbs'], diagnosisData.val()['ecg'], diagnosisData.val()['maxheart'], diagnosisData.val()['exang'], diagnosisData.val()['oldpeak'], diagnosisData.val()['stslope']])).astype(float)
+        
+        # Make the first graph.
+        graphOne = [ diagnosisData.val()['chest'], diagnosisData.val()['fbs'], diagnosisData.val()['ecg'], diagnosisData.val()['exang'], diagnosisData.val()['oldpeak'], diagnosisData.val()['stslope'] ]
 
-    graphTwo = [ diagnosisData.val()['bps'], diagnosisData.val()['chol'], diagnosisData.val()['maxheart'] ]
+        graphTwo = [ diagnosisData.val()['bps'], diagnosisData.val()['chol'], diagnosisData.val()['maxheart'] ]
 
-    # Explainable AI.
-    exp = exp_load.explain_instance(data_row = data, predict_fn = model.predict_proba)
-    exp = exp.as_html()
+        # Explainable AI.
+        exp = exp_load.explain_instance(data_row = data, predict_fn = model.predict_proba)
+        exp = exp.as_html()
 
-    healthyAvg = firstGraph(0)
-    cardioAvg = firstGraph(1)
+        healthyAvg = firstGraph(0)
+        cardioAvg = firstGraph(1)
 
-    healthySecAvg = secondGraph(0)
-    cardioSecAvg = secondGraph(1)
+        healthySecAvg = secondGraph(0)
+        cardioSecAvg = secondGraph(1)
 
-    healthyAge = getVar("age", 0)
-    cardioAge = getVar("age", 1)
+        healthyAge = getVar("age", 0)
+        cardioAge = getVar("age", 1)
 
-    healthyGender = getVar("sex", 0)
-    cardioGender = getVar("sex", 1)
+        healthyGender = getVar("sex", 0)
+        cardioGender = getVar("sex", 1)
 
-    healthyChol = getVar("cholesterol", 0)
-    cardioChol = getVar("cholesterol", 1)
-    
-    # Get number of healthy patients more than patient's value.
-    healthyCholMoreLess = getNumbers("cholesterol", diagnosisData.val()['chol'], 0)
+        healthyChol = getVar("cholesterol", 0)
+        cardioChol = getVar("cholesterol", 1)
+        
+        # Get number of healthy patients more than patient's value.
+        healthyCholMoreLess = getNumbers("cholesterol", diagnosisData.val()['chol'], 0)
 
-    # Get number of cardio patients more than patient's value.
-    cardioCholMoreLess = getNumbers("cholesterol", diagnosisData.val()['chol'], 1)
+        # Get number of cardio patients more than patient's value.
+        cardioCholMoreLess = getNumbers("cholesterol", diagnosisData.val()['chol'], 1)
 
-    # Get number of healthy patients more than patient's value.
-    healthyRBPMoreLess = getNumbers("resting bp s", diagnosisData.val()['bps'], 0)
+        # Get number of healthy patients more than patient's value.
+        healthyRBPMoreLess = getNumbers("resting bp s", diagnosisData.val()['bps'], 0)
 
-    # Get number of cardio patients more than patient's value.
-    cardioRBPMoreLess = getNumbers("resting bp s", diagnosisData.val()['bps'], 1)
+        # Get number of cardio patients more than patient's value.
+        cardioRBPMoreLess = getNumbers("resting bp s", diagnosisData.val()['bps'], 1)
 
-    # Get number of healthy patients more than patient's value.
-    healthyMaxHeartMoreLess = getNumbers("max heart rate", diagnosisData.val()['maxheart'], 0)
+        # Get number of healthy patients more than patient's value.
+        healthyMaxHeartMoreLess = getNumbers("max heart rate", diagnosisData.val()['maxheart'], 0)
 
-    # Get number of cardio patients more than patient's value.
-    cardioMaxHeartMoreLess = getNumbers("max heart rate", diagnosisData.val()['maxheart'], 1)
+        # Get number of cardio patients more than patient's value.
+        cardioMaxHeartMoreLess = getNumbers("max heart rate", diagnosisData.val()['maxheart'], 1)
 
-    healthyRBP = getVar("resting bp s", 0)
-    cardioRBP = getVar("resting bp s", 1)
+        healthyRBP = getVar("resting bp s", 0)
+        cardioRBP = getVar("resting bp s", 1)
 
-    healthyHeart = getVar("max heart rate", 0)
-    cardioHeart = getVar("max heart rate", 1)
+        healthyHeart = getVar("max heart rate", 0)
+        cardioHeart = getVar("max heart rate", 1)
 
-    healthyChest = getVar("chest pain type", 0)
-    cardioChest = getVar("chest pain type", 1)
+        healthyChest = getVar("chest pain type", 0)
+        cardioChest = getVar("chest pain type", 1)
 
-    healthyOldpeak = getVar("oldpeak", 0)
-    cardioOldpeak = getVar("oldpeak", 1)
+        healthyOldpeak = getVar("oldpeak", 0)
+        cardioOldpeak = getVar("oldpeak", 1)
 
-    healthyECG = getVar("resting ecg", 0)
-    cardioECG = getVar("resting ecg", 1)
+        healthyECG = getVar("resting ecg", 0)
+        cardioECG = getVar("resting ecg", 1)
 
-    healthyStSlope = getVar("ST slope", 0)
-    cardioStSlope = getVar("ST slope", 1)
+        healthyStSlope = getVar("ST slope", 0)
+        cardioStSlope = getVar("ST slope", 1)
 
-#   Count fbs 0 and 1 in healthy and cardio patients.
-    countHealFBS_0 = countVar("fasting blood sugar",0,0)
-    countHealFBS_1 = countVar("fasting blood sugar",0,1)
+    #   Count fbs 0 and 1 in healthy and cardio patients.
+        countHealFBS_0 = countVar("fasting blood sugar",0,0)
+        countHealFBS_1 = countVar("fasting blood sugar",0,1)
 
-    countCardioFBS_0 = countVar("fasting blood sugar",1,0)
-    countCardioFBS_1 = countVar("fasting blood sugar",1,1)
+        countCardioFBS_0 = countVar("fasting blood sugar",1,0)
+        countCardioFBS_1 = countVar("fasting blood sugar",1,1)
 
-    healthyFBS = [countHealFBS_0, countHealFBS_1]
-    cardioFBS = [countCardioFBS_0, countCardioFBS_1]
+        healthyFBS = [countHealFBS_0, countHealFBS_1]
+        cardioFBS = [countCardioFBS_0, countCardioFBS_1]
 
-#   Count exercise angina 0 and 1 in healthy and cardio patients.
-    healthyExang = [countVar("exercise angina",0,0), countVar("exercise angina",0,1)]
-    cardioExang = [countVar("exercise angina",1,0), countVar("exercise angina",1,1)]
+    #   Count exercise angina 0 and 1 in healthy and cardio patients.
+        healthyExang = [countVar("exercise angina",0,0), countVar("exercise angina",0,1)]
+        cardioExang = [countVar("exercise angina",1,0), countVar("exercise angina",1,1)]
 
-    return render_template('report.html', ct = ct, pred = pred, neg = neg, exp = exp, pos = pos, pid = pid, data = data, graphOne = graphOne, healthyChol = healthyChol, healthyAge = healthyAge, cardioChol = cardioChol, cardioAge = cardioAge, rbp = diagnosisData.val()['bps'], sex = patient.val()['gender'], age = patient.val()['age'], chol = diagnosisData.val()['chol'], maxHeart = diagnosisData.val()['maxheart'], chest = diagnosisData.val()['chest'], fbs = diagnosisData.val()['fbs'], oldpeak = diagnosisData.val()['oldpeak'], exang = diagnosisData.val()['exang'], stslope = diagnosisData.val()['stslope'], ecg = diagnosisData.val()['ecg'], healthyAvg = healthyAvg, cardioAvg = cardioAvg, healthySecAvg = healthySecAvg, cardioSecAvg = cardioSecAvg, graphTwo = graphTwo, healthyRBP = healthyRBP, cardioRBP = cardioRBP, healthyHeart = healthyHeart, cardioHeart = cardioHeart, healthyChest = healthyChest, cardioChest = cardioChest, countHealFBS_0 = countHealFBS_0, countHealFBS_1 = countHealFBS_1, countCardioFBS_0 = countCardioFBS_0, countCardioFBS_1 = countCardioFBS_1, healthyFBS = healthyFBS, cardioFBS = cardioFBS, healthyOldpeak = healthyOldpeak, cardioOldpeak = cardioOldpeak, healthyExang = healthyExang, cardioExang = cardioExang, healthyStSlope = healthyStSlope, cardioStSlope = cardioStSlope, healthyECG = healthyECG, cardioECG = cardioECG, healthyGender = healthyGender, cardioGender = cardioGender, healthyCholMoreLess = healthyCholMoreLess, cardioCholMoreLess = cardioCholMoreLess, healthyRBPMoreLess = healthyRBPMoreLess, cardioRBPMoreLess = cardioRBPMoreLess, healthyMaxHeartMoreLess = healthyMaxHeartMoreLess, cardioMaxHeartMoreLess = cardioMaxHeartMoreLess)
-
+        return render_template('report.html', uid = userID, ct = ct, pred = pred, neg = neg, exp = exp, pos = pos, pid = pid, data = data, graphOne = graphOne, healthyChol = healthyChol, healthyAge = healthyAge, cardioChol = cardioChol, cardioAge = cardioAge, rbp = diagnosisData.val()['bps'], sex = patient.val()['gender'], age = patient.val()['age'], chol = diagnosisData.val()['chol'], maxHeart = diagnosisData.val()['maxheart'], chest = diagnosisData.val()['chest'], fbs = diagnosisData.val()['fbs'], oldpeak = diagnosisData.val()['oldpeak'], exang = diagnosisData.val()['exang'], stslope = diagnosisData.val()['stslope'], ecg = diagnosisData.val()['ecg'], healthyAvg = healthyAvg, cardioAvg = cardioAvg, healthySecAvg = healthySecAvg, cardioSecAvg = cardioSecAvg, graphTwo = graphTwo, healthyRBP = healthyRBP, cardioRBP = cardioRBP, healthyHeart = healthyHeart, cardioHeart = cardioHeart, healthyChest = healthyChest, cardioChest = cardioChest, countHealFBS_0 = countHealFBS_0, countHealFBS_1 = countHealFBS_1, countCardioFBS_0 = countCardioFBS_0, countCardioFBS_1 = countCardioFBS_1, healthyFBS = healthyFBS, cardioFBS = cardioFBS, healthyOldpeak = healthyOldpeak, cardioOldpeak = cardioOldpeak, healthyExang = healthyExang, cardioExang = cardioExang, healthyStSlope = healthyStSlope, cardioStSlope = cardioStSlope, healthyECG = healthyECG, cardioECG = cardioECG, healthyGender = healthyGender, cardioGender = cardioGender, healthyCholMoreLess = healthyCholMoreLess, cardioCholMoreLess = cardioCholMoreLess, healthyRBPMoreLess = healthyRBPMoreLess, cardioRBPMoreLess = cardioRBPMoreLess, healthyMaxHeartMoreLess = healthyMaxHeartMoreLess, cardioMaxHeartMoreLess = cardioMaxHeartMoreLess)
+    except:
+        # Server error.
+        abort(500)
 
 # Get patients of user.
 @app.route('/getPatients', methods=['GET'])
@@ -404,46 +407,35 @@ def patients_history():
 def edit():
     # Edit patient's data on firebase.
     if request.method == 'POST':
+        try:
+            pid = request.args.get('pid')
+            age = request.form['age']
+            gender = request.form['gender']
+            name = request.form['name']
+            lastName = request.form['lastName']
+            email = request.form['email']
+                    
+            # Validate that data is of the appropriate type.
+            if userID is not None and pid is not None and only_letters(name) and only_letters(lastName) and (0 <= int(gender) <= 1) and check_email(email) and (0 <= int(age) <= 120):
+                patient_data = {"age": age, "gender": gender, "name": name, "lastName": lastName, "email": email}
+                db.child(userID).child("Patients").child(pid).update(patient_data)
 
-        pid = request.args.get('pid')
-        if userID is not None and pid is not None:
-            # Get data passed in.
-            try:
-                age = request.form['age']
-                gender = request.form['gender']
-                name = request.form['name']
-                lastName = request.form['lastName']
-                email = request.form['email']
-            except:
-                # Show error message to user.
-                flash("There was a problem fetching data passed with the form!", "danger")
+                flash("Patient data was successfully updated!", "success")
                 return redirect(request.url)
-                
-        # Validate that data is of the appropriate type.
-        if userID is not None and pid is not None and only_letters(name) and only_letters(lastName) and (0 <= int(gender) <= 1) and check_email(email) and (0 <= int(age) <= 120):
-            patient_data = {"age": age, "gender": gender, "name": name, "lastName": lastName, "email": email}
-            db.child(userID).child("Patients").child(pid).update(patient_data)
-
-            flash("Patient data was successfully updated!", "success")
-            return redirect(request.url)
-
-        else:
-            # Show error message to user.
-            flash("There was an error with the form, please follow the form's instructions.", "danger")
-            return redirect(request.url)
-            
-    # GET patien's basic information.
+            else:
+                # Show error message to user.
+                flash("There was an error with the form, please follow the form's instructions.", "danger")
+                return redirect(request.url)
+        except:
+            # Server error.
+            abort(500)    
+    # GET patient's basic information.
     else:
         try:
             pid = request.args.get('pid')
-        except:
-            # Show error message to user.
-            flash("There was an error with Patient's id.", "danger")
-            return redirect(request.url)
-    
-        # if userID and pid are not None, then return edit form for patient.
-        if userID is not None and pid is not None:
-            try:
+
+            # if userID and pid are not None, then return edit form for patient.
+            if userID is not None and pid is not None:
                 patient = db.child(userID).child("Patients").child(pid).get()
 
                 name = patient.val()['name']
@@ -451,15 +443,15 @@ def edit():
                 email = patient.val()['email']
                 gender = patient.val()['gender']
                 age =  patient.val()['age']
-            except:
+
+                return render_template('edit.html', pid = pid, name = name, lastName = lastName, email = email, gender = gender, age = age)
+            else:
                 # Show error message to user.
-                flash("There was an error with fetch patient's data from the database.", "danger")
+                flash("Either doctor's or patient's ID were not found.", "danger")
                 return redirect(request.url)
-                
-            return render_template('edit.html', pid = pid, name = name, lastName = lastName, email = email, gender = gender, age = age)
-        else:
+        except:
             # Show error message to user.
-            flash("Either doctor's or patient's ID were not found.", "danger")
+            flash("There was an error with Patient's id.", "danger")
             return redirect(request.url)
             
 # Delete a patient.
@@ -467,22 +459,17 @@ def edit():
 def delete():
     try:
         pid = request.args.get('pid')
-    except:
-        flash("There was an error with Doctor's id or Patient's id.", "danger")
-        return redirect(request.url)
 
-    # if userID and pid are not None, then proceed to delete selected patient.
-    if userID is not None and pid is not None:
-        try:
+        # if userID and pid are not None, then proceed to delete selected patient.
+        if userID is not None and pid is not None:
             db.child(userID).child("Patients").child(pid).remove()
             return render_template('patients.html', update="Patient was deleted successfully.", type="success")
-        except:
+        else:
             # Show error message to user.
-            return render_template('patients.html', update="There was an error deleting the patient.", type="danger" )
-    else:
-        # Show error message to user.
-        return render_template('patients.html', update="There was an error with Doctor's id or Patient's id.", type="danger")
-    
+            return render_template('patients.html', update="There was an error with Doctor's id or Patient's id.", type="danger")
+    except:
+        flash("There was an error deleting the patient.", "danger")
+        return redirect(request.url)
 
 if __name__ == '__main__':
     app.secret_key = 'OMONOIALAOSPROTATHLIMA'

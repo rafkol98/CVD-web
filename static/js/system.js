@@ -8,17 +8,7 @@ firebase.auth().onAuthStateChanged((user) => {
     // User logged in already or has just logged in.
     $("#user_id").val(user.uid);
     console.log(user.uid);
-  } else {
-    window.location.replace("/");
-    // User not logged in or has just logged out.
-  }
-});
-
-// Function used to redirect logged in users to patients page.
-function loggedIn() {
-  firebase.auth().onAuthStateChanged((user) => {
-    if (user) {
-      const path = `/setup?uid=${user.uid}`;
+    const path = `/setup?uid=${user.uid}`;
       //Fetch response.
       fetch(path, {
         method: "POST",
@@ -30,6 +20,16 @@ function loggedIn() {
         }
         )
       });
+  } else {
+    window.location.replace("/");
+    // User not logged in or has just logged out.
+  }
+});
+
+// Function used to redirect logged in users to patients page.
+function loggedIn() {
+  firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
       window.location.replace("/patients");
     }
   });
