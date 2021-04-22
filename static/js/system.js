@@ -54,7 +54,7 @@ function getPatients() {
   firebase.auth().onAuthStateChanged((user) => {
     if (user) {
       var userId = firebase.auth().currentUser.uid;
-      const url = `/getPatients?uid=${userId}`
+      const url = `/getPatients`
       fetch(url)
         .then(response => response.json())
         .then(patients => {

@@ -43,7 +43,7 @@ app.config['MAIL_USE_SSL'] = True
 mail = Mail(app)
 
 #Initialze person as dictionary
-person = {"uid": ""}
+userID = ""
 
 # Load model.
 # model = pickle.load(open('cvd-model.pkl','rb'))
@@ -113,11 +113,10 @@ def index():
 # Main functions
 @app.route('/setup', methods=['POST'])
 def setup():
-    global person
+    global userID
     uid = request.args.get('uid')
-    person["uid"] = uid
-    print("OK")
-    print(person["uid"])
+    userID = uid
+    print(userID)
     return ('', 204)
 
 
@@ -127,14 +126,14 @@ def diagnose():
     if request.method == 'POST':
 
         # Get uid of user logged in.
-        uid = request.form['user_id']
+        # uid = request.form['user_id']
 
         # Get patient id.
         pid = request.args.get('pid')
 
-        age = db.child(uid).child("Patients").child(pid).child("age").get().val()
+        age = db.child(userID).child("Patients").child(pid).child("age").get().val()
 
-        gender = db.child(uid).child("Patients").child(pid).child("gender").get().val()
+        gender = db.child(userID).child("Patients").child(pid).child("gender").get().val()
        
         chest = request.form['chest']
         bps = request.form['bps']
@@ -168,14 +167,14 @@ def diagnose():
                 # Write to the database.
                 if prediction==1:
                     # Save to database.
-                    save_to_db(ct, uid, pid, chest, bps, chol, fbs, ecg, maxheart, exang, oldpeak, stslope, 1)
+                    save_to_db(ct, userID, pid, chest, bps, chol, fbs, ecg, maxheart, exang, oldpeak, stslope, 1)
                     # Redirect to the report page.
-                    return redirect(url_for('report', pred = "Suffers from a CVD", neg = prob_neg, pos = prob_pos, pid = pid, uid = uid, ct = ct ))
+                    return redirect(url_for('report', pred = "Suffers from a CVD", neg = prob_neg, pos = prob_pos, pid = pid, uid = userID, ct = ct ))
                 else:
                     # Save to database.
-                    save_to_db(ct, uid, pid, chest, bps, chol, fbs, ecg, maxheart, exang, oldpeak, stslope, 0)
+                    save_to_db(ct, userID, pid, chest, bps, chol, fbs, ecg, maxheart, exang, oldpeak, stslope, 0)
                     # Redirect to the report page.
-                    return redirect(url_for('report', pred= "Most Likely Healthy", neg = prob_neg, pos = prob_pos, pid = pid, uid = uid, ct = ct ))
+                    return redirect(url_for('report', pred= "Most Likely Healthy", neg = prob_neg, pos = prob_pos, pid = pid, uid = userID, ct = ct ))
             else:
                 flash("Please fill all the boxes according to the instructions.", "danger")
                 return redirect(request.url)
@@ -187,7 +186,7 @@ def diagnose():
 def patients():
         if request.method == 'POST':
             try:
-                uid = request.form['user_id']
+                # uid = request.form['user_id']
                 age = request.form['age']
                 gender = request.form['gender']
                 name = request.form['name']
@@ -200,9 +199,9 @@ def patients():
                 return redirect(request.url)
                 
             # Validate input passed in.
-            if uid is not None and only_letters(name) and only_letters(lastName) and (0 <= int(gender) <= 1) and check_email(email) and (0 <= int(age) <= 120):
+            if userID is not None and only_letters(name) and only_letters(lastName) and (0 <= int(gender) <= 1) and check_email(email) and (0 <= int(age) <= 120):
                patient_data = {"age": age, "gender": gender, "name": name, "lastName": lastName, "email": email}
-               db.child(uid).child("Patients").push(patient_data)
+               db.child(userID).child("Patients").push(patient_data)
                flash("Patient was added.", "success")
                return redirect(request.url)
             else:
@@ -219,14 +218,14 @@ def report():
     pred = request.args.get('pred')
     neg = request.args.get('neg')
     pos = request.args.get('pos')
-    uid = request.args.get('uid')
+    # uid = request.args.get('uid')
     pid = request.args.get('pid')
     ct = request.args.get('ct')
 
     # Get patient.
-    patient = db.child(uid).child("Patients").child(pid).get()
+    patient = db.child(userID).child("Patients").child(pid).get()
     # Get current diagnosis data.
-    diagnosisData = db.child(uid).child("Patients").child(pid).child("current").get()
+    diagnosisData = db.child(userID).child("Patients").child(pid).child("current").get()
 
     # Make an array with all the patient's data.
     data = (np.array([patient.val()['age'], patient.val()['gender'], diagnosisData.val()['chest'], diagnosisData.val()['bps'], diagnosisData.val()['chol'], diagnosisData.val()['fbs'], diagnosisData.val()['ecg'], diagnosisData.val()['maxheart'], diagnosisData.val()['exang'], diagnosisData.val()['oldpeak'], diagnosisData.val()['stslope']])).astype(float)
@@ -305,7 +304,7 @@ def report():
     healthyExang = [countVar("exercise angina",0,0), countVar("exercise angina",0,1)]
     cardioExang = [countVar("exercise angina",1,0), countVar("exercise angina",1,1)]
 
-    return render_template('report.html', ct = ct, pred = pred, neg = neg, exp = exp, pos = pos, uid = uid, pid = pid, data = data, graphOne = graphOne, healthyChol = healthyChol, healthyAge = healthyAge, cardioChol = cardioChol, cardioAge = cardioAge, rbp = diagnosisData.val()['bps'], sex = patient.val()['gender'], age = patient.val()['age'], chol = diagnosisData.val()['chol'], maxHeart = diagnosisData.val()['maxheart'], chest = diagnosisData.val()['chest'], fbs = diagnosisData.val()['fbs'], oldpeak = diagnosisData.val()['oldpeak'], exang = diagnosisData.val()['exang'], stslope = diagnosisData.val()['stslope'], ecg = diagnosisData.val()['ecg'], healthyAvg = healthyAvg, cardioAvg = cardioAvg, healthySecAvg = healthySecAvg, cardioSecAvg = cardioSecAvg, graphTwo = graphTwo, healthyRBP = healthyRBP, cardioRBP = cardioRBP, healthyHeart = healthyHeart, cardioHeart = cardioHeart, healthyChest = healthyChest, cardioChest = cardioChest, countHealFBS_0 = countHealFBS_0, countHealFBS_1 = countHealFBS_1, countCardioFBS_0 = countCardioFBS_0, countCardioFBS_1 = countCardioFBS_1, healthyFBS = healthyFBS, cardioFBS = cardioFBS, healthyOldpeak = healthyOldpeak, cardioOldpeak = cardioOldpeak, healthyExang = healthyExang, cardioExang = cardioExang, healthyStSlope = healthyStSlope, cardioStSlope = cardioStSlope, healthyECG = healthyECG, cardioECG = cardioECG, healthyGender = healthyGender, cardioGender = cardioGender, healthyCholMoreLess = healthyCholMoreLess, cardioCholMoreLess = cardioCholMoreLess, healthyRBPMoreLess = healthyRBPMoreLess, cardioRBPMoreLess = cardioRBPMoreLess, healthyMaxHeartMoreLess = healthyMaxHeartMoreLess, cardioMaxHeartMoreLess = cardioMaxHeartMoreLess)
+    return render_template('report.html', ct = ct, pred = pred, neg = neg, exp = exp, pos = pos, uid = userID, pid = pid, data = data, graphOne = graphOne, healthyChol = healthyChol, healthyAge = healthyAge, cardioChol = cardioChol, cardioAge = cardioAge, rbp = diagnosisData.val()['bps'], sex = patient.val()['gender'], age = patient.val()['age'], chol = diagnosisData.val()['chol'], maxHeart = diagnosisData.val()['maxheart'], chest = diagnosisData.val()['chest'], fbs = diagnosisData.val()['fbs'], oldpeak = diagnosisData.val()['oldpeak'], exang = diagnosisData.val()['exang'], stslope = diagnosisData.val()['stslope'], ecg = diagnosisData.val()['ecg'], healthyAvg = healthyAvg, cardioAvg = cardioAvg, healthySecAvg = healthySecAvg, cardioSecAvg = cardioSecAvg, graphTwo = graphTwo, healthyRBP = healthyRBP, cardioRBP = cardioRBP, healthyHeart = healthyHeart, cardioHeart = cardioHeart, healthyChest = healthyChest, cardioChest = cardioChest, countHealFBS_0 = countHealFBS_0, countHealFBS_1 = countHealFBS_1, countCardioFBS_0 = countCardioFBS_0, countCardioFBS_1 = countCardioFBS_1, healthyFBS = healthyFBS, cardioFBS = cardioFBS, healthyOldpeak = healthyOldpeak, cardioOldpeak = cardioOldpeak, healthyExang = healthyExang, cardioExang = cardioExang, healthyStSlope = healthyStSlope, cardioStSlope = cardioStSlope, healthyECG = healthyECG, cardioECG = cardioECG, healthyGender = healthyGender, cardioGender = cardioGender, healthyCholMoreLess = healthyCholMoreLess, cardioCholMoreLess = cardioCholMoreLess, healthyRBPMoreLess = healthyRBPMoreLess, cardioRBPMoreLess = cardioRBPMoreLess, healthyMaxHeartMoreLess = healthyMaxHeartMoreLess, cardioMaxHeartMoreLess = cardioMaxHeartMoreLess)
 
 
 # Get patients of user.
@@ -315,9 +314,9 @@ def getPatients():
     def add_header(response):
         response.headers.add('Access-Control-Allow-Origin', '*')
         return response
-    uid = request.args.get('uid')
-
-    patients = db.child(uid).child("Patients").get().val()
+    # uid = request.args.get('uid')
+    print(userID)
+    patients = db.child(userID).child("Patients").get().val()
 
     return jsonify(patients)
 
@@ -326,19 +325,19 @@ def getPatients():
 @app.route('/report/comments', methods=['POST'])
 def report_comments():
     # comment = request.form['comment']
-    uid = request.args.get('uid')
+    # uid = request.args.get('uid')
     pid = request.args.get('pid')
 
     comments = request.form['comments']
 
     listHistory = []
-    snapshot = db.child(uid).child("Patients").child(pid).child("history").get().val()
+    snapshot = db.child(userID).child("Patients").child(pid).child("history").get().val()
     for key in snapshot:
         listHistory.append(key)
     
     smallest = getLastId(listHistory)
-    db.child(uid).child("Patients").child(pid).child("current").update({"comments":comments})
-    db.child(uid).child("Patients").child(pid).child("history").child(smallest).update({"comments":comments})
+    db.child(userID).child("Patients").child(pid).child("current").update({"comments":comments})
+    db.child(userID).child("Patients").child(pid).child("history").child(smallest).update({"comments":comments})
     
     return ('', 204)
 
@@ -346,14 +345,14 @@ def report_comments():
 @app.route('/save_pdf', methods=['POST'])
 def save_pdf():
     # comment = request.form['comment']
-    uid = request.args.get('uid')
+    # uid = request.args.get('uid')
     pid = request.args.get('pid')
     ct = request.args.get('ct')
 
     url = request.get_json()
     
-    db.child(uid).child("Patients").child(pid).child("current").update({"pdf":url})
-    db.child(uid).child("Patients").child(pid).child("history").child(ct).update({"pdf":url})
+    db.child(userID).child("Patients").child(pid).child("current").update({"pdf":url})
+    db.child(userID).child("Patients").child(pid).child("history").child(ct).update({"pdf":url})
     
     return ('', 204)
 
@@ -364,10 +363,10 @@ def info():
     def add_header(response):
         response.headers.add('Access-Control-Allow-Origin', '*')
         return response
-    uid = request.args.get('uid')
+    # uid = request.args.get('uid')
     pid = request.args.get('pid')
 
-    patient = db.child(uid).child("Patients").child(pid).get()
+    patient = db.child(userID).child("Patients").child(pid).get()
 
     jsonResp = {'name': patient.val()['name'],'age': patient.val()['age'], 'gender': patient.val()['gender'], 'email': patient.val()['email']}
     return jsonify(jsonResp)
@@ -375,13 +374,13 @@ def info():
 # Get history of patient.
 @app.route('/history')
 def history():
-    uid = request.args.get('uid')
+    # uid = request.args.get('uid')
     pid = request.args.get('pid')
 
-    history = db.child(uid).child("Patients").child(pid).child("history").get().val()
-    patient = db.child(uid).child("Patients").child(pid).get().val()
+    history = db.child(userID).child("Patients").child(pid).child("history").get().val()
+    patient = db.child(userID).child("Patients").child(pid).get().val()
 
-    return render_template('history.html', history = history, uid = uid, pid = pid, patient = patient)
+    return render_template('history.html', history = history, uid = userID, pid = pid, patient = patient)
 
 # Get specific history.
 @app.route('/patients/history/specific')
@@ -391,11 +390,11 @@ def history_specific():
         response.headers.add('Access-Control-Allow-Origin', '*')
         return response
     
-    uid = request.args.get('uid')
+    # uid = request.args.get('uid')
     pid = request.args.get('pid')
     key = request.args.get('key')
 
-    specific = db.child(uid).child("Patients").child(pid).child("history").child(key).get().val()
+    specific = db.child(userID).child("Patients").child(pid).child("history").child(key).get().val()
     return jsonify(specific)
 
 
@@ -406,10 +405,10 @@ def patients_history():
     def add_header(response):
         response.headers.add('Access-Control-Allow-Origin', '*')
         return response
-    uid = request.args.get('uid')
+    # uid = request.args.get('uid')
     pid = request.args.get('pid')
 
-    history = db.child(uid).child("Patients").child(pid).child("history").get().val()
+    history = db.child(userID).child("Patients").child(pid).child("history").get().val()
 
     return jsonify(history)
 
@@ -418,9 +417,9 @@ def patients_history():
 def edit():
     # Edit patient's data on firebase.
     if request.method == 'POST':
-        uid = request.args.get('uid')
+        # uid = request.args.get('uid')
         pid = request.args.get('pid')
-        if uid is not None and pid is not None:
+        if userID is not None and pid is not None:
             # Get data passed in.
             try:
                 age = request.form['age']
@@ -434,9 +433,9 @@ def edit():
                 return redirect(request.url)
                 
         # Validate that data is of the appropriate type.
-        if uid is not None and pid is not None and only_letters(name) and only_letters(lastName) and (0 <= int(gender) <= 1) and check_email(email) and (0 <= int(age) <= 120):
+        if userID is not None and pid is not None and only_letters(name) and only_letters(lastName) and (0 <= int(gender) <= 1) and check_email(email) and (0 <= int(age) <= 120):
             patient_data = {"age": age, "gender": gender, "name": name, "lastName": lastName, "email": email}
-            db.child(uid).child("Patients").child(pid).update(patient_data)
+            db.child(userID).child("Patients").child(pid).update(patient_data)
 
             flash("Patient data was successfully updated!", "success")
             return redirect(request.url)
@@ -449,17 +448,17 @@ def edit():
     # GET patien's basic information.
     else:
         try:
-            uid = request.args.get('uid')
+            # uid = request.args.get('uid')
             pid = request.args.get('pid')
         except:
             # Show error message to user.
             flash("There was an error with Doctor's id or Patient's id.", "danger")
             return redirect(request.url)
     
-        # if uid and pid are not None, then return edit form for patient.
-        if uid is not None and pid is not None:
+        # if userID and pid are not None, then return edit form for patient.
+        if userID is not None and pid is not None:
             try:
-                patient = db.child(uid).child("Patients").child(pid).get()
+                patient = db.child(userID).child("Patients").child(pid).get()
 
                 name = patient.val()['name']
                 lastName = patient.val()['lastName']
@@ -471,7 +470,7 @@ def edit():
                 flash("There was an error with fetch patient's data from the database.", "danger")
                 return redirect(request.url)
                 
-            return render_template('edit.html', uid = uid, pid = pid, name = name, lastName = lastName, email = email, gender = gender, age = age)
+            return render_template('edit.html', uid = userID, pid = pid, name = name, lastName = lastName, email = email, gender = gender, age = age)
         else:
             # Show error message to user.
             flash("Either doctor's or patient's ID were not found.", "danger")
@@ -481,16 +480,16 @@ def edit():
 @app.route('/delete/')
 def delete():
     try:
-        uid = request.args.get('uid')
+        # uid = request.args.get('uid')
         pid = request.args.get('pid')
     except:
         flash("There was an error with Doctor's id or Patient's id.", "danger")
         return redirect(request.url)
 
-    # if uid and pid are not None, then proceed to delete selected patient.
-    if uid is not None and pid is not None:
+    # if userID and pid are not None, then proceed to delete selected patient.
+    if userID is not None and pid is not None:
         try:
-            db.child(uid).child("Patients").child(pid).remove()
+            db.child(userID).child("Patients").child(pid).remove()
             return render_template('patients.html', update="Patient was deleted successfully.", type="success")
         except:
             # Show error message to user.
