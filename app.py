@@ -1,4 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify, after_this_request, abort, flash
+import sentry_sdk
+from flask import Flask
+from sentry_sdk.integrations.flask import FlaskIntegration
 from flask_mail import Mail, Message
 from dataset import firstGraph, secondGraph, getVar, countVar, getNumberPatientsMore, getNumberPatientsLess
 import pickle
@@ -12,6 +15,17 @@ import re
 
 
 app = Flask(__name__)
+
+# Setup sentry.
+sentry_sdk.init(
+    dsn="https://1b6924d4293e46e286182d21cbbca7d5@o577693.ingest.sentry.io/5733223",
+    integrations=[FlaskIntegration()],
+
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    # We recommend adjusting this value in production.
+    traces_sample_rate=1.0
+)
 
 # Firebase
 config = {
@@ -127,7 +141,7 @@ def diagnose():
         try:
             # Get patient id.
             pid = request.args.get('pid')
-
+            
             age = db.child(userID).child("Patients").child(pid).child("age").get().val()
 
             gender = db.child(userID).child("Patients").child(pid).child("gender").get().val()
@@ -174,8 +188,12 @@ def diagnose():
                 else:
                     flash("Please fill all the boxes according to the instructions.", "danger")
                     return redirect(request.url)
+            # If age or gender are None, send a message to user.
+            else:
+                flash("There was a problem fetching some vital patient information.", "danger")
+                return redirect(request.url)
         except:
-            abort(404)
+            abort(500)
     else:
         pid = request.args.get('pid')
         return render_template('diagnose.html', pid = pid)
@@ -451,8 +469,7 @@ def edit():
                 return redirect(request.url)
         except:
             # Show error message to user.
-            flash("There was an error with Patient's id.", "danger")
-            return redirect(request.url)
+            abort(500)
             
 # Delete a patient.
 @app.route('/delete/')
@@ -463,10 +480,12 @@ def delete():
         # if userID and pid are not None, then proceed to delete selected patient.
         if userID is not None and pid is not None:
             db.child(userID).child("Patients").child(pid).remove()
-            return render_template('patients.html', update="Patient was deleted successfully.", type="success")
+            flash("Patient was deleted successfully.", "success")
+            return redirect(url_for('patients'))
         else:
             # Show error message to user.
-            return render_template('patients.html', update="There was an error with Doctor's id or Patient's id.", type="danger")
+            flash("There was a problem deleting the patient.", "danger")
+            return redirect(url_for('patients'))
     except:
         flash("There was an error deleting the patient.", "danger")
         return redirect(request.url)
