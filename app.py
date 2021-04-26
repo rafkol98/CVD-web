@@ -16,14 +16,11 @@ import re
 
 app = Flask(__name__)
 
-# Setup sentry.
+# Sentry.io setup.
 sentry_sdk.init(
     dsn="https://1b6924d4293e46e286182d21cbbca7d5@o577693.ingest.sentry.io/5733223",
     integrations=[FlaskIntegration()],
 
-    # Set traces_sample_rate to 1.0 to capture 100%
-    # of transactions for performance monitoring.
-    # We recommend adjusting this value in production.
     traces_sample_rate=1.0
 )
 
@@ -56,8 +53,11 @@ app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 mail = Mail(app)
 
-#Initialze person as dictionary
-userID = ""
+
+app.config['USERID'] = ""
+
+#UserID global variable.
+# userID = app.config['USERID']
 
 # Load model.
 # model = pickle.load(open('cvd-model.pkl','rb'))
@@ -110,8 +110,6 @@ def not_found(e):
 # Server error.
 @app.errorhandler(500)
 def server_error(e):
-    # Email admin about the error immediately.
-    email_admin("Server error!", f"SERVER ERROR: {e}, ROUTE: {request.url}")
     return render_template("500.html")
 
 # Forbidden error.
@@ -127,10 +125,9 @@ def index():
 # Main functions
 @app.route('/setup', methods=['POST'])
 def setup():
-    global userID
+    # global userID
     uid = request.args.get('uid')
-    userID = uid
-    print(userID)
+    app.config['USERID'] = uid
     return ('', 204)
 
 
@@ -139,6 +136,7 @@ def setup():
 def diagnose():
     if request.method == 'POST':
         try:
+            userID = app.config['USERID']
             # Get patient id.
             pid = request.args.get('pid')
             
@@ -196,12 +194,17 @@ def diagnose():
             abort(500)
     else:
         pid = request.args.get('pid')
-        return render_template('diagnose.html', pid = pid)
+        if pid is not None:
+            return render_template('diagnose.html', pid = pid)
+        else:
+            flash("Either doctor's or patient's ID were not found.", "danger")
+            return redirect(url_for('patients'))
 
 @app.route('/patients/', methods=['GET','POST'])
 def patients():
         if request.method == 'POST':
             try:
+                userID = app.config['USERID']
                 age = request.form['age']
                 gender = request.form['gender']
                 name = request.form['name']
@@ -230,6 +233,7 @@ def patients():
 @app.route('/report')
 def report():
     try:
+        userID = app.config['USERID']
         pred = request.args.get('pred')
         neg = request.args.get('neg')
         pos = request.args.get('pos')
@@ -330,7 +334,7 @@ def getPatients():
     def add_header(response):
         response.headers.add('Access-Control-Allow-Origin', '*')
         return response
-    print(userID)
+    userID = app.config['USERID']
     patients = db.child(userID).child("Patients").get().val()
 
     return jsonify(patients)
@@ -339,6 +343,7 @@ def getPatients():
 # POST input box.
 @app.route('/report/comments', methods=['POST'])
 def report_comments():
+    userID = app.config['USERID']
     pid = request.args.get('pid')
 
     comments = request.form['comments']
@@ -357,6 +362,7 @@ def report_comments():
 # Save PDF's url to the database.
 @app.route('/save_pdf', methods=['POST'])
 def save_pdf():
+    userID = app.config['USERID']
     pid = request.args.get('pid')
     ct = request.args.get('ct')
 
@@ -374,6 +380,7 @@ def info():
     def add_header(response):
         response.headers.add('Access-Control-Allow-Origin', '*')
         return response
+    userID = app.config['USERID']
     pid = request.args.get('pid')
 
     patient = db.child(userID).child("Patients").child(pid).get()
@@ -382,14 +389,18 @@ def info():
     return jsonify(jsonResp)
 
 # Get history of patient.
-@app.route('/history')
+@app.route('/history', methods=['GET'])
 def history():
-    pid = request.args.get('pid')
-
-    history = db.child(userID).child("Patients").child(pid).child("history").get().val()
-    patient = db.child(userID).child("Patients").child(pid).get().val()
-
-    return render_template('history.html', history = history, pid = pid, patient = patient)
+        userID = app.config['USERID']
+        pid = request.args.get('pid')
+        if userID is not None and pid is not None:
+            history = db.child(userID).child("Patients").child(pid).child("history").get().val()
+            patient = db.child(userID).child("Patients").child(pid).get().val()
+            return render_template('history.html', history = history, pid = pid, patient = patient)
+        else:
+            flash("Either doctor's or patient's ID were not found.", "danger")
+            return redirect(url_for('patients'))
+        
 
 # Get specific history.
 @app.route('/patients/history/specific')
@@ -398,7 +409,7 @@ def history_specific():
     def add_header(response):
         response.headers.add('Access-Control-Allow-Origin', '*')
         return response
-    
+    userID = app.config['USERID']
     pid = request.args.get('pid')
     key = request.args.get('key')
 
@@ -413,7 +424,7 @@ def patients_history():
     def add_header(response):
         response.headers.add('Access-Control-Allow-Origin', '*')
         return response
-    
+    userID = app.config['USERID']
     pid = request.args.get('pid')
 
     history = db.child(userID).child("Patients").child(pid).child("history").get().val()
@@ -426,6 +437,7 @@ def edit():
     # Edit patient's data on firebase.
     if request.method == 'POST':
         try:
+            userID = app.config['USERID']
             pid = request.args.get('pid')
             age = request.form['age']
             gender = request.form['gender']
@@ -443,13 +455,14 @@ def edit():
             else:
                 # Show error message to user.
                 flash("There was an error with the form, please follow the form's instructions.", "danger")
-                return redirect(request.url)
+                return redirect(url_for('patients'))
         except:
             # Server error.
             abort(500)    
     # GET patient's basic information.
     else:
         try:
+            userID = app.config['USERID']
             pid = request.args.get('pid')
 
             # if userID and pid are not None, then return edit form for patient.
@@ -466,7 +479,7 @@ def edit():
             else:
                 # Show error message to user.
                 flash("Either doctor's or patient's ID were not found.", "danger")
-                return redirect(request.url)
+                return redirect(url_for('patients'))
         except:
             # Show error message to user.
             abort(500)
@@ -475,6 +488,7 @@ def edit():
 @app.route('/delete/')
 def delete():
     try:
+        userID = app.config['USERID']
         pid = request.args.get('pid')
 
         # if userID and pid are not None, then proceed to delete selected patient.
@@ -487,6 +501,7 @@ def delete():
             flash("There was a problem deleting the patient.", "danger")
             return redirect(url_for('patients'))
     except:
+        # Show error message that there was an error deleting the patient.
         flash("There was an error deleting the patient.", "danger")
         return redirect(request.url)
 
