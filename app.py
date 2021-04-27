@@ -56,9 +56,6 @@ mail = Mail(app)
 
 app.config['USERID'] = ""
 
-#UserID global variable.
-# userID = app.config['USERID']
-
 # Load model.
 # model = pickle.load(open('cvd-model.pkl','rb'))
 model = pickle.load(open('random_forest.pkl','rb'))
