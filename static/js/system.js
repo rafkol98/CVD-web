@@ -108,7 +108,6 @@ function info( pid) {
         $("#info-pid").html(pid);
         $("#info-age").html(json.age);
         $("#info-gender").html(gender);
-        $("#info-email").html(json.email);
     });
 }
 

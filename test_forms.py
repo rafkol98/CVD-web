@@ -19,7 +19,7 @@ class FormsTest(unittest.TestCase):
         response = self.app.post(
             '/patients/',
             data=dict(age="24", gender="0", name="Test",
-                      lastName="TestLast", email="test@gmail.com"),
+                      lastName="TestLast"),
             follow_redirects=False
         )
         self.assertEqual(response.status_code, 200)
@@ -28,7 +28,7 @@ class FormsTest(unittest.TestCase):
         response = self.app.post(
             '/edit?pid='+pid,
             data=dict(age=31, gender=0, name="Rafael",
-                      lastName="Panikos", email="kokos@gmail.com"),
+                      lastName="Panikos"),
             follow_redirects=True
         )
         self.assertEqual(response.status_code, 200)

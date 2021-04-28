@@ -44,15 +44,6 @@ db = firebase.database()
 # Initialisation of Firebase storage
 storage = firebase.storage()
 
-# Mail configuration
-app.config['MAIL_SERVER']='smtp.gmail.com'
-app.config['MAIL_PORT'] = 465
-app.config['MAIL_USERNAME'] = 'cardio.ncl@gmail.com'
-app.config['MAIL_PASSWORD'] = 'CardioWeb100!'
-app.config['MAIL_USE_TLS'] = False
-app.config['MAIL_USE_SSL'] = True
-mail = Mail(app)
-
 app.secret_key = 'OMONOIALAOSPROTATHLIMA'
 
 app.config['USERID'] = ""
@@ -68,11 +59,6 @@ def getNumbers(name, variable, condition):
     numLess = getNumberPatientsLess(name, variable, condition)
     return [numMore, numLess]
 
-# Emails admin about an error that occured.
-def email_admin(topic, message):
-    msg = Message(topic, sender = 'cardio.web@gmail.com', recipients = ['rafcall98@hotmail.com'])
-    msg.body = message
-    mail.send(msg)
 
 def check_number(string, min, max):
     if string.isdecimal():
@@ -316,11 +302,11 @@ def patients():
                 gender = request.form['gender']
                 name = request.form['name']
                 lastName = request.form['lastName']
-                email = request.form['email']
+                # email = request.form['email']
 
                 # Validate input passed in.
-                if userID is not None and only_letters(name) and only_letters(lastName) and (0 <= int(gender) <= 1) and check_email(email) and (0 <= int(age) <= 120):
-                    patient_data = {"age": age, "gender": gender, "name": name, "lastName": lastName, "email": email}
+                if userID is not None and only_letters(name) and only_letters(lastName) and (0 <= int(gender) <= 1) and (0 <= int(age) <= 120):
+                    patient_data = {"age": age, "gender": gender, "name": name, "lastName": lastName}
                     db.child(userID).child("Patients").push(patient_data)
                     flash("Patient was added.", "success")
                     return redirect(request.url)
@@ -492,7 +478,7 @@ def info():
 
     patient = db.child(userID).child("Patients").child(pid).get()
 
-    jsonResp = {'name': patient.val()['name'],'age': patient.val()['age'], 'gender': patient.val()['gender'], 'email': patient.val()['email']}
+    jsonResp = {'name': patient.val()['name'],'age': patient.val()['age'], 'gender': patient.val()['gender']}
     return jsonify(jsonResp)
 
 # Get history of patient.
@@ -550,11 +536,10 @@ def edit():
             gender = request.form['gender']
             name = request.form['name']
             lastName = request.form['lastName']
-            email = request.form['email']
                     
             # Validate that data is of the appropriate type.
-            if userID is not None and pid is not None and only_letters(name) and only_letters(lastName) and (0 <= int(gender) <= 1) and check_email(email) and (0 <= int(age) <= 120):
-                patient_data = {"age": age, "gender": gender, "name": name, "lastName": lastName, "email": email}
+            if userID is not None and pid is not None and only_letters(name) and only_letters(lastName) and (0 <= int(gender) <= 1) and (0 <= int(age) <= 120):
+                patient_data = {"age": age, "gender": gender, "name": name, "lastName": lastName}
                 db.child(userID).child("Patients").child(pid).update(patient_data)
 
                 flash("Patient data was successfully updated!", "success")
@@ -578,11 +563,10 @@ def edit():
 
                 name = patient.val()['name']
                 lastName = patient.val()['lastName']
-                email = patient.val()['email']
                 gender = patient.val()['gender']
                 age =  patient.val()['age']
 
-                return render_template('edit.html', pid = pid, name = name, lastName = lastName, email = email, gender = gender, age = age)
+                return render_template('edit.html', pid = pid, name = name, lastName = lastName, gender = gender, age = age)
             else:
                 # Show error message to user.
                 flash("Either doctor's or patient's ID were not found.", "danger")
