@@ -13,6 +13,7 @@ class ContentTest(unittest.TestCase):
     def setUp(self):
         # Initialize test client.
         self.app = app.test_client()
+        app.secret_key = 'OMONOIALAOSPROTATHLIMA'
         # Initialise USERID to be used for test purposes.
         app.config['USERID'] = "LAZxVbjxuaYot9WVpMDH2ssYJjA3"
 
@@ -69,5 +70,4 @@ class ContentTest(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    app.secret_key = 'OMONOIALAOSPROTATHLIMA'
     unittest.main()
