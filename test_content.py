@@ -4,7 +4,6 @@ import unittest
 # Patient id used for testing purposes.
 pid = "-MWZ3OxxmQoRFayfFbLF"
 
-
 class ContentTest(unittest.TestCase):
     """
     Test the content of the pages when correct and incorrect parameters are passed in.

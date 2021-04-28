@@ -127,6 +127,115 @@ def setup():
     app.config['USERID'] = uid
     return ('', 204)
 
+@app.route('/no_login', methods=['GET','POST'])
+def no_login():
+    if request.method == 'POST':
+        age = request.form['age']
+        gender = request.form['gender']
+        chest = request.form['chest']
+        bps = request.form['bps']
+        chol = request.form['chol'] 
+        fbs = request.form['fbs']
+        ecg = request.form['ecg']
+        maxheart = request.form['maxheart']
+        exang = request.form['exang']
+        oldpeak = request.form['oldpeak']
+        stslope = request.form['stslope']
+
+        # Get all the values from the form.
+        ints = [age, gender, chest, bps, chol, fbs, ecg, maxheart, exang, oldpeak, stslope]
+        
+        if all(ints) and check_number(bps, 0, 300) and check_number(chol, 0, 700) and check_number(maxheart, 0, 300) and (0 <= float(oldpeak) <= 7) and check_number(chest, 1, 4) and check_number(fbs, 0, 1) and check_number(ecg, 0, 2) and check_number(exang, 0, 1) and check_number(stslope, 0, 3):
+            
+            final = [np.array(ints)]
+
+            # Get data in an appropriate form.
+            data = (np.array(ints)).astype(float)
+
+            pred = model.predict(final)
+            
+            neg = str(model.predict_proba(final)[:,0])[1:-1]
+            pos = str(model.predict_proba(final)[:,1])[1:-1]
+
+            # Make the first graph.
+            graphOne = [ chest, fbs, ecg, exang, oldpeak, stslope ]
+
+            graphTwo = [ bps, chol, maxheart ]
+
+            # Explainable AI.
+            exp = exp_load.explain_instance(data_row = data, predict_fn = model.predict_proba)
+            exp = exp.as_html()
+
+            healthyAvg = firstGraph(0)
+            cardioAvg = firstGraph(1)
+
+            healthySecAvg = secondGraph(0)
+            cardioSecAvg = secondGraph(1)
+
+            healthyAge = getVar("age", 0)
+            cardioAge = getVar("age", 1)
+
+            healthyGender = getVar("sex", 0)
+            cardioGender = getVar("sex", 1)
+
+            healthyChol = getVar("cholesterol", 0)
+            cardioChol = getVar("cholesterol", 1)
+            
+            # Get number of healthy patients more than patient's value.
+            healthyCholMoreLess = getNumbers("cholesterol", chol, 0)
+
+            # Get number of cardio patients more than patient's value.
+            cardioCholMoreLess = getNumbers("cholesterol", chol, 1)
+
+            # Get number of healthy patients more than patient's value.
+            healthyRBPMoreLess = getNumbers("resting bp s", bps, 0)
+
+            # Get number of cardio patients more than patient's value.
+            cardioRBPMoreLess = getNumbers("resting bp s", bps, 1)
+
+            # Get number of healthy patients more than patient's value.
+            healthyMaxHeartMoreLess = getNumbers("max heart rate", maxheart, 0)
+
+            # Get number of cardio patients more than patient's value.
+            cardioMaxHeartMoreLess = getNumbers("max heart rate", maxheart, 1)
+
+            healthyRBP = getVar("resting bp s", 0)
+            cardioRBP = getVar("resting bp s", 1)
+
+            healthyHeart = getVar("max heart rate", 0)
+            cardioHeart = getVar("max heart rate", 1)
+
+            healthyChest = getVar("chest pain type", 0)
+            cardioChest = getVar("chest pain type", 1)
+
+            healthyOldpeak = getVar("oldpeak", 0)
+            cardioOldpeak = getVar("oldpeak", 1)
+
+            healthyECG = getVar("resting ecg", 0)
+            cardioECG = getVar("resting ecg", 1)
+
+            healthyStSlope = getVar("ST slope", 0)
+            cardioStSlope = getVar("ST slope", 1)
+
+        #   Count fbs 0 and 1 in healthy and cardio patients.
+            countHealFBS_0 = countVar("fasting blood sugar",0,0)
+            countHealFBS_1 = countVar("fasting blood sugar",0,1)
+
+            countCardioFBS_0 = countVar("fasting blood sugar",1,0)
+            countCardioFBS_1 = countVar("fasting blood sugar",1,1)
+
+            healthyFBS = [countHealFBS_0, countHealFBS_1]
+            cardioFBS = [countCardioFBS_0, countCardioFBS_1]
+
+        #   Count exercise angina 0 and 1 in healthy and cardio patients.
+            healthyExang = [countVar("exercise angina",0,0), countVar("exercise angina",0,1)]
+            cardioExang = [countVar("exercise angina",1,0), countVar("exercise angina",1,1)]
+
+            return render_template('report_no_login.html', pred = pred, neg = neg, exp = exp, pos = pos, data = data, graphOne = graphOne, healthyChol = healthyChol, healthyAge = healthyAge, cardioChol = cardioChol, cardioAge = cardioAge, rbp = bps, sex = gender, age = age, chol = chol, maxHeart = maxheart, chest = chest, fbs = fbs, oldpeak = oldpeak, exang = exang, stslope = stslope, ecg = ecg, healthyAvg = healthyAvg, cardioAvg = cardioAvg, healthySecAvg = healthySecAvg, cardioSecAvg = cardioSecAvg, graphTwo = graphTwo, healthyRBP = healthyRBP, cardioRBP = cardioRBP, healthyHeart = healthyHeart, cardioHeart = cardioHeart, healthyChest = healthyChest, cardioChest = cardioChest, countHealFBS_0 = countHealFBS_0, countHealFBS_1 = countHealFBS_1, countCardioFBS_0 = countCardioFBS_0, countCardioFBS_1 = countCardioFBS_1, healthyFBS = healthyFBS, cardioFBS = cardioFBS, healthyOldpeak = healthyOldpeak, cardioOldpeak = cardioOldpeak, healthyExang = healthyExang, cardioExang = cardioExang, healthyStSlope = healthyStSlope, cardioStSlope = cardioStSlope, healthyECG = healthyECG, cardioECG = cardioECG, healthyGender = healthyGender, cardioGender = cardioGender, healthyCholMoreLess = healthyCholMoreLess, cardioCholMoreLess = cardioCholMoreLess, healthyRBPMoreLess = healthyRBPMoreLess, cardioRBPMoreLess = cardioRBPMoreLess, healthyMaxHeartMoreLess = healthyMaxHeartMoreLess, cardioMaxHeartMoreLess = cardioMaxHeartMoreLess)
+
+    else:
+        return render_template('no_login.html') 
+
 
 # Diagnose patient.
 @app.route('/diagnose', methods=['GET','POST'])

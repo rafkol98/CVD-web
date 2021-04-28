@@ -1,0 +1,14 @@
+{% extends 'index_layout.html' %}
+{% block scripts %}{% endblock %}
+{% block body %}
+
+	{# Prediction. #}
+	<h2 class="mt-5 mb-5 text-center">{{pred}}</h2>
+
+	{# Explainable AI. #}
+	<div class="mb-5">{{exp|safe}}</div>
+
+	{# Indlude Graphs #}
+	{% include 'includes/_graphs.html' %}
+
+{% endblock %}
