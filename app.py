@@ -53,6 +53,7 @@ app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 mail = Mail(app)
 
+app.secret_key = 'OMONOIALAOSPROTATHLIMA'
 
 app.config['USERID'] = ""
 
@@ -612,6 +613,5 @@ def delete():
         return redirect(request.url)
 
 if __name__ == '__main__':
-    app.secret_key = 'OMONOIALAOSPROTATHLIMA'
     app.run(debug=True)
 
