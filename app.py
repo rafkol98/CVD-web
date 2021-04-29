@@ -51,7 +51,8 @@ app.secret_key = os.urandom(24)
 
 app.config['USERID'] = ""
 
-user = None
+user_id = None
+
 
 
 # Load model.
@@ -288,7 +289,7 @@ def no_login():
 def diagnose():
     if request.method == 'POST':
         try:
-            userID = auth.current_user['localId']
+            userID = session['usr']
             # Get patient id.
             pid = request.args.get('pid')
             
@@ -356,7 +357,7 @@ def diagnose():
 def patients():
         if request.method == 'POST':
             try:
-                userID = auth.current_user['localId']
+                userID = session['usr']
                 age = request.form['age']
                 gender = request.form['gender']
                 name = request.form['name']
@@ -385,7 +386,7 @@ def patients():
 @app.route('/report')
 def report():
     try:
-        userID = auth.current_user['localId']
+        userID = session['usr']
         pred = request.args.get('pred')
         neg = request.args.get('neg')
         pos = request.args.get('pos')
@@ -486,7 +487,7 @@ def getPatients():
     def add_header(response):
         response.headers.add('Access-Control-Allow-Origin', '*')
         return response
-    userID = auth.current_user['localId']
+    userID = session['usr']
     patients = db.child(userID).child("Patients").get().val()
 
     return jsonify(patients)
@@ -495,7 +496,7 @@ def getPatients():
 # POST input box.
 @app.route('/report/comments', methods=['POST'])
 def report_comments():
-    userID = auth.current_user['localId']
+    userID = session['usr']
     pid = request.args.get('pid')
 
     comments = request.form['comments']
@@ -514,7 +515,7 @@ def report_comments():
 # Save PDF's url to the database.
 @app.route('/save_pdf', methods=['POST'])
 def save_pdf():
-    userID = auth.current_user['localId']
+    userID = session['usr']
     pid = request.args.get('pid')
     ct = request.args.get('ct')
 
@@ -532,7 +533,7 @@ def info():
     def add_header(response):
         response.headers.add('Access-Control-Allow-Origin', '*')
         return response
-    userID = auth.current_user['localId']
+    userID = session['usr']
     pid = request.args.get('pid')
 
     patient = db.child(userID).child("Patients").child(pid).get()
@@ -543,7 +544,7 @@ def info():
 # Get history of patient.
 @app.route('/history', methods=['GET'])
 def history():
-        userID = auth.current_user['localId']
+        userID = session['usr']
         pid = request.args.get('pid')
         if userID is not None and pid is not None:
             history = db.child(userID).child("Patients").child(pid).child("history").get().val()
@@ -561,7 +562,7 @@ def history_specific():
     def add_header(response):
         response.headers.add('Access-Control-Allow-Origin', '*')
         return response
-    userID = auth.current_user['localId']
+    userID = session['usr']
     pid = request.args.get('pid')
     key = request.args.get('key')
 
@@ -576,7 +577,7 @@ def patients_history():
     def add_header(response):
         response.headers.add('Access-Control-Allow-Origin', '*')
         return response
-    userID = auth.current_user['localId']
+    userID = session['usr']
     pid = request.args.get('pid')
 
     history = db.child(userID).child("Patients").child(pid).child("history").get().val()
@@ -589,7 +590,7 @@ def edit():
     # Edit patient's data on firebase.
     if request.method == 'POST':
         try:
-            userID = auth.current_user['localId']
+            userID = session['usr']
             pid = request.args.get('pid')
             age = request.form['age']
             gender = request.form['gender']
@@ -613,7 +614,7 @@ def edit():
     # GET patient's basic information.
     else:
         try:
-            userID = auth.current_user['localId']
+            userID = session['usr']
             pid = request.args.get('pid')
 
             # if userID and pid are not None, then return edit form for patient.
@@ -638,7 +639,7 @@ def edit():
 @app.route('/delete/')
 def delete():
     try:
-        userID = auth.current_user['localId']
+        userID = session['usr']
         pid = request.args.get('pid')
 
         # if userID and pid are not None, then proceed to delete selected patient.
