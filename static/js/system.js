@@ -20,10 +20,11 @@ firebase.auth().onAuthStateChanged((user) => {
         }
         )
       });
-  } else {
-    window.location.replace("/");
-    // User not logged in or has just logged out.
-  }
+  } 
+  // else {
+  //   window.location.replace("/");
+  //   // User not logged in or has just logged out.
+  // }
 });
 
 // Function used to redirect logged in users to patients page.
@@ -35,18 +36,18 @@ function loggedIn() {
   });
 }
 
-// Function used to logout.
-function logout() {
-  firebase.auth().onAuthStateChanged((user) => {
-    if (user) {
-      firebase.auth().signOut().then(() => {
-        window.location.replace("/");
-      }).catch((error) => {
-        console.log("Error" + error);
-      });
-    }
-  });
-}
+// // Function used to logout.
+// function logout() {
+//   firebase.auth().onAuthStateChanged((user) => {
+//     if (user) {
+//       firebase.auth().signOut().then(() => {
+//         window.location.replace("/");
+//       }).catch((error) => {
+//         console.log("Error" + error);
+//       });
+//     }
+//   });
+// }
 
 // Get patients from the server and populate "patients" table.
 function getPatients() {
@@ -96,7 +97,7 @@ function getPatients() {
 }
 
 // Get info of patient.
-function info( pid) {
+function info(pid) {
   const url = `/patients/info?pid=${pid}`
   fetch(url)
     .then(response => response.json())

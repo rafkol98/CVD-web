@@ -1,4 +1,5 @@
 from app import app
+import os
 import unittest
 
 # Patient id used for testing purposes.
@@ -12,7 +13,7 @@ class FormsTest(unittest.TestCase):
     # Set up config.
     def setUp(self):
         self.app = app.test_client()
-        app.secret_key = 'OMONOIALAOSPROTATHLIMA'
+        app.secret_key = os.urandom(24)
         app.config['USERID'] = "LAZxVbjxuaYot9WVpMDH2ssYJjA3"
 
     def test_add_patient(self):

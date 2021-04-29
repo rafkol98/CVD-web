@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify, after_this_request, abort, flash
+from flask import Flask, render_template, request, redirect, url_for, jsonify, after_this_request, abort, flash, session
 import sentry_sdk
 from flask import Flask
 from sentry_sdk.integrations.flask import FlaskIntegration
@@ -12,6 +12,7 @@ import pyrebase
 import dill
 import json
 import re
+import os
 
 
 app = Flask(__name__)
@@ -39,12 +40,13 @@ config = {
 # Firebase initialisation
 firebase = pyrebase.initialize_app(config)
 
+auth = firebase.auth()
 # Initialisation of Firebase database
 db = firebase.database()
 # Initialisation of Firebase storage
 storage = firebase.storage()
 
-app.secret_key = 'OMONOIALAOSPROTATHLIMA'
+app.secret_key = os.urandom(24)
 
 app.config['USERID'] = ""
 
@@ -58,7 +60,6 @@ def getNumbers(name, variable, condition):
     numMore = getNumberPatientsMore(name, variable, condition)
     numLess = getNumberPatientsLess(name, variable, condition)
     return [numMore, numLess]
-
 
 def check_number(string, min, max):
     if string.isdecimal():
@@ -113,6 +114,27 @@ def setup():
     uid = request.args.get('uid')
     app.config['USERID'] = uid
     return ('', 204)
+
+# Main functions
+@app.route('/login', methods=['POST'])
+def login():
+    # global userID
+    try:
+        print(session['usr'])
+        return redirect(url_for('patients'))
+    except KeyError:
+        if request.method == "POST":
+            email = request.form["email"]
+            password = request.form["password"]
+            try:
+                user = auth.sign_in_with_email_and_password(email, password)
+                user = auth.refresh(user['refreshToken'])
+                user_id = user['idToken']
+                session['usr'] = user_id
+                return redirect(url_for('patients'))
+            except:
+                print("Wrong password")
+    
 
 @app.route('/no_login', methods=['GET','POST'])
 def no_login():
