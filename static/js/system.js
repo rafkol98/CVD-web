@@ -52,9 +52,6 @@ function loggedIn() {
 // Get patients from the server and populate "patients" table.
 function getPatients() {
   $("#items_table").empty();
-  firebase.auth().onAuthStateChanged((user) => {
-    if (user) {
-      var userId = firebase.auth().currentUser.uid;
       const url = `/getPatients`
       fetch(url)
         .then(response => response.json())
@@ -92,8 +89,8 @@ function getPatients() {
             }
           }
         });
-    }
-  });
+  //   }
+  // });
 }
 
 // Get info of patient.

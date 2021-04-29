@@ -40,6 +40,7 @@ config = {
 # Firebase initialisation
 firebase = pyrebase.initialize_app(config)
 
+
 auth = firebase.auth()
 # Initialisation of Firebase database
 db = firebase.database()
@@ -49,6 +50,9 @@ storage = firebase.storage()
 app.secret_key = os.urandom(24)
 
 app.config['USERID'] = ""
+
+user = None
+
 
 # Load model.
 # model = pickle.load(open('cvd-model.pkl','rb'))
@@ -115,6 +119,12 @@ def setup():
     app.config['USERID'] = uid
     return ('', 204)
 
+    # Main functions
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('index'))
+
 # Main functions
 @app.route('/login', methods=['POST'])
 def login():
@@ -128,13 +138,16 @@ def login():
             password = request.form["password"]
             try:
                 user = auth.sign_in_with_email_and_password(email, password)
-                user = auth.refresh(user['refreshToken'])
-                user_id = user['idToken']
+                user_id = auth.current_user['localId']
                 session['usr'] = user_id
+                data = {"name": "Mortimer 'Morty' Smith"}
+                db.child("users").child("Morty").set(data)
+
+                print("ALO    "+auth.current_user['localId'])
                 return redirect(url_for('patients'))
             except:
-                print("Wrong password")
-    
+                return redirect(url_for('index'))
+
 
 @app.route('/no_login', methods=['GET','POST'])
 def no_login():
@@ -251,7 +264,7 @@ def no_login():
 def diagnose():
     if request.method == 'POST':
         try:
-            userID = app.config['USERID']
+            userID = auth.current_user['localId']
             # Get patient id.
             pid = request.args.get('pid')
             
@@ -319,7 +332,7 @@ def diagnose():
 def patients():
         if request.method == 'POST':
             try:
-                userID = app.config['USERID']
+                userID = auth.current_user['localId']
                 age = request.form['age']
                 gender = request.form['gender']
                 name = request.form['name']
@@ -348,7 +361,7 @@ def patients():
 @app.route('/report')
 def report():
     try:
-        userID = app.config['USERID']
+        userID = auth.current_user['localId']
         pred = request.args.get('pred')
         neg = request.args.get('neg')
         pos = request.args.get('pos')
@@ -449,7 +462,7 @@ def getPatients():
     def add_header(response):
         response.headers.add('Access-Control-Allow-Origin', '*')
         return response
-    userID = app.config['USERID']
+    userID = auth.current_user['localId']
     patients = db.child(userID).child("Patients").get().val()
 
     return jsonify(patients)
@@ -458,7 +471,7 @@ def getPatients():
 # POST input box.
 @app.route('/report/comments', methods=['POST'])
 def report_comments():
-    userID = app.config['USERID']
+    userID = auth.current_user['localId']
     pid = request.args.get('pid')
 
     comments = request.form['comments']
@@ -477,7 +490,7 @@ def report_comments():
 # Save PDF's url to the database.
 @app.route('/save_pdf', methods=['POST'])
 def save_pdf():
-    userID = app.config['USERID']
+    userID = auth.current_user['localId']
     pid = request.args.get('pid')
     ct = request.args.get('ct')
 
@@ -495,7 +508,7 @@ def info():
     def add_header(response):
         response.headers.add('Access-Control-Allow-Origin', '*')
         return response
-    userID = app.config['USERID']
+    userID = auth.current_user['localId']
     pid = request.args.get('pid')
 
     patient = db.child(userID).child("Patients").child(pid).get()
@@ -506,7 +519,7 @@ def info():
 # Get history of patient.
 @app.route('/history', methods=['GET'])
 def history():
-        userID = app.config['USERID']
+        userID = auth.current_user['localId']
         pid = request.args.get('pid')
         if userID is not None and pid is not None:
             history = db.child(userID).child("Patients").child(pid).child("history").get().val()
@@ -524,7 +537,7 @@ def history_specific():
     def add_header(response):
         response.headers.add('Access-Control-Allow-Origin', '*')
         return response
-    userID = app.config['USERID']
+    userID = auth.current_user['localId']
     pid = request.args.get('pid')
     key = request.args.get('key')
 
@@ -539,7 +552,7 @@ def patients_history():
     def add_header(response):
         response.headers.add('Access-Control-Allow-Origin', '*')
         return response
-    userID = app.config['USERID']
+    userID = auth.current_user['localId']
     pid = request.args.get('pid')
 
     history = db.child(userID).child("Patients").child(pid).child("history").get().val()
@@ -552,7 +565,7 @@ def edit():
     # Edit patient's data on firebase.
     if request.method == 'POST':
         try:
-            userID = app.config['USERID']
+            userID = auth.current_user['localId']
             pid = request.args.get('pid')
             age = request.form['age']
             gender = request.form['gender']
@@ -576,7 +589,7 @@ def edit():
     # GET patient's basic information.
     else:
         try:
-            userID = app.config['USERID']
+            userID = auth.current_user['localId']
             pid = request.args.get('pid')
 
             # if userID and pid are not None, then return edit form for patient.
@@ -601,7 +614,7 @@ def edit():
 @app.route('/delete/')
 def delete():
     try:
-        userID = app.config['USERID']
+        userID = auth.current_user['localId']
         pid = request.args.get('pid')
 
         # if userID and pid are not None, then proceed to delete selected patient.

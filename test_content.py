@@ -1,5 +1,4 @@
 from app import app
-import os
 import unittest
 
 # Patient id used for testing purposes.
