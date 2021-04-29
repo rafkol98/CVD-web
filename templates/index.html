@@ -1,14 +1,19 @@
 {% extends 'index_layout.html' %}
+{% block head %}
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+{% endblock %}
 
 {% block body %}
-<div class="row mt-5">
-    <div class="col-md-6 d-flex justify-content-center align-items-center">
-        <img class="img-main img-fluid center mt-5" src="{{ url_for('static', filename='docs-image.svg') }}">
+	<div class="row mt-5">
+		<div class="col-md-6 d-flex justify-content-center align-items-center">
+			<img class="img-main img-fluid center mt-5" src="{{ url_for('static', filename='docs-image.svg') }}">
+		</div>
+		<!-- login options of user. -->
+		<div class="col-md-6 d-flex justify-content-center align-items-center">
+            {% include 'includes/_login_form.html' %}		          
+		</div>
     </div>
-    <!-- login options of user. -->
-    <div class="col-md-6 d-flex justify-content-center align-items-center">
-        {% include 'includes/_login.html' %}
-        {# <div id="firebaseui-auth-container"></div> #}
-    </div>
-</div>
+    
 {% endblock %}
+

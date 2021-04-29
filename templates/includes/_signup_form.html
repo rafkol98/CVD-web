@@ -1,0 +1,26 @@
+<form id='form' action='/signup' class="p-1 mt-3 mb-3 box p-5" method="POST">
+    <h3 class="mb-4"><i class="fas fa-user-md"></i> Sign Up</h3>
+    <div class="form-row">
+        <label for="email">Email</label>
+        <input name="email" type="email" class="form-control mb-3" id="email" placeholder="Enter email..." required>
+    </div>
+
+    <div class="form-row">
+        <label for="password">Password</label>
+        <input name="password" type="password" class="form-control mb-3" id="password" placeholder="Enter password..." data-parsley-minlength="6" required>
+    </div>
+
+    <div class="form-row">
+        <label for="rep_password">Repeat Password</label>
+        <input name="rep_password" type="password" class="form-control mb-3" id="rep_password" placeholder="Enter password..." data-parsley-minlength="6"  data-parsley-equalto="#password" required>
+    </div>
+    <div class="form-row">
+        <button type="submit" class="btn btn-function center mt-2"><i class="fas fa-sign-in-alt"></i> Sign Up</button>
+    </div>
+</form>
+
+<script>
+    $(function () {
+        $('#form').parsley()
+    });
+</script>

@@ -109,7 +109,7 @@ def forbidden_error(e):
 # Main functions
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', mode = False)
 
 # Main functions
 @app.route('/setup', methods=['POST'])
@@ -124,6 +124,33 @@ def setup():
 def logout():
     session.clear()
     return redirect(url_for('index'))
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == "POST":
+        email = request.form["email"]
+        password = request.form["password"]
+        rep_password = request.form["rep_password"]
+        
+        # Check if passwords match and check email.
+        if (password == rep_password) and check_email(email):
+            try:
+                # create user.
+                auth.create_user_with_email_and_password(email, password)
+            except:
+                print("user exists!")
+                return redirect(url_for('signup'))
+            # 
+            user = auth.sign_in_with_email_and_password(email, password)
+            user_id = auth.current_user['localId']
+            session['usr'] = user_id
+            return redirect(url_for('patients'))
+        else:
+            print("soemthing went wrong.")
+            return redirect(url_for('signup'))
+    else:
+        return render_template('signup.html') 
+    
 
 # Main functions
 @app.route('/login', methods=['POST'])
@@ -140,10 +167,7 @@ def login():
                 user = auth.sign_in_with_email_and_password(email, password)
                 user_id = auth.current_user['localId']
                 session['usr'] = user_id
-                data = {"name": "Mortimer 'Morty' Smith"}
-                db.child("users").child("Morty").set(data)
 
-                print("ALO    "+auth.current_user['localId'])
                 return redirect(url_for('patients'))
             except:
                 return redirect(url_for('index'))
