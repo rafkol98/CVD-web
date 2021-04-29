@@ -80,12 +80,14 @@ function getPatients() {
                 badge = "dark";
               }
 
+              gender = patients[key].gender === 0 ? "Male" : "Female"
+
               // Populate table.
               items_table.innerHTML +=
                 `<tr><td> <a href="/edit?pid=${key}"><i class='fas fa-edit'></i></a>` +
                 "</td>"+"<td>" +
-                patients[key].name + " " + patients[key].lastName +
-                `</td> <td><a href="javascript:info('${key}');"><i class="fas fa-info-circle"></i> Info</a></td>  <td><a href="/history?pid=${key}");"><i class="fas fa-file-medical-alt"></i> History</a></td> <td><h5><span class="badge badge-${badge}">${condition}</span></h5></td> <td><a href="/diagnose?pid=${key}" class="btn btn-function"><i class="fas fa-heartbeat"></i> Diagnose</a></td> </tr>`;
+                key +
+                `</td> <td>${patients[key].age}</td> <td>${gender}</td>  <td><a href="/history?pid=${key}");"><i class="fas fa-file-medical-alt"></i> History</a></td> <td><h5><span class="badge badge-${badge}">${condition}</span></h5></td> <td><a href="/diagnose?pid=${key}" class="btn btn-function"><i class="fas fa-heartbeat"></i> Diagnose</a></td> </tr>`;
             }
           }
         });

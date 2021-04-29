@@ -53,7 +53,9 @@ app.config['USERID'] = ""
 
 user_id = None
 
-
+@app.before_request
+def func():
+  session.modified = True
 
 # Load model.
 # model = pickle.load(open('cvd-model.pkl','rb'))
@@ -171,6 +173,7 @@ def login():
                 user = auth.sign_in_with_email_and_password(email, password)
                 user_id = auth.current_user['localId']
                 session['usr'] = user_id
+                main.permanent_session_lifetime = timedelta(days=5)
 
                 return redirect(url_for('patients'))
             except:
@@ -369,13 +372,11 @@ def patients():
                 userID = session['usr']
                 age = request.form['age']
                 gender = request.form['gender']
-                name = request.form['name']
-                lastName = request.form['lastName']
                 # email = request.form['email']
 
                 # Validate input passed in.
-                if userID is not None and only_letters(name) and only_letters(lastName) and (0 <= int(gender) <= 1) and (0 <= int(age) <= 120):
-                    patient_data = {"age": age, "gender": gender, "name": name, "lastName": lastName}
+                if userID is not None and (0 <= int(gender) <= 1) and (0 <= int(age) <= 120):
+                    patient_data = {"age": age, "gender": gender}
                     db.child(userID).child("Patients").push(patient_data)
                     flash("Patient was added.", "success")
                     return redirect(request.url)
@@ -535,21 +536,6 @@ def save_pdf():
     
     return ('', 204)
 
-# Get a patient's info.
-@app.route('/patients/info', methods=['GET'])
-def info():
-    @after_this_request
-    def add_header(response):
-        response.headers.add('Access-Control-Allow-Origin', '*')
-        return response
-    userID = session['usr']
-    pid = request.args.get('pid')
-
-    patient = db.child(userID).child("Patients").child(pid).get()
-
-    jsonResp = {'name': patient.val()['name'],'age': patient.val()['age'], 'gender': patient.val()['gender']}
-    return jsonify(jsonResp)
-
 # Get history of patient.
 @app.route('/history', methods=['GET'])
 def history():
@@ -603,12 +589,10 @@ def edit():
             pid = request.args.get('pid')
             age = request.form['age']
             gender = request.form['gender']
-            name = request.form['name']
-            lastName = request.form['lastName']
                     
             # Validate that data is of the appropriate type.
-            if userID is not None and pid is not None and only_letters(name) and only_letters(lastName) and (0 <= int(gender) <= 1) and (0 <= int(age) <= 120):
-                patient_data = {"age": age, "gender": gender, "name": name, "lastName": lastName}
+            if userID is not None and pid is not None and (0 <= int(gender) <= 1) and (0 <= int(age) <= 120):
+                patient_data = {"age": age, "gender": gender}
                 db.child(userID).child("Patients").child(pid).update(patient_data)
 
                 flash("Patient data was successfully updated!", "success")
@@ -630,12 +614,10 @@ def edit():
             if userID is not None and pid is not None:
                 patient = db.child(userID).child("Patients").child(pid).get()
 
-                name = patient.val()['name']
-                lastName = patient.val()['lastName']
                 gender = patient.val()['gender']
                 age =  patient.val()['age']
 
-                return render_template('edit.html', pid = pid, name = name, lastName = lastName, gender = gender, age = age)
+                return render_template('edit.html', pid = pid, gender = gender, age = age)
             else:
                 # Show error message to user.
                 flash("Either doctor's or patient's ID were not found.", "danger")
