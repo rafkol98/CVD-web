@@ -110,7 +110,11 @@ def forbidden_error(e):
 # Main functions
 @app.route('/')
 def index():
-    return render_template('index.html', mode = False)
+    try:
+        print(session['usr'])
+        return redirect(url_for('patients'))
+    except:
+        return render_template('index.html')
 
 # Main functions
 @app.route('/setup', methods=['POST'])
@@ -139,7 +143,7 @@ def signup():
                 # create user.
                 auth.create_user_with_email_and_password(email, password)
             except:
-                print("user exists!")
+                flash("User already exists.", "danger")
                 return redirect(url_for('signup'))
             # 
             user = auth.sign_in_with_email_and_password(email, password)
@@ -147,16 +151,15 @@ def signup():
             session['usr'] = user_id
             return redirect(url_for('patients'))
         else:
-            print("soemthing went wrong.")
+            flash("Please ensure passwords match and email is valid.", "danger")
             return redirect(url_for('signup'))
     else:
         return render_template('signup.html') 
     
 
-# Main functions
+# Login user
 @app.route('/login', methods=['POST'])
 def login():
-    # global userID
     try:
         print(session['usr'])
         return redirect(url_for('patients'))
@@ -171,6 +174,7 @@ def login():
 
                 return redirect(url_for('patients'))
             except:
+                flash("Couldn't sign in, ensure email and password are correct.", "danger")
                 return redirect(url_for('index'))
 
 
@@ -199,7 +203,12 @@ def no_login():
             # Get data in an appropriate form.
             data = (np.array(ints)).astype(float)
 
-            pred = model.predict(final)
+            pred = ''
+
+            if model.predict(final) == 0:
+                pred = "Most Likely Healthy"
+            else:
+                pred = "Most Likely CVD"
             
             neg = str(model.predict_proba(final)[:,0])[1:-1]
             pos = str(model.predict_proba(final)[:,1])[1:-1]
