@@ -3,52 +3,6 @@ if (window.history.replaceState) {
   window.history.replaceState(null, null, window.location.href);
 }
 
-firebase.auth().onAuthStateChanged((user) => {
-  if (user) {
-    // User logged in already or has just logged in.
-    $("#user_id").val(user.uid);
-    console.log(user.uid);
-    const path = `/setup?uid=${user.uid}`;
-      //Fetch response.
-      fetch(path, {
-        method: "POST",
-        credentials: "include",
-        body: JSON.stringify(),
-        cache: "no-cache",
-        headers: new Headers({
-          "content-type": "application/json"
-        }
-        )
-      });
-  } 
-  // else {
-  //   window.location.replace("/");
-  //   // User not logged in or has just logged out.
-  // }
-});
-
-// Function used to redirect logged in users to patients page.
-function loggedIn() {
-  firebase.auth().onAuthStateChanged((user) => {
-    if (user) {
-      window.location.replace("/patients");
-    }
-  });
-}
-
-// // Function used to logout.
-// function logout() {
-//   firebase.auth().onAuthStateChanged((user) => {
-//     if (user) {
-//       firebase.auth().signOut().then(() => {
-//         window.location.replace("/");
-//       }).catch((error) => {
-//         console.log("Error" + error);
-//       });
-//     }
-//   });
-// }
-
 // Get patients from the server and populate "patients" table.
 function getPatients() {
   $("#items_table").empty();
@@ -80,14 +34,14 @@ function getPatients() {
                 badge = "dark";
               }
 
-              gender = patients[key].gender === 0 ? "Male" : "Female"
+              // gender = patients[key].gender === 0 ? "Male" : "Female"
 
               // Populate table.
               items_table.innerHTML +=
                 `<tr><td> <a href="/edit?pid=${key}"><i class='fas fa-edit'></i></a>` +
                 "</td>"+"<td>" +
                 key +
-                `</td> <td>${patients[key].age}</td> <td>${gender}</td>  <td><a href="/history?pid=${key}");"><i class="fas fa-file-medical-alt"></i> History</a></td> <td><h5><span class="badge badge-${badge}">${condition}</span></h5></td> <td><a href="/diagnose?pid=${key}" class="btn btn-function"><i class="fas fa-heartbeat"></i> Diagnose</a></td> </tr>`;
+                `</td> <td>${patients[key].age}</td> <td>${patients[key].gender}</td>  <td><a href="/history?pid=${key}");"><i class="fas fa-file-medical-alt"></i> History</a></td> <td><h5><span class="badge badge-${badge}">${condition}</span></h5></td> <td><a href="/diagnose?pid=${key}" class="btn btn-function"><i class="fas fa-heartbeat"></i> Diagnose</a></td> </tr>`;
             }
           }
         });

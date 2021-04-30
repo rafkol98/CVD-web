@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify, after_this_request, abort, flash, session
 import sentry_sdk
 from flask import Flask
+from datetime import timedelta
 from sentry_sdk.integrations.flask import FlaskIntegration
 from flask_mail import Mail, Message
 from dataset import firstGraph, secondGraph, getVar, countVar, getNumberPatientsMore, getNumberPatientsLess
@@ -40,6 +41,7 @@ config = {
 # Firebase initialisation
 firebase = pyrebase.initialize_app(config)
 
+app.permanent_session_lifetime = timedelta(days=5)
 
 auth = firebase.auth()
 # Initialisation of Firebase database
@@ -118,20 +120,13 @@ def index():
     except:
         return render_template('index.html')
 
-# Main functions
-@app.route('/setup', methods=['POST'])
-def setup():
-    # global userID
-    uid = request.args.get('uid')
-    app.config['USERID'] = uid
-    return ('', 204)
-
-    # Main functions
+# Logout user.
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('index'))
 
+# Signup user.
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == "POST":
@@ -173,7 +168,6 @@ def login():
                 user = auth.sign_in_with_email_and_password(email, password)
                 user_id = auth.current_user['localId']
                 session['usr'] = user_id
-                main.permanent_session_lifetime = timedelta(days=5)
 
                 return redirect(url_for('patients'))
             except:
@@ -181,8 +175,10 @@ def login():
                 return redirect(url_for('index'))
 
 
+# Load no login page.
 @app.route('/no_login', methods=['GET','POST'])
 def no_login():
+    # POST request.
     if request.method == 'POST':
         age = request.form['age']
         gender = request.form['gender']
@@ -293,6 +289,7 @@ def no_login():
             return render_template('report_no_login.html', pred = pred, neg = neg, exp = exp, pos = pos, data = data, graphOne = graphOne, healthyChol = healthyChol, healthyAge = healthyAge, cardioChol = cardioChol, cardioAge = cardioAge, rbp = bps, sex = gender, age = age, chol = chol, maxHeart = maxheart, chest = chest, fbs = fbs, oldpeak = oldpeak, exang = exang, stslope = stslope, ecg = ecg, healthyAvg = healthyAvg, cardioAvg = cardioAvg, healthySecAvg = healthySecAvg, cardioSecAvg = cardioSecAvg, graphTwo = graphTwo, healthyRBP = healthyRBP, cardioRBP = cardioRBP, healthyHeart = healthyHeart, cardioHeart = cardioHeart, healthyChest = healthyChest, cardioChest = cardioChest, countHealFBS_0 = countHealFBS_0, countHealFBS_1 = countHealFBS_1, countCardioFBS_0 = countCardioFBS_0, countCardioFBS_1 = countCardioFBS_1, healthyFBS = healthyFBS, cardioFBS = cardioFBS, healthyOldpeak = healthyOldpeak, cardioOldpeak = cardioOldpeak, healthyExang = healthyExang, cardioExang = cardioExang, healthyStSlope = healthyStSlope, cardioStSlope = cardioStSlope, healthyECG = healthyECG, cardioECG = cardioECG, healthyGender = healthyGender, cardioGender = cardioGender, healthyCholMoreLess = healthyCholMoreLess, cardioCholMoreLess = cardioCholMoreLess, healthyRBPMoreLess = healthyRBPMoreLess, cardioRBPMoreLess = cardioRBPMoreLess, healthyMaxHeartMoreLess = healthyMaxHeartMoreLess, cardioMaxHeartMoreLess = cardioMaxHeartMoreLess)
 
     else:
+        # Return no_login form.
         return render_template('no_login.html') 
 
 
@@ -365,6 +362,7 @@ def diagnose():
             flash("Either doctor's or patient's ID were not found.", "danger")
             return redirect(url_for('patients'))
 
+# Patients page.
 @app.route('/patients/', methods=['GET','POST'])
 def patients():
         if request.method == 'POST':
@@ -372,8 +370,7 @@ def patients():
                 userID = session['usr']
                 age = request.form['age']
                 gender = request.form['gender']
-                # email = request.form['email']
-
+                
                 # Validate input passed in.
                 if userID is not None and (0 <= int(gender) <= 1) and (0 <= int(age) <= 120):
                     patient_data = {"age": age, "gender": gender}
