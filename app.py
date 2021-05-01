@@ -53,9 +53,6 @@ db = firebase.database()
 # Initialisation of Firebase storage
 storage = firebase.storage()
 
-app.secret_key = os.urandom(24)
-
-app.config['USERID'] = ""
 
 @app.before_request
 def func():
@@ -651,5 +648,6 @@ def delete():
         return redirect(request.url)
 
 if __name__ == '__main__':
+    app.secret_key = os.urandom(24)
     app.run(debug=True)
 
