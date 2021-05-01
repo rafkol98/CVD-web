@@ -41,11 +41,15 @@ config = {
 # Firebase initialisation
 firebase = pyrebase.initialize_app(config)
 
+# Logout user automatically after 5 days.
 app.permanent_session_lifetime = timedelta(days=5)
 
+# Initialisation of Firebase authentication.
 auth = firebase.auth()
+
 # Initialisation of Firebase database
 db = firebase.database()
+
 # Initialisation of Firebase storage
 storage = firebase.storage()
 
@@ -53,14 +57,11 @@ app.secret_key = os.urandom(24)
 
 app.config['USERID'] = ""
 
-user_id = None
-
 @app.before_request
 def func():
   session.modified = True
 
 # Load model.
-# model = pickle.load(open('cvd-model.pkl','rb'))
 model = pickle.load(open('random_forest.pkl','rb'))
 with open("explainer_lime.pkl", 'rb') as f: exp_load = dill.load(f)
 
@@ -70,6 +71,7 @@ def getNumbers(name, variable, condition):
     numLess = getNumberPatientsLess(name, variable, condition)
     return [numMore, numLess]
 
+# Check a number is within the limits.
 def check_number(string, min, max):
     if string.isdecimal():
         numeric = int(string)
@@ -178,8 +180,8 @@ def login():
 # Load no login page.
 @app.route('/no_login', methods=['GET','POST'])
 def no_login():
-    # POST request.
     if request.method == 'POST':
+        # Get data passed in the form.
         age = request.form['age']
         gender = request.form['gender']
         chest = request.form['chest']
@@ -192,11 +194,13 @@ def no_login():
         oldpeak = request.form['oldpeak']
         stslope = request.form['stslope']
 
-        # Get all the values from the form.
+        # Put the data in an array.
         ints = [age, gender, chest, bps, chol, fbs, ecg, maxheart, exang, oldpeak, stslope]
         
+        # Error checking for the passed in data.
         if all(ints) and check_number(bps, 0, 300) and check_number(chol, 0, 700) and check_number(maxheart, 0, 300) and (0 <= float(oldpeak) <= 7) and check_number(chest, 1, 4) and check_number(fbs, 0, 1) and check_number(ecg, 0, 2) and check_number(exang, 0, 1) and check_number(stslope, 0, 3):
-            
+            # Generate report.
+
             final = [np.array(ints)]
 
             # Get data in an appropriate form.
@@ -272,7 +276,7 @@ def no_login():
             healthyStSlope = getVar("ST slope", 0)
             cardioStSlope = getVar("ST slope", 1)
 
-        #   Count fbs 0 and 1 in healthy and cardio patients.
+            # Count fbs 0 and 1 in healthy and cardio patients.
             countHealFBS_0 = countVar("fasting blood sugar",0,0)
             countHealFBS_1 = countVar("fasting blood sugar",0,1)
 
@@ -282,7 +286,7 @@ def no_login():
             healthyFBS = [countHealFBS_0, countHealFBS_1]
             cardioFBS = [countCardioFBS_0, countCardioFBS_1]
 
-        #   Count exercise angina 0 and 1 in healthy and cardio patients.
+            # Count exercise angina 0 and 1 in healthy and cardio patients.
             healthyExang = [countVar("exercise angina",0,0), countVar("exercise angina",0,1)]
             cardioExang = [countVar("exercise angina",1,0), countVar("exercise angina",1,1)]
 
@@ -366,6 +370,7 @@ def diagnose():
 @app.route('/patients/', methods=['GET','POST'])
 def patients():
         if request.method == 'POST':
+            # Add a patient.
             try:
                 userID = session['usr']
                 age = request.form['age']
@@ -383,7 +388,7 @@ def patients():
                     return redirect(request.url)
             except:
                 # Show error message to user.
-                flash("There was a problem ading the patient", "danger")
+                flash("There was a problem adding the patient", "danger")
                 return redirect(request.url)
         else:
             # GET Request.
@@ -468,7 +473,7 @@ def report():
         healthyStSlope = getVar("ST slope", 0)
         cardioStSlope = getVar("ST slope", 1)
 
-    #   Count fbs 0 and 1 in healthy and cardio patients.
+        # Count fbs 0 and 1 in healthy and cardio patients.
         countHealFBS_0 = countVar("fasting blood sugar",0,0)
         countHealFBS_1 = countVar("fasting blood sugar",0,1)
 
@@ -478,7 +483,7 @@ def report():
         healthyFBS = [countHealFBS_0, countHealFBS_1]
         cardioFBS = [countCardioFBS_0, countCardioFBS_1]
 
-    #   Count exercise angina 0 and 1 in healthy and cardio patients.
+        # Count exercise angina 0 and 1 in healthy and cardio patients.
         healthyExang = [countVar("exercise angina",0,0), countVar("exercise angina",0,1)]
         cardioExang = [countVar("exercise angina",1,0), countVar("exercise angina",1,1)]
 
@@ -486,6 +491,7 @@ def report():
     except:
         # Server error.
         abort(500)
+
 
 # Get patients of user.
 @app.route('/getPatients', methods=['GET'])
@@ -500,7 +506,7 @@ def getPatients():
     return jsonify(patients)
 
 
-# POST input box.
+# Add a comment.
 @app.route('/report/comments', methods=['POST'])
 def report_comments():
     userID = session['usr']
