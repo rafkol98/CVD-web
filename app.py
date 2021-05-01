@@ -35,7 +35,8 @@ config = {
     "storageBucket": "cardio-82209.appspot.com",
     "messagingSenderId": "792713522509",
     "appId": "1:792713522509:web:859deb8956aee32fa01b04",
-    "measurementId": "G-H0RD6F6TJQ"
+    "measurementId": "G-H0RD6F6TJQ",
+    "serviceAccount": "./serviceAccountCredentials.json"
   }
 
 # Firebase initialisation
@@ -301,7 +302,7 @@ def no_login():
 def diagnose():
     if request.method == 'POST':
         try:
-            userID = session['usr']
+            userID = auth.current_user['localId']
             # Get patient id.
             pid = request.args.get('pid')
             
@@ -371,7 +372,7 @@ def patients():
         if request.method == 'POST':
             # Add a patient.
             try:
-                userID = session['usr']
+                userID = auth.current_user['localId']
                 age = request.form['age']
                 gender = request.form['gender']
                 
@@ -397,7 +398,7 @@ def patients():
 @app.route('/report')
 def report():
     try:
-        userID = session['usr']
+        userID = auth.current_user['localId']
         pred = request.args.get('pred')
         neg = request.args.get('neg')
         pos = request.args.get('pos')
@@ -499,7 +500,8 @@ def getPatients():
     def add_header(response):
         response.headers.add('Access-Control-Allow-Origin', '*')
         return response
-    userID = session['usr']
+    
+    userID = auth.current_user['localId']
     patients = db.child(userID).child("Patients").get().val()
 
     return jsonify(patients)
@@ -508,7 +510,7 @@ def getPatients():
 # Add a comment.
 @app.route('/report/comments', methods=['POST'])
 def report_comments():
-    userID = session['usr']
+    userID = auth.current_user['localId']
     pid = request.args.get('pid')
 
     comments = request.form['comments']
@@ -527,7 +529,7 @@ def report_comments():
 # Save PDF's url to the database.
 @app.route('/save_pdf', methods=['POST'])
 def save_pdf():
-    userID = session['usr']
+    userID = auth.current_user['localId']
     pid = request.args.get('pid')
     ct = request.args.get('ct')
 
@@ -541,7 +543,7 @@ def save_pdf():
 # Get history of patient.
 @app.route('/history', methods=['GET'])
 def history():
-        userID = session['usr']
+        userID = auth.current_user['localId']
         pid = request.args.get('pid')
         if userID is not None and pid is not None:
             history = db.child(userID).child("Patients").child(pid).child("history").get().val()
@@ -559,7 +561,7 @@ def history_specific():
     def add_header(response):
         response.headers.add('Access-Control-Allow-Origin', '*')
         return response
-    userID = session['usr']
+    userID = auth.current_user['localId']
     pid = request.args.get('pid')
     key = request.args.get('key')
 
@@ -574,7 +576,7 @@ def patients_history():
     def add_header(response):
         response.headers.add('Access-Control-Allow-Origin', '*')
         return response
-    userID = session['usr']
+    userID = auth.current_user['localId']
     pid = request.args.get('pid')
 
     history = db.child(userID).child("Patients").child(pid).child("history").get().val()
@@ -587,7 +589,7 @@ def edit():
     # Edit patient's data on firebase.
     if request.method == 'POST':
         try:
-            userID = session['usr']
+            userID = auth.current_user['localId']
             pid = request.args.get('pid')
             age = request.form['age']
             gender = request.form['gender']
@@ -609,7 +611,7 @@ def edit():
     # GET patient's basic information.
     else:
         try:
-            userID = session['usr']
+            userID = auth.current_user['localId']
             pid = request.args.get('pid')
 
             # if userID and pid are not None, then return edit form for patient.
@@ -632,7 +634,7 @@ def edit():
 @app.route('/delete/')
 def delete():
     try:
-        userID = session['usr']
+        userID = auth.current_user['localId']
         pid = request.args.get('pid')
 
         # if userID and pid are not None, then proceed to delete selected patient.
