@@ -53,7 +53,7 @@ db = firebase.database()
 # Initialisation of Firebase storage
 storage = firebase.storage()
 
-app.secret_key = os.urandom(24)
+app.secret_key = "OMONOIALAOSPROTATHLIMA"
 
 
 @app.before_request
