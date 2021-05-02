@@ -124,9 +124,8 @@ a {
   font-family: 'Ubuntu', sans-serif !important;
 }
 
-.navbar-toggler {
+.toggler-hidden {
   display: none !important;
-  /* visibility: hidden; */
 }
 
 .breadcrumb {

@@ -6,11 +6,11 @@
 
 {% block body %}
 	<div class="row mt-5">
-		<div class="col-md-6 d-flex justify-content-center align-items-center">
+		<div class="col justify-content-center align-items-center">
 			<img class="img-main img-fluid center mt-5" src="{{ url_for('static', filename='docs-image.svg') }}">
 		</div>
 		<!-- login options of user. -->
-		<div class="col-md-6 pl-5 justify-content-center align-items-center">
+		<div class="col pl-5 justify-content-center align-items-center">
             {% include 'includes/_login_form.html' %}		          
 		</div>
     </div>
