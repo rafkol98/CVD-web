@@ -5,6 +5,10 @@
   flex-direction: row-reverse;
 }
 
+.black {
+  color: #000000;
+}
+
 .btn-primary {
   background-color: #3a51ff !important;
   color: white !important;
@@ -42,7 +46,6 @@
 
 .navside {
   background-color:#273cd8;
-  /* background-image: linear-gradient(to right, #37bb9d, #079191); */
 }
 
 .img-logo {
@@ -132,8 +135,6 @@ a {
   background-color: rgb(250, 250, 250) !important;
 }
 
-
-
 body {
   background-color: rgb(250, 250, 250) !important;
 }
@@ -164,6 +165,16 @@ body {
 
 #page-content-wrapper {
   min-width: 100vw;
+}
+
+.image-first-about {
+  max-width: 45vw;
+  text-align: center;
+}
+
+.image-about {
+  max-width: 70vw;
+  text-align: center;
 }
 
 #wrapper.toggled #sidebar-wrapper {

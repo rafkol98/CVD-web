@@ -1,0 +1,21 @@
+{% extends 'index_layout.html' %}
+
+{% block body %}
+
+<div class="col-12 align-items-center">
+    <h3 class="mt-3"><i class="fas fa-info-circle"></i> About</h3>
+    <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Debitis, perferendis. Autem suscipit minus optio
+        dolorum exercitationem dolore corporis voluptate labore id! Expedita, aliquam reprehenderit! Asperiores alias
+        ullam itaque harum accusamus.</p>
+
+        <div class="d-flex justify-content-center">
+            <div class="embed-responsive embed-responsive-16by9 image-first-about">
+                <iframe class="text-center" width="560" height="315" src="https://www.youtube.com/embed/HxuVCg40eR4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    <hr>
+    
+    {% include 'includes/_collapse.html' %}
+</div>
+
+{% endblock %}

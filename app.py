@@ -122,6 +122,12 @@ def index():
     except:
         return render_template('index.html')
 
+# Main functions
+@app.route('/about')
+def about():
+   return render_template('about.html')
+
+
 # Logout user.
 @app.route('/logout')
 def logout():
