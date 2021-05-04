@@ -34,35 +34,19 @@ function getPatients() {
                 badge = "dark";
               }
 
-              // gender = patients[key].gender === 0 ? "Male" : "Female"
+              var gender = (patients[key].gender === "0") ? "Male" : (patients[key].gender === "1") ? "Female" : "";
 
               // Populate table.
               items_table.innerHTML +=
                 `<tr><td> <a href="/edit?pid=${key}"><i class='fas fa-edit'></i></a>` +
                 "</td>"+"<td>" +
                 key +
-                `</td> <td>${patients[key].age}</td> <td>${patients[key].gender}</td>  <td><a href="/history?pid=${key}");"><i class="fas fa-file-medical-alt"></i> History</a></td> <td><h5><span class="badge badge-${badge}">${condition}</span></h5></td> <td><a href="/diagnose?pid=${key}" class="btn btn-function"><i class="fas fa-heartbeat"></i> Diagnose</a></td> </tr>`;
+                `</td> <td>${patients[key].age}</td> <td>${gender}</td>  <td><a href="/history?pid=${key}");"><i class="fas fa-file-medical-alt"></i> History</a></td> <td><h5><span class="badge badge-${badge}">${condition}</span></h5></td> <td><a href="/diagnose?pid=${key}" class="btn btn-function"><i class="fas fa-heartbeat"></i> Diagnose</a></td> </tr>`;
             }
           }
         });
   //   }
   // });
-}
-
-// Get info of patient.
-function info(pid) {
-  const url = `/patients/info?pid=${pid}`
-  fetch(url)
-    .then(response => response.json())
-    .then(json => {
-      // var gender =  ? "0"
-      var gender = (json.gender === "0") ? "Male" : (json.gender === "1") ? "Female" : "";
-
-        $("#infoModal").modal('show');
-        $("#info-pid").html(pid);
-        $("#info-age").html(json.age);
-        $("#info-gender").html(gender);
-    });
 }
 
 // Get history of patient.
