@@ -3,20 +3,27 @@
 {# About page. #}
 {% block body %}
 
-<div class="col-12 align-items-center">
-    <h3 class="mt-3"><i class="fas fa-info-circle"></i> About</h3>
-    <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Debitis, perferendis. Autem suscipit minus optio
-        dolorum exercitationem dolore corporis voluptate labore id! Expedita, aliquam reprehenderit! Asperiores alias
-        ullam itaque harum accusamus.</p>
+	<div class="col-12 align-items-center">
+		<h3 class="mt-3">
+			<i class="fas fa-info-circle"></i>
+			About</h3>
+		<p>Cardio is a medical web platform that was created to help doctors visualize and predict cardiovascular diseases. In this page you can user manual and a video tutorial on how to use the platform.</p>
+
+		
+
+		<hr>
+
+        <a href="{{ url_for('static', filename='user manual.pdf') }}" download>
+			<h4 class="text-center m-5">
+				<i class="fas fa-file-pdf"></i>
+				Download user-manual</h4>
+		</a>
 
         <div class="d-flex justify-content-center">
-            <div class="embed-responsive embed-responsive-16by9 image-first-about">
-                <iframe width="560" height="315" src="https://www.youtube.com/embed/PIzKi6lgG9Y" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            </div>
+			<div class="embed-responsive embed-responsive-16by9 image-first-about">
+				<iframe width="560" height="315" src="https://www.youtube.com/embed/PIzKi6lgG9Y" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+			</div>
         </div>
-    <hr>
-    
-    {% include 'includes/_collapse.html' %}
-</div>
+	</div>
 
 {% endblock %}
