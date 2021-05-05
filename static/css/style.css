@@ -9,6 +9,12 @@
   color: #000000;
 }
 
+.it-sm {
+  color:#7e7e7e;
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
 .btn-primary {
   background-color: #3a51ff !important;
   color: white !important;

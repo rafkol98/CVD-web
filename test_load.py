@@ -13,7 +13,7 @@ class FlaskTest(unittest.TestCase):
     # Set up config.
     def setUp(self):
         # Initialize test client.
-        app.secret_key = os.urandom(24)
+        app.secret_key = "OMONOIALAOSPROTATHLIMA"
         self.app = app.test_client()
         # Initialise USERID to be used for test purposes.
         app.config['USERID'] = "LAZxVbjxuaYot9WVpMDH2ssYJjA3"

@@ -1,3 +1,4 @@
+{# Form to diagnose patients without login. #}
 <form id='form' action='/no_login' class="p-1 mt-3 mb-3" method="POST" data-parsley-validate="">
 
     <div class="form-row">
@@ -5,7 +6,7 @@
             <label for="inputAge">Age</label>
             <a href="#" data-toggle="popover" title="Age"
                 data-content="Please type the age of the patient"><i
-                    class="fas fa-question-circle"></i></a>
+                    class="fas fa-question-circle"></i></a><span class="it-sm"> INTEGER: Minimum 0 - Maximum 120</span>
             <input name="age" type="age" class="form-control" id="inputAge"  min="0" max="120" placeholder="Enter Age" data-parsley-type="integer" required>
         </div>
 
@@ -37,10 +38,10 @@
         </div>
 
         <div class="form-group col-md-6">
-            <label for="inputBPS">Resting Blood Pressure</label>
+            <label for="inputBPS">Resting Blood Pressure</label> 
             <a href="#" data-toggle="popover" title="Resting Blood Pressure"
                 data-content="Please type the level of blood pressure of the patient at resting mode in mm/Hg"><i
-                    class="fas fa-question-circle"></i></a>
+                    class="fas fa-question-circle"></i></a><span class="it-sm"> INTEGER: Minimum 0 - Maximum 300</span>
             <input name="bps" class="form-control" id="inputBPS" min="0" max="300" placeholder="Enter BP s" required data-parsley-type="integer">
         </div>
     </div>
@@ -50,7 +51,7 @@
             <label for="inputChol">Total Cholestrol</label>
             <a href="#" data-toggle="popover" title="Cholestrol"
                 data-content="Please type the level of Total Cholestrol of the patient"><i
-                    class="fas fa-question-circle"></i></a>
+                    class="fas fa-question-circle"></i></a><span class="it-sm"> INTEGER: Minimum 0 - Maximum 700</span>
             <input name="chol" type="age" class="form-control" id="inputChol"  min="0" max="700" placeholder="Enter Cholestrol" data-parsley-type="integer" required>
         </div>
 
@@ -83,7 +84,7 @@
             <label for="inputHeart col-md-6">Max heart rate achieved </label>
             <a href="#" data-toggle="popover" title="Max heart rate achieved"
                 data-content="Please type the maximum heart rate that the patient achieved."><i
-                    class="fas fa-question-circle"></i></a>
+                    class="fas fa-question-circle"></i></a><span class="it-sm"> INTEGER: Minimum 0 - Maximum 300</span>
             <input name="maxheart" type="age" class="form-control" id="inputHeart"  min="0" max="300" placeholder="Enter Heart Rate Achieved" data-parsley-type="integer" required>
         </div>
     </div>
@@ -103,7 +104,7 @@
         <div class="form-group col-md-6">
             <label for="inputOldPeak">Oldpeak</label>
             <a href="#" data-toggle="popover" title="Oldpeak" data-content="Please type the Exercise induced ST-depression in comparison with the state of
-            rest."><i class="fas fa-question-circle"></i></a>
+            rest."><i class="fas fa-question-circle"></i></a><span class="it-sm"> NUMERIC: Minimum 0 - Maximum 7</span>
             <input name="oldpeak" class="form-control" id="inputOldPeak" placeholder="Enter Oldpeak result" min="0" max="7" data-parsley-type="number" required>
         </div>
     </div>
@@ -125,6 +126,7 @@
     </div>
 </form>
 
+{# Validate form. #}
 <script>
     $(document).ready(function () {
         $('[data-toggle="popover"]').popover();

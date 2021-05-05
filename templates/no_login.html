@@ -1,6 +1,8 @@
 {% extends 'index_layout.html' %}
 
 {% block body %}
+    {# Loading #}
+    <div id="loading" style="display:none"><img src="{{ url_for('static', filename='three-dots.svg') }}" alt="" /></div>
 
     <div class="col-12 align-items-center">
         <h3 class="mt-3"><i class="fas fa-heartbeat"></i> Diagnose</h3>

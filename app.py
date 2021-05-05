@@ -71,6 +71,10 @@ def getNumbers(name, variable, condition):
     numLess = getNumberPatientsLess(name, variable, condition)
     return [numMore, numLess]
 
+def sign_in_test(email, password):
+    user = auth.sign_in_with_email_and_password(email, password)
+    return auth.current_user['localId']
+
 # Check a number is within the limits.
 def check_number(string, min, max):
     if string.isdecimal():

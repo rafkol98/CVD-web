@@ -1,4 +1,4 @@
-from app import app
+from app import app, sign_in_test
 import unittest
 
 # Patient id used for testing purposes.
@@ -11,11 +11,16 @@ class ContentTest(unittest.TestCase):
 
     # Set up config.
     def setUp(self):
+        
         # Initialize test client.
         self.app = app.test_client()
-        app.secret_key = os.urandom(24)
-        # Initialise USERID to be used for test purposes.
-        app.config['USERID'] = "LAZxVbjxuaYot9WVpMDH2ssYJjA3"
+        app.secret_key = "OMONOIALAOSPROTATHLIMA"
+        
+        # # Initialise USERID to be used for test purposes.
+        # user = auth.sign_in_with_email_and_password("demo-cardio21@gmail.com", "Cardiodemo100!")
+        # user_id = auth.current_user['localId']
+        sign_in_test("demo-cardio21@gmail.com", "Cardiodemo100!")
+        
 
     # Test that "/" - index, loads the correct data.
     def test_index(self):

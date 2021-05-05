@@ -1,5 +1,5 @@
 <script>
-    //TODO: 1) SAVE PDF URL TO DATABASE. FLASK METHOD, LIKE COMMENT! 2) CALL URL FROM HISTORY VIEW LIKE THIS.
+    // On page load call the function to automatically save the pdf file.
     window.onload = function () {
       setTimeout(loadAfterTime, 2000);
     };
@@ -7,7 +7,7 @@
     function loadAfterTime() {
       const report = this.document.getElementById("report");
   
-      //initialise variables.
+      // Initialise variables.
       userid = {{ uid|tojson }};
       patientid = {{ pid|tojson }};
       name = {{ ct | tojson }};
@@ -20,21 +20,21 @@
         jsPDF: { orientation: 'landscape' }
       }
       
-      //Save to firebase storage.
+      // Save to firebase storage.
       html2pdf().from(report).set(opt).outputPdf().then(function (pdf) {
-        //Create pdf url.
+        // Create pdf url.
         const pdf_url = `${userid}/${patientid}/${name}.pdf`;
         // Save pdf as base64 file.
         const ref = firebase.storage().ref(pdf_url);
         ref.putString(btoa(pdf), 'base64');
 
         delay(10000).then(function(){
-          //Download URL.
+          // Download URL.
           firebase.storage().ref(pdf_url).getDownloadURL()
           .then((url) => {
             console.log("here,"+url);
             const path = `/save_pdf?pid=${patientid}&ct=${name}`;
-            //Fetch response.
+            // Fetch response.
             fetch(path, {
               method: "POST",
               credentials: "include",
