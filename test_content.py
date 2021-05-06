@@ -84,14 +84,14 @@ class ContentTest(unittest.TestCase):
             response = c.get('/history', follow_redirects=True)
             self.assertFalse(b"View Details" in response.data)
 
-    # Test that "report" page, doesn't load when data is passed like this without diagnosing first.
+    # Test that "report" page loads the correct data.
     def test_report(self):
         with app.test_client() as c:
             with c.session_transaction() as sess:
                 sess['usr'] = userID
                 
             response = c.get('/report?pred=Most+Likely+Healthy&neg=0.82&pos=0.18&pid='+pid+'&ct=1619438610', follow_redirects=True)
-            self.assertFalse(b"Most Likely Healthy" in response.data)
+            self.assertTrue(b"Most Likely Healthy" in response.data)
 
     # Test that if pid is not passed in the "report" page, it's not loaded.
     def test_report_without_vars(self):
