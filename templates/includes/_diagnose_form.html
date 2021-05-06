@@ -7,107 +7,125 @@
 
 <form id='form' action='/diagnose?pid={{pid}}' class="p-1 mt-3 mb-3" method="POST" data-parsley-validate="">
 
-    <div class="form-row">
-        <div class="form-group col-md-6">
-            <label for="inputChest">Chest pain type</label>
-            <a href="#" data-toggle="popover" title="Chest pain type"
-                data-content="Please select the type of chest pain the patient is experiencing."><i
-                    class="fas fa-question-circle"></i></a>
-            <select name="chest" class="form-control" id="inputChest" required>
-                <option value="1">Atypical</option>
-                <option value="2">Typical Angine</option>
-                <option value="3">Non anginal pain</option>
-                <option value="4">Asymptomatic</option>
-            </select>
-        </div>
+	<div class="form-row">
+		<div class="form-group col-md-6">
+			<label for="inputChest">Chest pain type</label>
+			<a href="#" data-toggle="popover" title="Chest pain type" data-content="Please select the type of chest pain the patient is experiencing.">
+				<i class="fas fa-question-circle"></i>
+			</a>
+			<select name="chest" class="form-control" id="inputChest" required>
+				<option value="1">Atypical</option>
+				<option value="2">Typical Angine</option>
+				<option value="3">Non anginal pain</option>
+				<option value="4">Asymptomatic</option>
+			</select>
+		</div>
 
-        <div class="form-group col-md-6">
-            <label for="inputBPS">Resting Blood Pressure</label>
-            <a href="#" data-toggle="popover" title="Resting Blood Pressure"
-                data-content="Please type the level of blood pressure of the patient at resting mode in mm/Hg"><i
-                    class="fas fa-question-circle"></i></a><span class="it-sm"> INTEGER: Minimum 0 - Maximum 300</span>
-            <input name="bps" class="form-control" id="inputBPS" min="0" max="300" placeholder="Enter BP s" required data-parsley-type="integer">
-        </div>
-    </div>
+		<div class="form-group col-md-6">
+			<label for="inputBPS">Resting Blood Pressure</label>
+			<a href="#" data-toggle="popover" title="Resting Blood Pressure" data-content="Please type the level of blood pressure of the patient at resting mode in mm/Hg">
+				<i class="fas fa-question-circle"></i>
+			</a>
+			<span class="it-sm">
+				INTEGER: Minimum 0 - Maximum 300</span>
+			<input name="bps" class="form-control" id="inputBPS" min="0" max="300" placeholder="Enter BP s" required data-parsley-type="integer">
+		</div>
+	</div>
 
-    <div class="form-row">
-        <div class="form-group col-md-6">
-            <label for="inputChol">Total Cholestrol</label>
-            <a href="#" data-toggle="popover" title="Cholestrol"
-                data-content="Please type the level of Total Cholestrol of the patient"><i
-                    class="fas fa-question-circle"></i></a><span class="it-sm"> INTEGER: Minimum 0 - Maximum 700</span>
-            <input name="chol" type="age" class="form-control" id="inputChol"  min="0" max="700" placeholder="Enter Cholestrol" data-parsley-type="integer" required>
-        </div>
+	<div class="form-row">
+		<div class="form-group col-md-6">
+			<label for="inputChol">Total Cholestrol</label>
+			<a href="#" data-toggle="popover" title="Cholestrol" data-content="Please type the level of Total Cholestrol of the patient">
+				<i class="fas fa-question-circle"></i>
+			</a>
+			<span class="it-sm">
+				INTEGER: Minimum 0 - Maximum 700</span>
+			<input name="chol" type="age" class="form-control" id="inputChol" min="0" max="700" placeholder="Enter Cholestrol" data-parsley-type="integer" required>
+		</div>
 
-        <div class="form-group col-md-6">
-            <label for="inputFBS">Fasting blood sugar </label>
-            <a href="#" data-toggle="popover" title="Fasting blood sugar"
-                data-content="Please select the level of fasting blood sugar of the patient."><i
-                    class="fas fa-question-circle"></i></a>
-            <select name="fbs" class="form-control" id="inputECG" required>
-                <option value="0">Less or equal to 120 mg/dl</option>
-                <option value="1">More than 120 mg/dl</option>
-            </select>
-        </div>
-    </div>
+		<div class="form-group col-md-6">
+			<label for="inputFBS">Fasting blood sugar
+			</label>
+			<a href="#" data-toggle="popover" title="Fasting blood sugar" data-content="Please select the level of fasting blood sugar of the patient.">
+				<i class="fas fa-question-circle"></i>
+			</a>
+			<select name="fbs" class="form-control" id="inputECG" required>
+				<option value="0">Less or equal to 120 mg/dl</option>
+				<option value="1">More than 120 mg/dl</option>
+			</select>
+		</div>
+	</div>
 
-    <div class="form-row">
-        <div class="form-group col-md-6">
-            <label for="inputECG">Resting ECG</label>
-            <a href="#" data-toggle="popover" title="Resting ECG"
-                data-content="Please select the results acquired by the Electrocardiogram."><i
-                    class="fas fa-question-circle"></i></a>
-            <select name="ecg" class="form-control" id="inputECG" required>
-                <option value="0">Normal</option>
-                <option value="1">Abnormality in ST-T wave</option>
-                <option value="2">Left ventricular hypertrophy</option>
-            </select>
-        </div>
+	<div class="form-row">
+		<div class="form-group col-md-6">
+			<label for="inputECG">Resting ECG</label>
+			<a href="#" data-toggle="popover" title="Resting ECG" data-content="Please select the results acquired by the Electrocardiogram.">
+				<i class="fas fa-question-circle"></i>
+			</a>
+			<select name="ecg" class="form-control" id="inputECG" required>
+				<option value="0">Normal</option>
+				<option value="1">Abnormality in ST-T wave</option>
+				<option value="2">Left ventricular hypertrophy</option>
+			</select>
+		</div>
 
-        <div class="form-group col-md-6">
-            <label for="inputHeart col-md-6">Max heart rate achieved </label>
-            <a href="#" data-toggle="popover" title="Max heart rate achieved"
-                data-content="Please type the maximum heart rate that the patient achieved."><i
-                    class="fas fa-question-circle"></i></a><span class="it-sm"> INTEGER: Minimum 0 - Maximum 300</span>
-            <input name="maxheart" type="age" class="form-control" id="inputHeart"  min="0" max="300" placeholder="Enter Heart Rate Achieved" data-parsley-type="integer" required>
-        </div>
-    </div>
+		<div class="form-group col-md-6">
+			<label for="inputHeart col-md-6">Max heart rate achieved
+			</label>
+			<a href="#" data-toggle="popover" title="Max heart rate achieved" data-content="Please type the maximum heart rate that the patient achieved.">
+				<i class="fas fa-question-circle"></i>
+			</a>
+			<span class="it-sm">
+				INTEGER: Minimum 0 - Maximum 300</span>
+			<input name="maxheart" type="age" class="form-control" id="inputHeart" min="0" max="300" placeholder="Enter Heart Rate Achieved" data-parsley-type="integer" required>
+		</div>
+	</div>
 
-    <div class="form-row">
-        <div class="form-group col-md-6">
-            <label for="inputHeart">Exercise angina? </label>
-            <a href="#" data-toggle="popover" title="Exercise Angina"
-                data-content="Select if the patinet indunced angina while exercising."><i
-                    class="fas fa-question-circle"></i></a>
-            <select name="exang" class="form-control" id="inputECG" required>
-                <option value="0">No</option>
-                <option value="1">Yes</option>
-            </select>
-        </div>
+	<div class="form-row">
+		<div class="form-group col-md-6">
+			<label for="inputHeart">Exercise angina?
+			</label>
+			<a href="#" data-toggle="popover" title="Exercise Angina" data-content="Select if the patinet indunced angina while exercising.">
+				<i class="fas fa-question-circle"></i>
+			</a>
+			<select name="exang" class="form-control" id="inputECG" required>
+				<option value="0">No</option>
+				<option value="1">Yes</option>
+			</select>
+		</div>
 
-        <div class="form-group col-md-6">
-            <label for="inputOldPeak">Oldpeak</label>
-            <a href="#" data-toggle="popover" title="Oldpeak" data-content="Please type the Exercise induced ST-depression in comparison with the state of
-            rest."><i class="fas fa-question-circle"></i></a><span class="it-sm"> NUMERIC: Minimum 0 - Maximum 7</span>
-            <input name="oldpeak" class="form-control" id="inputOldPeak" placeholder="Enter Oldpeak result" min="0" max="7" data-parsley-type="number" required>
-        </div>
-    </div>
+		<div class="form-group col-md-6">
+			<label for="inputOldPeak">Oldpeak</label>
+			<a href="#" data-toggle="popover" title="Oldpeak" data-content="Please type the Exercise induced ST-depression in comparison with the state of
+					            rest.">
+				<i class="fas fa-question-circle"></i>
+			</a>
+			<span class="it-sm">
+				NUMERIC: Minimum 0 - Maximum 7</span>
+			<input name="oldpeak" class="form-control" id="inputOldPeak" placeholder="Enter Oldpeak result" min="0" max="7" data-parsley-type="number" required>
+		</div>
+	</div>
 
-    <div class="form-group">
-        <label for="inputStSlope">ST slope </label>
-        <a href="#" data-toggle="popover" title="ST slope" data-content="Please select the ST segment measured in terms of slope during peak exercise."><i class="fas fa-question-circle"></i></a>
-        <select name="stslope" class="form-control" id="inputStSlope" required>
-            <option value="0">Normal</option>
-            <option value="1">Upsloping</option>
-            <option value="2">Horizontal</option>
-            <option value="3">Downsloping</option>
-        </select>
-    </div>
+	<div class="form-group">
+		<label for="inputStSlope">ST slope
+		</label>
+		<a href="#" data-toggle="popover" title="ST slope" data-content="Please select the ST segment measured in terms of slope during peak exercise.">
+			<i class="fas fa-question-circle"></i>
+		</a>
+		<select name="stslope" class="form-control" id="inputStSlope" required>
+			<option value="0">Normal</option>
+			<option value="1">Upsloping</option>
+			<option value="2">Horizontal</option>
+			<option value="3">Downsloping</option>
+		</select>
+	</div>
 
-    <input hidden id="user_id" name="user_id">
-    <div class="row justify-content-center">
-        <button type="submit" class="btn btn-function center mb-4" onclick=""><i class="fas fa-file-medical-alt"></i> Diagnose</button>
-    </div>
+	<input hidden id="user_id" name="user_id">
+	<div class="row justify-content-center">
+		<button type="submit" class="btn btn-function center mb-4" onclick="">
+			<i class="fas fa-file-medical-alt"></i>
+			Diagnose</button>
+	</div>
 </form>
 
 {# Validate form. #}
@@ -117,12 +135,11 @@
     });
 
     $(function () {
-        $('#form').parsley().on('field:validated', function() {
-          var ok = $('.parsley-error').length === 0;
-          console.log("OK")
-        })
-        .on('form:submit', function() {
+        $('#form').parsley().on('field:validated', function () {
+            var ok = $('.parsley-error').length === 0;
+            console.log("OK")
+        }).on('form:submit', function () {
             $('#loading').show();
         });
-      });
+    });
 </script>

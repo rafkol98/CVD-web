@@ -1,31 +1,31 @@
-<div id="msg_com" class="alert alert-success mt-3" >
-    Your comment was added!
+<div id="msg_com" class="alert alert-success mt-3">
+	Your comment was added!
 </div>
 
 {# Send comment to the server to be added on the diagnosis. #}
 <form id='form' action='/report/comments?pid={{pid}}' class="p-1 mt-3 mb-3" method="POST">
 
-    <label for="comments">Comments:</label>
-    <textarea class="form-control" rows="5" id="comments" name="comments" required></textarea>
+	<label for="comments">Comments:</label>
+	<textarea class="form-control" rows="5" id="comments" name="comments" required></textarea>
 
-    <div class="button-right">
-        <button type="submit" id="btn-save-com" class="btn btn-primary mt-3 mb-3"><i class="fas fa-comment"></i> Save Comments</button>
-    </div>
+	<div class="button-right">
+		<button type="submit" id="btn-save-com" class="btn btn-primary mt-3 mb-3">
+			<i class="fas fa-comment"></i>
+			Save Comments</button>
+	</div>
 </form>
 
 <script>
-    //Hide message
-    $('#msg_com').hide();
+	// Hide message
+	$('#msg_com').hide();
 
-    //On submit form validate with parsley.
-    $(function () {
-        $('#form').parsley().on('field:validated', function() {
-          var ok = $('.parsley-error').length === 0;
-          console.log("OKK")
-        })
-        .on('form:submit', function() {
-            //Show message.
-            $('#msg_com').show();
-        });
-      });
+	// On submit form validate with parsley.
+	$(function () {
+		$('#form').parsley().on('field:validated', function () {
+			var ok = $('.parsley-error').length === 0;
+			console.log("OKK")
+		}).on('form:submit', function () { // Show message.
+			$('#msg_com').show();
+		});
+	});
 </script>

@@ -1,7 +1,7 @@
 <script>
     // On page load call the function to automatically save the pdf file.
     window.onload = function () {
-      setTimeout(loadAfterTime, 2000);
+      loadAfterTime();
     };
   
     function loadAfterTime() {
@@ -45,6 +45,7 @@
               }
               )
             });
+            $('#pdf-alert').hide()
           })
           .catch((error) => {
             // Handle any errors
